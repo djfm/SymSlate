@@ -1,0 +1,7 @@
+parameters:
+#    fm_sym_slate.example.class: FM\SymSlateBundle\Example
+
+services:
+#    fm_sym_slate.example:
+#        class: %fm_sym_slate.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

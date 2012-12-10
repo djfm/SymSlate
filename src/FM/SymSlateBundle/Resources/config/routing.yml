@@ -1,0 +1,16 @@
+homepage:
+    pattern:  /
+    defaults: { _controller: FMSymSlateBundle:Default:index }
+
+packs:
+    resource: "@FMSymSlateBundle/Controller/PackController.php"
+    type: annotation
+    
+
+messagesimports:
+    resource: "@FMSymSlateBundle/Controller/MessagesImportController.php"
+    type: annotation
+ 
+languages:
+    resource: "@FMSymSlateBundle/Controller/LanguageController.php"
+    type: annotation
