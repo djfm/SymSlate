@@ -306,6 +306,13 @@ class MessagesImport
 				"subsection" => ''
 			);
 			
+			$message->storage_data = array(
+				'method'   => $row['Array Name'] ? 'ARRAY' : 'FILE',
+				'path'     => str_replace('/en/', '/[iso]/', str_replace('/en.php','/[iso].php', $row['Storage File Path'])),
+				'category' => $category,
+				'custom'   => $row['Array Name']
+			);
+			
 			$messages[] = $message;
 			
 		}

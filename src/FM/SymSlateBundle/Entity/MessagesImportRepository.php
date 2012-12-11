@@ -20,10 +20,12 @@ class MessagesImportRepository extends EntityRepository
 		
 		$mr = $em->getRepository('FMSymSlateBundle:Message');
 		$cr = $em->getRepository('FMSymSlateBundle:Classification');
+		$sr = $em->getRepository('FMSymSlateBundle:Storage');
 		
 		foreach($messages as $message)
 		{
 			$classification_data = $message->classification_data;
+			$storage_data = $message->storage_data;
 			
 			//create the message
 			if($tmp = $mr->findOneByMkey($message->getMkey()))
@@ -51,14 +53,29 @@ class MessagesImportRepository extends EntityRepository
 			}
 			
 			$classification->setCategory($classification_data["category"]);
-			
 			$em->persist($classification);
-			$em->flush();
-			
 			
 			//create OR UPDATE the storage
+			if($storage = $sr->findOneBy(array("pack_id" => $messages_import->getPackId(), "message_id" => $message->getId())))
+			{
+				
+			}
+			else
+			{
+				$storage = new Storage();
+				$storage->setMessagesImport($messages_import);
+				$storage->setPack($messages_import->getPack());
+				$storage->setMessage($message);
+			}
 			
+			$storage->setMethod($storage_data['method']);
+			$storage->setPath($storage_data['path']);
+			$storage->setCategory($storage_data['category']);
+			$storage->setCustom($storage_data['custom']);
 			
+			$em->persist($storage);
+			
+			$em->flush();
 			
 		}
 	}

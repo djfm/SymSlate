@@ -7,7 +7,8 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Storage
  *
- * @ORM\Table()
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="pack_id_message_id_idx", columns={"pack_id", "message_id"})})
+ * @ORM\ChangeTrackingPolicy("DEFERRED_EXPLICIT")
  * @ORM\Entity
  */
 class Storage
@@ -85,7 +86,7 @@ class Storage
     /**
      * @var string
      *
-     * @ORM\Column(name="custom", type="string", length=64)
+     * @ORM\Column(name="custom", type="string", length=64, nullable=true)
      */
     private $custom;
 
@@ -144,29 +145,6 @@ class Storage
     public function getMessageId()
     {
         return $this->message_id;
-    }
-
-    /**
-     * Set message�_import_id
-     *
-     * @param integer $message�ImportId
-     * @return Storage
-     */
-    public function setMessage�ImportId($message�ImportId)
-    {
-        $this->message�_import_id = $message�ImportId;
-    
-        return $this;
-    }
-
-    /**
-     * Get message�_import_id
-     *
-     * @return integer 
-     */
-    public function getMessage�ImportId()
-    {
-        return $this->message�_import_id;
     }
 
     /**

@@ -232,4 +232,37 @@ class Message
     {
         return $this->classifications;
     }
+
+    /**
+     * Add storages
+     *
+     * @param \FM\SymSlateBundle\Entity\Storage $storages
+     * @return Message
+     */
+    public function addStorage(\FM\SymSlateBundle\Entity\Storage $storages)
+    {
+        $this->storages[] = $storages;
+    
+        return $this;
+    }
+
+    /**
+     * Remove storages
+     *
+     * @param \FM\SymSlateBundle\Entity\Storage $storages
+     */
+    public function removeStorage(\FM\SymSlateBundle\Entity\Storage $storages)
+    {
+        $this->storages->removeElement($storages);
+    }
+
+    /**
+     * Get storages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getStorages()
+    {
+        return $this->storages;
+    }
 }
