@@ -15,17 +15,17 @@ class Pack
 {
 	
 	/**
-	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="message", cascade={"persist","remove"})
+	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="message")
 	 */
 	 private $classifications;
 	 
 	 /**
-	 * @ORM\OneToMany(targetEntity="MessagesImport", mappedBy="pack", cascade={"persist"})
+	 * @ORM\OneToMany(targetEntity="MessagesImport", mappedBy="pack")
 	 */
 	 private $messages_imports;
 	 
 	 /**
-	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="pack", cascade={"persist"})
+	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="pack")
 	 */
 	 private $storages;
 	 

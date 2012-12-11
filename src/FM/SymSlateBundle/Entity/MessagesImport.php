@@ -17,17 +17,17 @@ class MessagesImport
 {
 	
 	/**
-	 * @ORM\OneToMany(targetEntity="Message", mappedBy="messages_import", cascade={"persist","remove"})
+	 * @ORM\OneToMany(targetEntity="Message", mappedBy="messages_import")
 	 */
 	 private $messages;
 	 
 	 /**
-	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="messages_import", cascade={"persist","remove"})
+	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="messages_import")
 	 */
 	 private $classifications;
 	 
 	 /**
-	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="messages_import", cascade={"persist","remove"})
+	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="messages_import")
 	 */
 	 private $storages;
 	
@@ -241,7 +241,15 @@ class MessagesImport
         // when displaying uploaded doc/image in the view.
         return 'uploads/message_imports';
     }
-		
+	
+	/**
+     * @ORM\PreRemove()
+     */
+    public function removeDependencies()
+    {
+        
+    }
+	
 	/**
      * @ORM\PostRemove()
      */

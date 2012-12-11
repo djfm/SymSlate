@@ -16,19 +16,19 @@ class Storage
 	
 	/**
 	 * @ORM\ManyToOne(targetEntity="MessagesImport", inversedBy="storages")
-	 * @ORM\JoinColumn(name="messages_import_id", referencedColumnName="id")
+	 * @ORM\JoinColumn(name="messages_import_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	 private $messages_import;
 	 
 	 /**
 	 * @ORM\ManyToOne(targetEntity="Pack", inversedBy="storages")
-	 * @ORM\JoinColumn(name="pack_id", referencedColumnName="id")
+	 * @ORM\JoinColumn(name="pack_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	 private $pack;
 	 
 	 /**
 	 * @ORM\ManyToOne(targetEntity="Message", inversedBy="storages")
-	 * @ORM\JoinColumn(name="message_id", referencedColumnName="id")
+	 * @ORM\JoinColumn(name="message_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	 private $message;
 	

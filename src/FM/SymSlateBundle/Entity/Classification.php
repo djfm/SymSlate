@@ -17,19 +17,19 @@ class Classification
 	
 	/**
 	 * @ORM\ManyToOne(targetEntity="MessagesImport", inversedBy="classifications")
-	 * @ORM\JoinColumn(name="messages_import_id", referencedColumnName="id")
+	 * @ORM\JoinColumn(name="messages_import_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	 private $messages_import;
 	 
 	 /**
-	 * @ORM\ManyToOne(targetEntity="Message", inversedBy="classifications", cascade={"persist"})
-	 * @ORM\JoinColumn(name="message_id", referencedColumnName="id")
+	 * @ORM\ManyToOne(targetEntity="Message", inversedBy="classifications")
+	 * @ORM\JoinColumn(name="message_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	 private $message;
 	 
 	 /**
 	 * @ORM\ManyToOne(targetEntity="Pack", inversedBy="classifications")
-	 * @ORM\JoinColumn(name="pack_id", referencedColumnName="id")
+	 * @ORM\JoinColumn(name="pack_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	 private $pack;
 	
