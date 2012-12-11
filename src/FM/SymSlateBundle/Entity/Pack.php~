@@ -8,24 +8,24 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Pack
  *
- * @ORM\Table()
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="project_name_version_idx", columns={"project", "name", "version"})})
  * @ORM\Entity
  */
 class Pack
 {
 	
 	/**
-	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="message", cascade={"persist","remove"})
+	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="message")
 	 */
 	 private $classifications;
 	 
 	 /**
-	 * @ORM\OneToMany(targetEntity="MessagesImport", mappedBy="pack", cascade={"persist"})
+	 * @ORM\OneToMany(targetEntity="MessagesImport", mappedBy="pack")
 	 */
 	 private $messages_imports;
 	 
 	 /**
-	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="pack", cascade={"persist"})
+	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="pack")
 	 */
 	 private $storages;
 	 

@@ -11,6 +11,10 @@ messagesimports:
     resource: "@FMSymSlateBundle/Controller/MessagesImportController.php"
     type: annotation
  
+translationsimports:
+    resource: "@FMSymSlateBundle/Controller/TranslationsImportController.php"
+    type: annotation
+ 
 languages:
     resource: "@FMSymSlateBundle/Controller/LanguageController.php"
     type: annotation

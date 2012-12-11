@@ -239,15 +239,7 @@ class MessagesImport
     {
         // get rid of the __DIR__ so it doesn't screw up
         // when displaying uploaded doc/image in the view.
-        return 'uploads/message_imports';
-    }
-	
-	/**
-     * @ORM\PreRemove()
-     */
-    public function removeDependencies()
-    {
-        
+        return 'uploads/messages_imports';
     }
 	
 	/**

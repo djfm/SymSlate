@@ -32,6 +32,12 @@ class Classification
 	 * @ORM\JoinColumn(name="pack_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	 private $pack;
+	 
+	/**
+     * @ORM\OneToOne(targetEntity="Translation", inversedBy="classification")
+     * @ORM\JoinColumn(name="translation_id", referencedColumnName="id")
+     */
+     private $translation;
 	
     /**
      * @var integer
@@ -392,5 +398,28 @@ class Classification
     public function getPack()
     {
         return $this->pack;
+    }
+
+    /**
+     * Set translation
+     *
+     * @param \FM\SymSlateBundle\Entity\Translation $translation
+     * @return Classification
+     */
+    public function setTranslation(\FM\SymSlateBundle\Entity\Translation $translation = null)
+    {
+        $this->translation = $translation;
+    
+        return $this;
+    }
+
+    /**
+     * Get translation
+     *
+     * @return \FM\SymSlateBundle\Entity\Translation 
+     */
+    public function getTranslation()
+    {
+        return $this->translation;
     }
 }

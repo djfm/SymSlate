@@ -17,22 +17,22 @@ class MessagesImport
 {
 	
 	/**
-	 * @ORM\OneToMany(targetEntity="Message", mappedBy="messages_import", cascade={"persist","remove"})
+	 * @ORM\OneToMany(targetEntity="Message", mappedBy="messages_import")
 	 */
 	 private $messages;
 	 
 	 /**
-	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="messages_import", cascade={"persist","remove"})
+	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="messages_import")
 	 */
 	 private $classifications;
 	 
 	 /**
-	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="messages_import", cascade={"persist","remove"})
+	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="messages_import")
 	 */
 	 private $storages;
 	
 	 /**
-	 * @ORM\ManyToOne(targetEntity="Pack", inversedBy="messages_imports")
+	 * @ORM\ManyToOne(targetEntity="Pack", inversedBy="messages_imports", cascade={"persist"})
 	 * @ORM\JoinColumn(name="pack_id", referencedColumnName="id")
 	 */
 	 private $pack;
@@ -239,9 +239,9 @@ class MessagesImport
     {
         // get rid of the __DIR__ so it doesn't screw up
         // when displaying uploaded doc/image in the view.
-        return 'uploads/message_imports';
+        return 'uploads/messages_imports';
     }
-		
+	
 	/**
      * @ORM\PostRemove()
      */

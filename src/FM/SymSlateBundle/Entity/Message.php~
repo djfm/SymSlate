@@ -17,18 +17,18 @@ class Message
 {
 	
 	/**
-	 * @ORM\ManyToOne(targetEntity="MessagesImport", inversedBy="messages")
-	 * @ORM\JoinColumn(name="messages_import_id", referencedColumnName="id")
+	 * @ORM\ManyToOne(targetEntity="MessagesImport", inversedBy="messages", cascade={"persist"})
+	 * @ORM\JoinColumn(name="messages_import_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	 private $messages_import;
 	
 	/**
-	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="message", cascade={"persist","remove"})
+	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="message")
 	 */
 	 private $classifications;
 	 
 	 /**
-	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="message", cascade={"persist","remove"})
+	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="message")
 	 */
 	 private $storages;
 	 
