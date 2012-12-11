@@ -20,6 +20,18 @@ class Classification
 	 * @ORM\JoinColumn(name="messages_import_id", referencedColumnName="id")
 	 */
 	 private $messages_import;
+	 
+	 /**
+	 * @ORM\ManyToOne(targetEntity="Message", inversedBy="classifications", cascade={"persist"})
+	 * @ORM\JoinColumn(name="message_id", referencedColumnName="id")
+	 */
+	 private $message;
+	 
+	 /**
+	 * @ORM\ManyToOne(targetEntity="Pack", inversedBy="classifications")
+	 * @ORM\JoinColumn(name="pack_id", referencedColumnName="id")
+	 */
+	 private $pack;
 	
     /**
      * @var integer
@@ -61,21 +73,21 @@ class Classification
     /**
      * @var string
      *
-     * @ORM\Column(name="section", type="string", length=64)
+     * @ORM\Column(name="section", type="string", length=64, nullable=true)
      */
     private $section;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="subsection", type="string", length=64)
+     * @ORM\Column(name="subsection", type="string", length=64, nullable=true)
      */
     private $subsection;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="translation_id", type="integer")
+     * @ORM\Column(name="translation_id", type="integer", nullable=true)
      */
     private $translation_id;
 
@@ -334,5 +346,51 @@ class Classification
     public function getMessagesImportId()
     {
         return $this->messages_import_id;
+    }
+
+    /**
+     * Set message
+     *
+     * @param \FM\SymSlateBundle\Entity\Message $message
+     * @return Classification
+     */
+    public function setMessage(\FM\SymSlateBundle\Entity\Message $message = null)
+    {
+        $this->message = $message;
+    
+        return $this;
+    }
+
+    /**
+     * Get message
+     *
+     * @return \FM\SymSlateBundle\Entity\Message 
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * Set pack
+     *
+     * @param \FM\SymSlateBundle\Entity\Pack $pack
+     * @return Classification
+     */
+    public function setPack(\FM\SymSlateBundle\Entity\Pack $pack = null)
+    {
+        $this->pack = $pack;
+    
+        return $this;
+    }
+
+    /**
+     * Get pack
+     *
+     * @return \FM\SymSlateBundle\Entity\Pack 
+     */
+    public function getPack()
+    {
+        return $this->pack;
     }
 }

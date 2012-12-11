@@ -91,6 +91,7 @@ class MessagesImportController extends Controller
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
 			
+			$entity->setPack($em->getRepository('FMSymSlateBundle:Pack')->findOneById($entity->getPackId()));
 			$entity->setCreatedBy($this->get("security.context")->getToken()->getUser());
 			$entity->upload();
 			$em->persist($entity);

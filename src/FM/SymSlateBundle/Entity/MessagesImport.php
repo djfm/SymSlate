@@ -25,6 +25,17 @@ class MessagesImport
 	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="messages_import", cascade={"persist","remove"})
 	 */
 	 private $classifications;
+	 
+	 /**
+	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="messages_import", cascade={"persist","remove"})
+	 */
+	 private $storages;
+	
+	 /**
+	 * @ORM\ManyToOne(targetEntity="Pack", inversedBy="messages_imports")
+	 * @ORM\JoinColumn(name="pack_id", referencedColumnName="id")
+	 */
+	 private $pack;
 	
     /**
      * @var integer
@@ -86,13 +97,8 @@ class MessagesImport
 
 	public function __construct()
 	{
-		$this->clearMessagesCollectionCache();
-	}
-
-
-	public function clearMessagesCollectionCache()
-	{
 		$this->messages = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->storages = new \Doctrine\Common\Collections\ArrayCollection();
 	}
 
     /**
@@ -289,6 +295,17 @@ class MessagesImport
 			$message->setText($row['English String']);
 			$message->setType("STRING");
 			
+			$m = array();
+			preg_match("/^(?:\s*\d+\s*-\s*)?(.*?)\s*$/",$row['Section'],$m);
+			$category = $m[1];
+			
+			//virtual properties
+			$message->classification_data = array(
+				"category" => $category,
+				"section"  => $row['Group'],
+				"subsection" => ''
+			);
+			
 			$messages[] = $message;
 			
 		}
@@ -389,5 +406,61 @@ class MessagesImport
     public function getClassifications()
     {
         return $this->classifications;
+    }
+
+    /**
+     * Set pack
+     *
+     * @param \FM\SymSlateBundle\Entity\Pack $pack
+     * @return MessagesImport
+     */
+    public function setPack(\FM\SymSlateBundle\Entity\Pack $pack = null)
+    {
+        $this->pack = $pack;
+    
+        return $this;
+    }
+
+    /**
+     * Get pack
+     *
+     * @return \FM\SymSlateBundle\Entity\Pack 
+     */
+    public function getPack()
+    {
+        return $this->pack;
+    }
+
+    /**
+     * Add storages
+     *
+     * @param \FM\SymSlateBundle\Entity\Storage $storages
+     * @return MessagesImport
+     */
+    public function addStorage(\FM\SymSlateBundle\Entity\Storage $storages)
+    {
+        $this->storages[] = $storages;
+    
+        return $this;
+    }
+
+    /**
+     * Remove storages
+     *
+     * @param \FM\SymSlateBundle\Entity\Storage $storages
+     */
+    public function removeStorage(\FM\SymSlateBundle\Entity\Storage $storages)
+    {
+        $this->storages->removeElement($storages);
+    }
+
+    /**
+     * Get storages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getStorages()
+    {
+        return $this->storages;
     }
 }

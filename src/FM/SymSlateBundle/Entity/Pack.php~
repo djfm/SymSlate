@@ -13,6 +13,29 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Pack
 {
+	
+	/**
+	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="message", cascade={"persist","remove"})
+	 */
+	 private $classifications;
+	 
+	 /**
+	 * @ORM\OneToMany(targetEntity="MessagesImport", mappedBy="pack", cascade={"persist"})
+	 */
+	 private $messages_imports;
+	 
+	 /**
+	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="pack", cascade={"persist"})
+	 */
+	 private $storages;
+	 
+	 public function __construct()
+	 {
+	 	$this->classifications  = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->messages_imports = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->storages         = new \Doctrine\Common\Collections\ArrayCollection();
+	 }
+	
     /**
      * @var integer
      *
@@ -206,4 +229,70 @@ class Pack
         return $this;
     }
 	
+
+    /**
+     * Add classifications
+     *
+     * @param \FM\SymSlateBundle\Entity\Classification $classifications
+     * @return Pack
+     */
+    public function addClassification(\FM\SymSlateBundle\Entity\Classification $classifications)
+    {
+        $this->classifications[] = $classifications;
+    
+        return $this;
+    }
+
+    /**
+     * Remove classifications
+     *
+     * @param \FM\SymSlateBundle\Entity\Classification $classifications
+     */
+    public function removeClassification(\FM\SymSlateBundle\Entity\Classification $classifications)
+    {
+        $this->classifications->removeElement($classifications);
+    }
+
+    /**
+     * Get classifications
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getClassifications()
+    {
+        return $this->classifications;
+    }
+
+    /**
+     * Add messages_imports
+     *
+     * @param \FM\SymSlateBundle\Entity\MessagesImport $messagesImports
+     * @return Pack
+     */
+    public function addMessagesImport(\FM\SymSlateBundle\Entity\MessagesImport $messagesImports)
+    {
+        $this->messages_imports[] = $messagesImports;
+    
+        return $this;
+    }
+
+    /**
+     * Remove messages_imports
+     *
+     * @param \FM\SymSlateBundle\Entity\MessagesImport $messagesImports
+     */
+    public function removeMessagesImport(\FM\SymSlateBundle\Entity\MessagesImport $messagesImports)
+    {
+        $this->messages_imports->removeElement($messagesImports);
+    }
+
+    /**
+     * Get messages_imports
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getMessagesImports()
+    {
+        return $this->messages_imports;
+    }
 }

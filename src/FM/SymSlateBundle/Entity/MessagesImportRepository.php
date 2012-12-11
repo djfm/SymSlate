@@ -15,19 +15,51 @@ class MessagesImportRepository extends EntityRepository
 	public function saveMessages($messages_import, $messages)
 	{
 		$em = $this->getEntityManager();
+		
+		$em->getConnection()->getConfiguration()->setSQLLogger(null);
+		
 		$mr = $em->getRepository('FMSymSlateBundle:Message');
+		$cr = $em->getRepository('FMSymSlateBundle:Classification');
+		
 		foreach($messages as $message)
 		{
-			if($mr->findByMkey($message->getMkey()))
+			$classification_data = $message->classification_data;
+			
+			//create the message
+			if($tmp = $mr->findOneByMkey($message->getMkey()))
 			{
 				//do nothing if the message is already there
+				$message = $tmp;
 			}			
 			else
 			{
 				$message->setMessagesImport($messages_import);
 				$em->persist($message);
-				$em->flush();
 			}
+			
+			//create OR UPDATE the classification
+			if($classification = $cr->findOneBy(array("pack_id" => $messages_import->getPackId(), "message_id" => $message->getId())))
+			{
+				
+			}
+			else
+			{
+				$classification = new Classification();
+				$classification->setMessagesImport($messages_import);
+				$classification->setPack($messages_import->getPack());
+				$classification->setMessage($message);
+			}
+			
+			$classification->setCategory($classification_data["category"]);
+			
+			$em->persist($classification);
+			$em->flush();
+			
+			
+			//create OR UPDATE the storage
+			
+			
+			
 		}
 	}
 }

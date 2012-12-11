@@ -22,6 +22,22 @@ class Message
 	 */
 	 private $messages_import;
 	
+	/**
+	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="message", cascade={"persist","remove"})
+	 */
+	 private $classifications;
+	 
+	 /**
+	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="message", cascade={"persist","remove"})
+	 */
+	 private $storages;
+	 
+	 public function __construct()
+	 {
+	 	$this->classifications = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->storages = new \Doctrine\Common\Collections\ArrayCollection();
+	 }
+	
     /**
      * @var integer
      *
@@ -182,5 +198,71 @@ class Message
     public function getMessagesImport()
     {
         return $this->messages_import;
+    }
+
+    /**
+     * Add classifications
+     *
+     * @param \FM\SymSlateBundle\Entity\Classification $classifications
+     * @return Message
+     */
+    public function addClassification(\FM\SymSlateBundle\Entity\Classification $classifications)
+    {
+        $this->classifications[] = $classifications;
+    
+        return $this;
+    }
+
+    /**
+     * Remove classifications
+     *
+     * @param \FM\SymSlateBundle\Entity\Classification $classifications
+     */
+    public function removeClassification(\FM\SymSlateBundle\Entity\Classification $classifications)
+    {
+        $this->classifications->removeElement($classifications);
+    }
+
+    /**
+     * Get classifications
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getClassifications()
+    {
+        return $this->classifications;
+    }
+
+    /**
+     * Add storages
+     *
+     * @param \FM\SymSlateBundle\Entity\Storage $storages
+     * @return Message
+     */
+    public function addStorage(\FM\SymSlateBundle\Entity\Storage $storages)
+    {
+        $this->storages[] = $storages;
+    
+        return $this;
+    }
+
+    /**
+     * Remove storages
+     *
+     * @param \FM\SymSlateBundle\Entity\Storage $storages
+     */
+    public function removeStorage(\FM\SymSlateBundle\Entity\Storage $storages)
+    {
+        $this->storages->removeElement($storages);
+    }
+
+    /**
+     * Get storages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getStorages()
+    {
+        return $this->storages;
     }
 }
