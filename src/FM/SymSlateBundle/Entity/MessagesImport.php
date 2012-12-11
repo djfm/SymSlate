@@ -32,7 +32,7 @@ class MessagesImport
 	 private $storages;
 	
 	 /**
-	 * @ORM\ManyToOne(targetEntity="Pack", inversedBy="messages_imports")
+	 * @ORM\ManyToOne(targetEntity="Pack", inversedBy="messages_imports", cascade={"persist"})
 	 * @ORM\JoinColumn(name="pack_id", referencedColumnName="id")
 	 */
 	 private $pack;

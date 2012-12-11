@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityRepository;
  */
 class MessagesImportRepository extends EntityRepository
 {
-	public function saveMessages($messages_import, $messages, $logger = null)
+	public function saveMessages($messages_import_id, $messages, $logger = null)
 	{
 		$em = $this->getEntityManager();
 		
@@ -24,6 +24,8 @@ class MessagesImportRepository extends EntityRepository
 		
 		foreach($messages as $message)
 		{
+			$messages_import = $this->findOneById($messages_import_id);
+			
 			$classification_data = $message->classification_data;
 			$storage_data = $message->storage_data;
 			
@@ -77,8 +79,8 @@ class MessagesImportRepository extends EntityRepository
 			
 			if($logger)$logger->info('Size of unit of work: ' . $em->getUnitOfWork()->size());
 			
-			$em->persist($em->merge($messages_import));
-			$em->persist($em->merge($messages_import->getPack()));
+			/*$em->persist($em->merge($messages_import));
+			$em->persist($em->merge($messages_import->getPack()));*/
 			$em->flush();
 			
 			$em->clear();

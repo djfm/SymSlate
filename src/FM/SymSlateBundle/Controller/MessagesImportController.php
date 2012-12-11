@@ -97,7 +97,7 @@ class MessagesImportController extends Controller
 			$em->persist($entity);
 			$em->flush();
 			
-			$em->getRepository('FMSymSlateBundle:MessagesImport')->saveMessages($entity, $entity->buildMessages(), $this->get('logger'));
+			$em->getRepository('FMSymSlateBundle:MessagesImport')->saveMessages($entity->getId(), $entity->buildMessages(), $this->get('logger'));
 			
 			
 			

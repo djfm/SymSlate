@@ -17,7 +17,7 @@ class Message
 {
 	
 	/**
-	 * @ORM\ManyToOne(targetEntity="MessagesImport", inversedBy="messages")
+	 * @ORM\ManyToOne(targetEntity="MessagesImport", inversedBy="messages", cascade={"persist"})
 	 * @ORM\JoinColumn(name="messages_import_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	 private $messages_import;
