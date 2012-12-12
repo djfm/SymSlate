@@ -6,6 +6,9 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+
+require '../../../../vendor/lootils/archiver/src/Lootils/Archiver/TarArchive.php';
+
 /**
  * TranslationsImport
  *
@@ -299,9 +302,13 @@ class TranslationsImport
         return $this->translations;
     }
 	
-	public function buildTranslation()
+	public function buildTranslations()
 	{
-		$this->getAbsolutePath();
+		$arch  = \Lootils\Archiver\TarArchive($this->getAbsolutePath());
+		$files = $arch->contents();	
+		foreach($files as $filename => $data) {
+		   echo $filename . '<br/>';
+		}
 	}
 	
 }

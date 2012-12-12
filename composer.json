@@ -21,6 +21,7 @@
         "kriswallsmith/assetic": "1.1.*@dev",
         "friendsofsymfony/user-bundle": "*",
         "stof/doctrine-extensions-bundle": "dev-master",
+        "lootils/archiver": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [

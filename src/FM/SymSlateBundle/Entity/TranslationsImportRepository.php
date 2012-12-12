@@ -15,6 +15,6 @@ class TranslationsImportRepository extends EntityRepository
 	public function saveTranslations($translations_import_id, $logger = null)
 	{
 		$translations_import = $this->findOneById($translations_import_id);
-		$translations        = $translations_import->buildTranslation();
+		$translations        = $translations_import->buildTranslations();
 	}
 }
