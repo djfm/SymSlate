@@ -308,16 +308,19 @@ $exp = <<<'NOW'
 NOW;
 		$arch  = new \Archive_Tar($this->getAbsolutePath());
 		$files = $arch->listContent();
+		$total = 0;
 		foreach($files as $f)
 		{
 			$data    = $arch->extractInString($f['filename']);
 			$matches = array();
 			$count   = preg_match_all($exp, $data, $matches);
+			$total  += $count;
 			for($i = 0; $i < $count; $i++)
 			{
-				echo "Key: {$matches[1][$i]}, Translation: {$matches[2][$i]}<br/>";
+				//echo "Key: {$matches[1][$i]}, Translation: {$matches[2][$i]}<br/>";
 			}
 		}
+		echo "<b>Found: $total</b>";
 	}
 	
 }
