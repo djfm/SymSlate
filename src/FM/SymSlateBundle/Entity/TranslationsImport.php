@@ -303,21 +303,19 @@ class TranslationsImport
 	
 	public function buildTranslations()
 	{
-		$exp   = '/\[\s*\'((?:(?:\\\')|[^\'])+)\'\s*]\s*=\s*\'((?:(?:\\\')|[^\'])+)\'\s*;/';
+$exp = <<<'NOW'
+/\w+\s*\[\s*'(.*?)[^\\]'\s*]\s*=\s*'(.*?[^\\])'\s*;\s*(?:$|\n)/
+NOW;
 		$arch  = new \Archive_Tar($this->getAbsolutePath());
 		$files = $arch->listContent();
 		foreach($files as $f)
 		{
-			foreach($f as $k => $v)
-			{
-				echo "<p>$k:$v</p>";
-			}
 			$data    = $arch->extractInString($f['filename']);
 			$matches = array();
-			preg_match_all($exp, $data,$matches);
-			foreach($matches as $match)
+			$count   = preg_match_all($exp, $data, $matches);
+			for($i = 0; $i < $count; $i++)
 			{
-				echo "Key: {$match[1]}, Translation: {$match[2]}<br/>";
+				echo "Key: {$matches[1][$i]}, Translation: {$matches[2][$i]}<br/>";
 			}
 		}
 	}
