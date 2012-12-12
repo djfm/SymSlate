@@ -6,8 +6,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-
-require '../../../../vendor/lootils/archiver/src/Lootils/Archiver/TarArchive.php';
+require 'Archive/Tar.php';
 
 /**
  * TranslationsImport
@@ -304,10 +303,22 @@ class TranslationsImport
 	
 	public function buildTranslations()
 	{
-		$arch  = \Lootils\Archiver\TarArchive($this->getAbsolutePath());
-		$files = $arch->contents();	
-		foreach($files as $filename => $data) {
-		   echo $filename . '<br/>';
+		$exp   = '/\[\s*\'((?:(?:\\\')|[^\'])+)\'\s*]\s*=\s*\'((?:(?:\\\')|[^\'])+)\'\s*;/';
+		$arch  = new \Archive_Tar($this->getAbsolutePath());
+		$files = $arch->listContent();
+		foreach($files as $f)
+		{
+			foreach($f as $k => $v)
+			{
+				echo "<p>$k:$v</p>";
+			}
+			$data    = $arch->extractInString($f['filename']);
+			$matches = array();
+			preg_match_all($exp, $data,$matches);
+			foreach($matches as $match)
+			{
+				echo "Key: {$match[1]}, Translation: {$match[2]}<br/>";
+			}
 		}
 	}
 	
