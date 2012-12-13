@@ -30,12 +30,11 @@ class Translation
 	 * @ORM\JoinColumn(name="reviewed_by", referencedColumnName="id", onDelete="CASCADE", nullable=true)
 	 */
 	private $reviewer;
-	
-	/**
-     * @ORM\OneToOne(targetEntity="Classification", inversedBy="translation")
-     * @ORM\JoinColumn(name="id", referencedColumnName="translation_id")
+     
+    /**
+     * @ORM\ManyToMany(targetEntity="Classification", mappedBy="translations")
      */
-    private $classification;
+    private $classifications;
 	
 	
     /**
@@ -57,21 +56,21 @@ class Translation
     /**
      * @var integer
      *
-     * @ORM\Column(name="created_by", type="integer")
+     * @ORM\Column(name="created_by", type="integer", nullable=true)
      */
     private $created_by;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="reviewed_by", type="integer")
+     * @ORM\Column(name="reviewed_by", type="integer", nullable=true)
      */
     private $reviewed_by;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="previous_translation_id", type="integer")
+     * @ORM\Column(name="previous_translation_id", type="integer", nullable=true)
      */
     private $previous_translation_id;
 

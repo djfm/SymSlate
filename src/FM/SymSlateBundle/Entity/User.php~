@@ -28,6 +28,8 @@ class User extends BaseUser
 		$this->translations = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->authored_translations = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->reviewed_translations = new \Doctrine\Common\Collections\ArrayCollection();
+		
+		parent::__construct();
 	}
 	
 	

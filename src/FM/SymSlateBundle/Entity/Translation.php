@@ -32,9 +32,9 @@ class Translation
 	private $reviewer;
      
     /**
-     * @ORM\OneToOne(targetEntity="Classification", mappedBy="translation")
+     * @ORM\ManyToMany(targetEntity="Classification", mappedBy="translations")
      */
-    private $classification;
+    private $classifications;
 	
 	
     /**
@@ -56,21 +56,21 @@ class Translation
     /**
      * @var integer
      *
-     * @ORM\Column(name="created_by", type="integer")
+     * @ORM\Column(name="created_by", type="integer", nullable=true)
      */
     private $created_by;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="reviewed_by", type="integer")
+     * @ORM\Column(name="reviewed_by", type="integer", nullable=true)
      */
     private $reviewed_by;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="previous_translation_id", type="integer")
+     * @ORM\Column(name="previous_translation_id", type="integer", nullable=true)
      */
     private $previous_translation_id;
 
@@ -327,5 +327,45 @@ class Translation
     public function getClassification()
     {
         return $this->classification;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->classifications = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
+    /**
+     * Add classifications
+     *
+     * @param \FM\SymSlateBundle\Entity\Classification $classifications
+     * @return Translation
+     */
+    public function addClassification(\FM\SymSlateBundle\Entity\Classification $classifications)
+    {
+        $this->classifications[] = $classifications;
+    
+        return $this;
+    }
+
+    /**
+     * Remove classifications
+     *
+     * @param \FM\SymSlateBundle\Entity\Classification $classifications
+     */
+    public function removeClassification(\FM\SymSlateBundle\Entity\Classification $classifications)
+    {
+        $this->classifications->removeElement($classifications);
+    }
+
+    /**
+     * Get classifications
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getClassifications()
+    {
+        return $this->classifications;
     }
 }

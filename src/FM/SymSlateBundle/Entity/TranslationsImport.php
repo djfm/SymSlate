@@ -312,12 +312,37 @@ NOW;
 		foreach($files as $f)
 		{
 			$data    = $arch->extractInString($f['filename']);
-			$matches = array();
-			$count   = preg_match_all($exp, $data, $matches);
-			$total  += $count;
-			for($i = 0; $i < $count; $i++)
+			
+			$lang    = array();
+
+//non mail non front office		
+$nf_exp = <<<'NOW'
+/\/translations\/([a-z]{2})\/(?:admin\.php|errors\.php|fields\.php|pdf\.php|tabs\.php)(?:$|\n)/
+NOW;
+
+//front office
+$f_exp = <<<'NOW'
+/\/themes\/\w+\/lang\/([a-z]{2})\.php(?:$|\n)/
+NOW;
+
+//module translation, non mail
+$m_exp = <<<'NOW'
+/\/modules\/\w+(?:\/translations)?\/([a-z]{2})\.php($|\n)/
+NOW;
+			
+			if(preg_match())
 			{
-				//echo "Key: {$matches[1][$i]}, Translation: {$matches[2][$i]}<br/>";
+				
+			}
+			else if(preg_match())
+			{
+				$matches = array();
+				$count   = preg_match_all($exp, $data, $matches);
+				$total  += $count;
+				for($i = 0; $i < $count; $i++)
+				{
+					//echo "Key: {$matches[1][$i]}, Translation: {$matches[2][$i]}<br/>";
+				}
 			}
 		}
 		echo "<b>Found: $total</b>";

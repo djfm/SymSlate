@@ -34,10 +34,15 @@ class Classification
 	 private $pack;
 	 
 	/**
-     * @ORM\OneToOne(targetEntity="Translation", inversedBy="classification")
-     * @ORM\JoinColumn(name="translation_id", referencedColumnName="id")
+     * @ORM\ManyToMany(targetEntity="Translation", inversedBy="classifications")
+     * @ORM\JoinTable(name="CurrentTranslation")
      */
-     private $translation;
+     private $translations;
+	 
+	 public function __construct()
+	 {
+	 	$this->translations = new \Doctrine\Common\Collections\ArrayCollection();
+	 }
 	
     /**
      * @var integer
@@ -89,13 +94,6 @@ class Classification
      * @ORM\Column(name="subsection", type="string", length=64, nullable=true)
      */
     private $subsection;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="translation_id", type="integer", nullable=true)
-     */
-    private $translation_id;
 
 	/**
      * @var datetime $created
@@ -237,29 +235,6 @@ class Classification
     public function getSubsection()
     {
         return $this->subsection;
-    }
-
-    /**
-     * Set translation_id
-     *
-     * @param integer $translationId
-     * @return Classification
-     */
-    public function setTranslationId($translationId)
-    {
-        $this->translation_id = $translationId;
-    
-        return $this;
-    }
-
-    /**
-     * Get translation_id
-     *
-     * @return integer 
-     */
-    public function getTranslationId()
-    {
-        return $this->translation_id;
     }
 
     /**
@@ -421,5 +396,38 @@ class Classification
     public function getTranslation()
     {
         return $this->translation;
+    }
+
+    /**
+     * Add translations
+     *
+     * @param \FM\SymSlateBundle\Entity\Translation $translations
+     * @return Classification
+     */
+    public function addTranslation(\FM\SymSlateBundle\Entity\Translation $translations)
+    {
+        $this->translations[] = $translations;
+    
+        return $this;
+    }
+
+    /**
+     * Remove translations
+     *
+     * @param \FM\SymSlateBundle\Entity\Translation $translations
+     */
+    public function removeTranslation(\FM\SymSlateBundle\Entity\Translation $translations)
+    {
+        $this->translations->removeElement($translations);
+    }
+
+    /**
+     * Get translations
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTranslations()
+    {
+        return $this->translations;
     }
 }
