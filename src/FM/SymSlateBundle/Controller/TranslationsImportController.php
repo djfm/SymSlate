@@ -91,13 +91,18 @@ class TranslationsImportController extends Controller
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
 			
-			$entity->setCreatedBy($this->get("security.context")->getToken()->getUser());
+			$entity->setCreator($this->get("security.context")->getToken()->getUser());
 			$entity->upload();
 			
             $em->persist($entity);
             $em->flush();
-
-            $em->getRepository('FMSymSlateBundle:TranslationsImport')->saveTranslations($entity->getId(), $this->get('logger'));
+            
+			if(!$entity->getCreator())
+			{
+				echo "<p><b>Creator Not Set!!!</b></p>";
+			}
+			else
+            	$em->getRepository('FMSymSlateBundle:TranslationsImport')->saveTranslations($entity->getId(), $this->get('logger'));
 			
             //return $this->redirect($this->generateUrl('translationsimports_show', array('id' => $entity->getId())));
         }

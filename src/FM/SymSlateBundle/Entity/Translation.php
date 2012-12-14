@@ -7,34 +7,46 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Translation
  *
- * @ORM\Table()
- * @ORM\ChangeTrackingPolicy("DEFERRED_EXPLICIT")
+ * @ORM\Table(indexes={@ORM\Index(name="mkey_language_id_text_idx", columns={"mkey","language_id", "text"})})
  * @ORM\Entity(repositoryClass="FM\SymSlateBundle\Entity\TranslationRepository")
  */
 class Translation
 {
 	/**
-	 * @ORM\ManyToOne(targetEntity="TranslationsImport", inversedBy="messages", cascade={"persist"})
+	 * @ORM\ManyToOne(targetEntity="TranslationsImport", inversedBy="messages")
 	 * @ORM\JoinColumn(name="translations_import_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
 	 */
 	private $translations_import;
 	 
     /**
-	 * @ORM\ManyToOne(targetEntity="User", inversedBy="authored_translations", cascade={"persist"})
+	 * @ORM\ManyToOne(targetEntity="User", inversedBy="authored_translations")
 	 * @ORM\JoinColumn(name="created_by", referencedColumnName="id", onDelete="CASCADE", nullable=true)
 	 */
 	private $author;
 	 
     /**
-	 * @ORM\ManyToOne(targetEntity="User", inversedBy="authored_translations", cascade={"persist"})
+	 * @ORM\ManyToOne(targetEntity="User", inversedBy="authored_translations")
 	 * @ORM\JoinColumn(name="reviewed_by", referencedColumnName="id", onDelete="CASCADE", nullable=true)
 	 */
 	private $reviewer;
-     
-    /**
-     * @ORM\ManyToMany(targetEntity="Classification", mappedBy="translations")
-     */
-    private $classifications;
+	
+	/**
+	 * @ORM\ManyToOne(targetEntity="Language", inversedBy="translations")
+	 * @ORM\JoinColumn(name="language_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+	 */
+	private $language;
+	
+	/**
+	 * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="translation")
+	 */
+	private $current_translations;
+	 
+	public function __construct()
+	{
+		$this->messages = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->storages = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->current_translations = new \Doctrine\Common\Collections\ArrayCollection();
+	}
 	
 	
     /**
@@ -80,6 +92,13 @@ class Translation
      * @ORM\Column(name="language_id", type="integer")
      */
     private $language_id;
+
+	/**
+     * @var string
+     *
+     * @ORM\Column(name="mkey", type="text")
+     */
+    private $mkey;
 
     /**
      * @var string
@@ -307,65 +326,81 @@ class Translation
     }
 
     /**
-     * Set classification
+     * Set mkey
      *
-     * @param \FM\SymSlateBundle\Entity\Classification $classification
+     * @param string $mkey
      * @return Translation
      */
-    public function setClassification(\FM\SymSlateBundle\Entity\Classification $classification = null)
+    public function setMkey($mkey)
     {
-        $this->classification = $classification;
+        $this->mkey = $mkey;
     
         return $this;
     }
 
     /**
-     * Get classification
+     * Get mkey
      *
-     * @return \FM\SymSlateBundle\Entity\Classification 
+     * @return string 
      */
-    public function getClassification()
+    public function getMkey()
     {
-        return $this->classification;
+        return $this->mkey;
     }
+
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->classifications = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-    
-    /**
-     * Add classifications
+     * Set language
      *
-     * @param \FM\SymSlateBundle\Entity\Classification $classifications
+     * @param \FM\SymSlateBundle\Entity\Language $language
      * @return Translation
      */
-    public function addClassification(\FM\SymSlateBundle\Entity\Classification $classifications)
+    public function setLanguage(\FM\SymSlateBundle\Entity\Language $language)
     {
-        $this->classifications[] = $classifications;
+        $this->language = $language;
     
         return $this;
     }
 
     /**
-     * Remove classifications
+     * Get language
      *
-     * @param \FM\SymSlateBundle\Entity\Classification $classifications
+     * @return \FM\SymSlateBundle\Entity\Language 
      */
-    public function removeClassification(\FM\SymSlateBundle\Entity\Classification $classifications)
+    public function getLanguage()
     {
-        $this->classifications->removeElement($classifications);
+        return $this->language;
     }
 
     /**
-     * Get classifications
+     * Add current_translations
+     *
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
+     * @return Translation
+     */
+    public function addCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
+    {
+        $this->current_translations[] = $currentTranslations;
+    
+        return $this;
+    }
+
+    /**
+     * Remove current_translations
+     *
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
+     */
+    public function removeCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
+    {
+        $this->current_translations->removeElement($currentTranslations);
+    }
+
+    /**
+     * Get current_translations
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getClassifications()
+    public function getCurrentTranslations()
     {
-        return $this->classifications;
+        return $this->current_translations;
     }
 }

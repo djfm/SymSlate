@@ -12,6 +12,17 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Language
 {
+	/**
+	 * @ORM\OneToMany(targetEntity="Translation", mappedBy="language")
+	 */
+	private $translations;
+	
+	public function __construct()
+	{
+		$this->translations = new \Doctrine\Common\Collections\ArrayCollection();
+	}
+	
+	
     /**
      * @var integer
      *
@@ -31,14 +42,14 @@ class Language
     /**
      * @var string
      *
-     * @ORM\Column(name="locale", type="string", length=255)
+     * @ORM\Column(name="locale", type="string", length=255, nullable=true)
      */
     private $locale;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255)
+     * @ORM\Column(name="name", type="string", length=255, nullable=true)
      */
     private $name;
 
@@ -120,5 +131,38 @@ class Language
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Add translations
+     *
+     * @param \FM\SymSlateBundle\Entity\Translation $translations
+     * @return Language
+     */
+    public function addTranslation(\FM\SymSlateBundle\Entity\Translation $translations)
+    {
+        $this->translations[] = $translations;
+    
+        return $this;
+    }
+
+    /**
+     * Remove translations
+     *
+     * @param \FM\SymSlateBundle\Entity\Translation $translations
+     */
+    public function removeTranslation(\FM\SymSlateBundle\Entity\Translation $translations)
+    {
+        $this->translations->removeElement($translations);
+    }
+
+    /**
+     * Get translations
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTranslations()
+    {
+        return $this->translations;
     }
 }

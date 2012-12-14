@@ -33,15 +33,16 @@ class Classification
 	 */
 	 private $pack;
 	 
-	/**
-     * @ORM\ManyToMany(targetEntity="Translation", inversedBy="classifications")
-     * @ORM\JoinTable(name="CurrentTranslation")
+	 
+	 /**
+     * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="classification")
      */
-     private $translations;
+     private $current_translations;
+	 
 	 
 	 public function __construct()
 	 {
-	 	$this->translations = new \Doctrine\Common\Collections\ArrayCollection();
+	 	$this->current_translations = new \Doctrine\Common\Collections\ArrayCollection();
 	 }
 	
     /**
@@ -374,60 +375,38 @@ class Classification
     {
         return $this->pack;
     }
+   
 
     /**
-     * Set translation
+     * Add current_translations
      *
-     * @param \FM\SymSlateBundle\Entity\Translation $translation
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
      * @return Classification
      */
-    public function setTranslation(\FM\SymSlateBundle\Entity\Translation $translation = null)
+    public function addCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
     {
-        $this->translation = $translation;
+        $this->current_translations[] = $currentTranslations;
     
         return $this;
     }
 
     /**
-     * Get translation
+     * Remove current_translations
      *
-     * @return \FM\SymSlateBundle\Entity\Translation 
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
      */
-    public function getTranslation()
+    public function removeCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
     {
-        return $this->translation;
+        $this->current_translations->removeElement($currentTranslations);
     }
 
     /**
-     * Add translations
-     *
-     * @param \FM\SymSlateBundle\Entity\Translation $translations
-     * @return Classification
-     */
-    public function addTranslation(\FM\SymSlateBundle\Entity\Translation $translations)
-    {
-        $this->translations[] = $translations;
-    
-        return $this;
-    }
-
-    /**
-     * Remove translations
-     *
-     * @param \FM\SymSlateBundle\Entity\Translation $translations
-     */
-    public function removeTranslation(\FM\SymSlateBundle\Entity\Translation $translations)
-    {
-        $this->translations->removeElement($translations);
-    }
-
-    /**
-     * Get translations
+     * Get current_translations
      *
      * @return \Doctrine\Common\Collections\Collection 
      */
-    public function getTranslations()
+    public function getCurrentTranslations()
     {
-        return $this->translations;
+        return $this->current_translations;
     }
 }

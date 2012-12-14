@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
  * Storage
  *
  * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="pack_id_message_id_idx", columns={"pack_id", "message_id"})})
- * @ORM\ChangeTrackingPolicy("DEFERRED_EXPLICIT")
  * @ORM\Entity
  */
 class Storage

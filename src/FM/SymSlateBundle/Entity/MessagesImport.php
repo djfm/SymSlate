@@ -32,10 +32,16 @@ class MessagesImport
 	 private $storages;
 	
 	 /**
-	 * @ORM\ManyToOne(targetEntity="Pack", inversedBy="messages_imports", cascade={"persist"})
-	 * @ORM\JoinColumn(name="pack_id", referencedColumnName="id")
+	 * @ORM\ManyToOne(targetEntity="Pack", inversedBy="messages_imports")
+	 * @ORM\JoinColumn(name="pack_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	 private $pack;
+	 
+	 public function __construct()
+	 {
+		$this->messages = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->storages = new \Doctrine\Common\Collections\ArrayCollection();
+	 }
 	
     /**
      * @var integer
@@ -95,11 +101,7 @@ class MessagesImport
      */
 	public $file;
 
-	public function __construct()
-	{
-		$this->messages = new \Doctrine\Common\Collections\ArrayCollection();
-		$this->storages = new \Doctrine\Common\Collections\ArrayCollection();
-	}
+	
 
     /**
      * Get id

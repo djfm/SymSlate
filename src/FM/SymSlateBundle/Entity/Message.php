@@ -9,7 +9,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * Message
  * 
  * @ORM\Entity
- * @ORM\ChangeTrackingPolicy("DEFERRED_EXPLICIT")
  * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="mkey_idx", columns={"mkey"})})
  * 
  */
@@ -17,7 +16,7 @@ class Message
 {
 	
 	/**
-	 * @ORM\ManyToOne(targetEntity="MessagesImport", inversedBy="messages", cascade={"persist"})
+	 * @ORM\ManyToOne(targetEntity="MessagesImport", inversedBy="messages")
 	 * @ORM\JoinColumn(name="messages_import_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	 private $messages_import;

@@ -22,6 +22,12 @@ class TranslationsImport
 	 */
 	private $translations;
 	
+	/**
+	 * @ORM\ManyToOne(targetEntity="User", inversedBy="translations_imports")
+	 * @ORM\JoinColumn(name="created_by", referencedColumnName="id", onDelete="CASCADE")
+	 */
+	private $creator;
+	
 	public function __construct()
 	{
 		$this->translations = new \Doctrine\Common\Collections\ArrayCollection();
@@ -303,6 +309,9 @@ class TranslationsImport
 	
 	public function buildTranslations()
 	{
+		
+		$translations = array();
+		
 $exp = <<<'NOW'
 /\w+\s*\[\s*'(.*?)[^\\]'\s*]\s*=\s*'(.*?[^\\])'\s*;\s*(?:$|\n)/
 NOW;
@@ -317,35 +326,88 @@ NOW;
 
 //non mail non front office		
 $nf_exp = <<<'NOW'
-/\/translations\/([a-z]{2})\/(?:admin\.php|errors\.php|fields\.php|pdf\.php|tabs\.php)(?:$|\n)/
+/translations\/([a-z]{2})\/(?:admin\.php|errors\.php|fields\.php|pdf\.php|tabs\.php)$/
 NOW;
 
 //front office
 $f_exp = <<<'NOW'
-/\/themes\/\w+\/lang\/([a-z]{2})\.php(?:$|\n)/
+/themes\/\w+\/lang\/([a-z]{2})\.php$/
 NOW;
 
 //module translation, non mail
 $m_exp = <<<'NOW'
-/\/modules\/\w+(?:\/translations)?\/([a-z]{2})\.php($|\n)/
+/modules\/\w+(?:\/translations)?\/([a-z]{2})\.php$/
+NOW;
+
+$o_exp = <<<'NOW'
+/mails\/([a-z]{2})\/lang.php$/
+NOW;
+
+$ma_exp = <<<'NOW'
+/mails\/([a-z]{2})\/([^\.]+)\.(txt|html)$/
 NOW;
 			
-			if(preg_match())
+			$match = array();
+			if(preg_match($ma_exp, $f['filename'],$match))
 			{
+				$total += 1;
+				$translation = new Translation();
+				$translation->setText($data);
+				$translation->language_code = $match[1];
+				$translation->setMkey('mail_/'.str_replace("/[{$match[1]}]/", '/[iso]/', $f['filename']));
 				
+				$translations[] = $translation;
 			}
-			else if(preg_match())
+			else if(   preg_match($nf_exp,$f['filename'],$match) 
+			        or preg_match($f_exp ,$f['filename'],$match) 
+			        or preg_match($m_exp ,$f['filename'],$match) 
+			        or preg_match($o_exp ,$f['filename'],$match))
 			{
 				$matches = array();
 				$count   = preg_match_all($exp, $data, $matches);
 				$total  += $count;
 				for($i = 0; $i < $count; $i++)
 				{
-					//echo "Key: {$matches[1][$i]}, Translation: {$matches[2][$i]}<br/>";
+					$translation = new Translation();
+					$translation->setText($matches[2][$i]);
+					$translation->language_code = $match[1];
+					$translation->setMkey($matches[1][$i]);
+					
+					$translations[] = $translation;
 				}
+			}
+			else
+			{
+				echo "Not matched: {$f['filename']}<br/>";
 			}
 		}
 		echo "<b>Found: $total</b>";
+		return $translations;
 	}
 	
+
+    
+
+    /**
+     * Set creator
+     *
+     * @param \FM\SymSlateBundle\Entity\User $creator
+     * @return TranslationsImport
+     */
+    public function setCreator(\FM\SymSlateBundle\Entity\User $creator = null)
+    {
+        $this->creator = $creator;
+    
+        return $this;
+    }
+
+    /**
+     * Get creator
+     *
+     * @return \FM\SymSlateBundle\Entity\User 
+     */
+    public function getCreator()
+    {
+        return $this->creator;
+    }
 }

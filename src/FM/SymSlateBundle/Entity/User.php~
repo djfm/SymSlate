@@ -23,11 +23,17 @@ class User extends BaseUser
 	 */
 	private $reviewed_translations;
 	
+	/**
+	 * @ORM\OneToMany(targetEntity="TranslationsImport", mappedBy="creator")
+	 */
+	private $translations_imports;
+	
 	public function __construct()
 	{
 		$this->translations = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->authored_translations = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->reviewed_translations = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->translations_imports = new \Doctrine\Common\Collections\ArrayCollection();
 		
 		parent::__construct();
 	}
@@ -117,5 +123,38 @@ class User extends BaseUser
     public function getReviewedTranslations()
     {
         return $this->reviewed_translations;
+    }
+
+    /**
+     * Add translations_imports
+     *
+     * @param \FM\SymSlateBundle\Entity\TranslationsImport $translationsImports
+     * @return User
+     */
+    public function addTranslationsImport(\FM\SymSlateBundle\Entity\TranslationsImport $translationsImports)
+    {
+        $this->translations_imports[] = $translationsImports;
+    
+        return $this;
+    }
+
+    /**
+     * Remove translations_imports
+     *
+     * @param \FM\SymSlateBundle\Entity\TranslationsImport $translationsImports
+     */
+    public function removeTranslationsImport(\FM\SymSlateBundle\Entity\TranslationsImport $translationsImports)
+    {
+        $this->translations_imports->removeElement($translationsImports);
+    }
+
+    /**
+     * Get translations_imports
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTranslationsImports()
+    {
+        return $this->translations_imports;
     }
 }

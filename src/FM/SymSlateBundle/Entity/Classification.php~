@@ -33,15 +33,16 @@ class Classification
 	 */
 	 private $pack;
 	 
-	/**
-     * @ORM\ManyToMany(targetEntity="Translation", inversedBy="classifications")
-     * @ORM\JoinTable(name="CurrentTranslation")
+	 
+	 /**
+     * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="classification")
      */
-     private $translations;
+     private $current_translations;
+	 
 	 
 	 public function __construct()
 	 {
-	 	$this->translations = new \Doctrine\Common\Collections\ArrayCollection();
+	 	$this->current_translations = new \Doctrine\Common\Collections\ArrayCollection();
 	 }
 	
     /**
@@ -374,27 +375,5 @@ class Classification
     {
         return $this->pack;
     }
-
-    /**
-     * Set translation
-     *
-     * @param \FM\SymSlateBundle\Entity\Translation $translation
-     * @return Classification
-     */
-    public function setTranslation(\FM\SymSlateBundle\Entity\Translation $translation = null)
-    {
-        $this->translation = $translation;
-    
-        return $this;
-    }
-
-    /**
-     * Get translation
-     *
-     * @return \FM\SymSlateBundle\Entity\Translation 
-     */
-    public function getTranslation()
-    {
-        return $this->translation;
-    }
+   
 }

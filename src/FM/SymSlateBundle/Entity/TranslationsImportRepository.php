@@ -12,9 +12,58 @@ use Doctrine\ORM\EntityRepository;
  */
 class TranslationsImportRepository extends EntityRepository
 {
+		
+	public function getLanguage($language_code)
+	{	
+		if($language = $this->getEntityManager()->getRepository('FMSymSlateBundle:Language')->findOneByCode($language_code))
+		{
+			return $language;
+		}
+		else
+		{
+			$language = new Language();
+			$language->setCode($language_code);
+			$this->getEntityManager()->persist($language);
+			$this->getEntityManager()->flush();
+			return $language;
+		}
+	}
+	
+	
 	public function saveTranslations($translations_import_id, $logger = null)
 	{
+		
+		//$this->getEntityManager()->getConnection()->getConfiguration()->setSQLLogger(null);
+		
 		$translations_import = $this->findOneById($translations_import_id);
+		$user                = $translations_import->getCreator();
 		$translations        = $translations_import->buildTranslations();
+		
+		foreach($translations as $translation)
+		{	
+			$language = $this->getLanguage($translation->language_code);
+			
+			if($tmp = $this->getEntityManager()->getRepository('FMSymSlateBundle:Translation')->findOneBy(array(
+				"mkey" => $translation->getMkey(),
+				"language_id" => $language->getId(),
+				"text" => $translation->getText()
+			)))
+			{
+				$translation = $tmp;
+				echo "Skipped " . $translation->getId() . "<br/>";
+			}
+			else
+			{
+				$translation->setTranslationsImport($translations_import);
+				$translation->setAuthor($user);
+				$translation->setLanguage($language);
+				$this->getEntityManager()->persist($translation);
+			}
+			
+			$this->getEntityManager()->flush();
+			$this->getEntityManager()->clear();
+			$translations_import = $this->findOneById($translations_import_id);
+			$user                = $translations_import->getCreator();
+		}
 	}
 }
