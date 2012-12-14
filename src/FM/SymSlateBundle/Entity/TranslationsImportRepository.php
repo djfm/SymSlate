@@ -60,6 +60,8 @@ class TranslationsImportRepository extends EntityRepository
 				$this->getEntityManager()->persist($translation);
 			}
 			
+			$this->getEntityManager()->getRepository('FMSymSlateBundle:CurrentTranslation')->actualizeWith($translation);
+			
 			$this->getEntityManager()->flush();
 			$this->getEntityManager()->clear();
 			$translations_import = $this->findOneById($translations_import_id);

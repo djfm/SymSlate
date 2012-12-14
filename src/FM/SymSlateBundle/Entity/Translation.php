@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(indexes={@ORM\Index(name="mkey_language_id_text_idx", columns={"mkey","language_id", "text"})})
  * @ORM\Entity(repositoryClass="FM\SymSlateBundle\Entity\TranslationRepository")
+ * @ORM\HasLifecycleCallbacks
  */
 class Translation
 {
