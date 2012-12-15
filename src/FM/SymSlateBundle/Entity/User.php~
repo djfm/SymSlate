@@ -24,6 +24,11 @@ class User extends BaseUser
 	private $reviewed_translations;
 	
 	/**
+	 * @ORM\OneToMany(targetEntity="TranslationSubmission", mappedBy="user")
+	 */
+	private $translation_submissions;
+	
+	/**
 	 * @ORM\OneToMany(targetEntity="TranslationsImport", mappedBy="creator")
 	 */
 	private $translations_imports;
@@ -34,10 +39,20 @@ class User extends BaseUser
 		$this->authored_translations = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->reviewed_translations = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->translations_imports = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->translation_submissions = new \Doctrine\Common\Collections\ArrayCollection();
 		
 		parent::__construct();
 	}
 	
+	public function canCreateLanguages()
+	{
+		return true;
+	}
+	
+	public function canTranslateInto(Language $language)
+	{
+		return true;
+	}
 	
     /**
      * @var integer

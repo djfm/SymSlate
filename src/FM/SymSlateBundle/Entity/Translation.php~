@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(indexes={@ORM\Index(name="mkey_language_id_text_idx", columns={"mkey","language_id", "text"})})
  * @ORM\Entity(repositoryClass="FM\SymSlateBundle\Entity\TranslationRepository")
+ * @ORM\HasLifecycleCallbacks
  */
 class Translation
 {
@@ -40,6 +41,11 @@ class Translation
 	 * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="translation")
 	 */
 	private $current_translations;
+	
+	/**
+	 * @ORM\OneToOne(targetEntity="TranslationSubmission", mappedBy="translation")
+	 */
+	 private $translation_submission;
 	 
 	public function __construct()
 	{
@@ -369,5 +375,38 @@ class Translation
     public function getLanguage()
     {
         return $this->language;
+    }
+
+    /**
+     * Add current_translations
+     *
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
+     * @return Translation
+     */
+    public function addCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
+    {
+        $this->current_translations[] = $currentTranslations;
+    
+        return $this;
+    }
+
+    /**
+     * Remove current_translations
+     *
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
+     */
+    public function removeCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
+    {
+        $this->current_translations->removeElement($currentTranslations);
+    }
+
+    /**
+     * Get current_translations
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCurrentTranslations()
+    {
+        return $this->current_translations;
     }
 }

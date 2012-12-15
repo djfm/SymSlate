@@ -39,6 +39,11 @@ class Classification
      */
      private $current_translations;
 	 
+	 /**
+     * @ORM\OneToMany(targetEntity="TranslationSubmission", mappedBy="classification")
+     */
+     private $translation_submissions;
+	 
 	 
 	 public function __construct()
 	 {
@@ -408,5 +413,38 @@ class Classification
     public function getCurrentTranslations()
     {
         return $this->current_translations;
+    }
+
+    /**
+     * Add translation_submissions
+     *
+     * @param \FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmissions
+     * @return Classification
+     */
+    public function addTranslationSubmission(\FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmissions)
+    {
+        $this->translation_submissions[] = $translationSubmissions;
+    
+        return $this;
+    }
+
+    /**
+     * Remove translation_submissions
+     *
+     * @param \FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmissions
+     */
+    public function removeTranslationSubmission(\FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmissions)
+    {
+        $this->translation_submissions->removeElement($translationSubmissions);
+    }
+
+    /**
+     * Get translation_submissions
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTranslationSubmissions()
+    {
+        return $this->translation_submissions;
     }
 }

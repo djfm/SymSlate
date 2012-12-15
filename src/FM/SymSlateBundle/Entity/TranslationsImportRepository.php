@@ -13,13 +13,13 @@ use Doctrine\ORM\EntityRepository;
 class TranslationsImportRepository extends EntityRepository
 {
 		
-	public function getLanguage($language_code)
+	public function getOrCreateLanguage($user, $language_code)
 	{	
 		if($language = $this->getEntityManager()->getRepository('FMSymSlateBundle:Language')->findOneByCode($language_code))
 		{
 			return $language;
 		}
-		else
+		else if($user->canCreateLanguages())
 		{
 			$language = new Language();
 			$language->setCode($language_code);
@@ -27,13 +27,14 @@ class TranslationsImportRepository extends EntityRepository
 			$this->getEntityManager()->flush();
 			return $language;
 		}
+		else return null;
 	}
 	
 	
 	public function saveTranslations($translations_import_id, $logger = null)
 	{
 		
-		//$this->getEntityManager()->getConnection()->getConfiguration()->setSQLLogger(null);
+		$this->getEntityManager()->getConnection()->getConfiguration()->setSQLLogger(null);
 		
 		$translations_import = $this->findOneById($translations_import_id);
 		$user                = $translations_import->getCreator();
@@ -41,31 +42,31 @@ class TranslationsImportRepository extends EntityRepository
 		
 		foreach($translations as $translation)
 		{	
-			$language = $this->getLanguage($translation->language_code);
-			
-			if($tmp = $this->getEntityManager()->getRepository('FMSymSlateBundle:Translation')->findOneBy(array(
-				"mkey" => $translation->getMkey(),
-				"language_id" => $language->getId(),
-				"text" => $translation->getText()
-			)))
+			if(($language = $this->getOrCreateLanguage($user, $translation->language_code)) and $user->canTranslateInto($language))
 			{
-				$translation = $tmp;
-				echo "Skipped " . $translation->getId() . "<br/>";
+				if($tmp = $this->getEntityManager()->getRepository('FMSymSlateBundle:Translation')->findOneBy(array(
+					"mkey" => $translation->getMkey(),
+					"language_id" => $language->getId(),
+					"text" => $translation->getText()
+				)))
+				{
+					$translation = $tmp;
+				}
+				else
+				{
+					$translation->setTranslationsImport($translations_import);
+					$translation->setAuthor($user);
+					$translation->setLanguage($language);
+					$this->getEntityManager()->persist($translation);
+				}
+				
+				$this->getEntityManager()->getRepository('FMSymSlateBundle:CurrentTranslation')->actualizeWith($translation, $logger);
+				
+				$this->getEntityManager()->flush();
+				$this->getEntityManager()->clear();
+				$translations_import = $this->findOneById($translations_import_id);
+				$user                = $translations_import->getCreator();
 			}
-			else
-			{
-				$translation->setTranslationsImport($translations_import);
-				$translation->setAuthor($user);
-				$translation->setLanguage($language);
-				$this->getEntityManager()->persist($translation);
-			}
-			
-			$this->getEntityManager()->getRepository('FMSymSlateBundle:CurrentTranslation')->actualizeWith($translation);
-			
-			$this->getEntityManager()->flush();
-			$this->getEntityManager()->clear();
-			$translations_import = $this->findOneById($translations_import_id);
-			$user                = $translations_import->getCreator();
 		}
 	}
 }

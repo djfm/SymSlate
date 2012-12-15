@@ -41,6 +41,11 @@ class Translation
 	 * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="translation")
 	 */
 	private $current_translations;
+	
+	/**
+	 * @ORM\OneToOne(targetEntity="TranslationSubmission", mappedBy="translation")
+	 */
+	 private $translation_submission;
 	 
 	public function __construct()
 	{
@@ -403,5 +408,28 @@ class Translation
     public function getCurrentTranslations()
     {
         return $this->current_translations;
+    }
+
+    /**
+     * Set translation_submission
+     *
+     * @param \FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmission
+     * @return Translation
+     */
+    public function setTranslationSubmission(\FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmission = null)
+    {
+        $this->translation_submission = $translationSubmission;
+    
+        return $this;
+    }
+
+    /**
+     * Get translation_submission
+     *
+     * @return \FM\SymSlateBundle\Entity\TranslationSubmission 
+     */
+    public function getTranslationSubmission()
+    {
+        return $this->translation_submission;
     }
 }

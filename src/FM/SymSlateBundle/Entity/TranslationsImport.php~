@@ -313,7 +313,7 @@ class TranslationsImport
 		$translations = array();
 		
 $exp = <<<'NOW'
-/\w+\s*\[\s*'(.*?)[^\\]'\s*]\s*=\s*'(.*?[^\\])'\s*;\s*(?:$|\n)/
+/\w+\s*\[\s*'(.*?[^\\])'\s*]\s*=\s*'(.*?[^\\])'\s*;\s*(?:$|\n)/
 NOW;
 		$arch  = new \Archive_Tar($this->getAbsolutePath());
 		$files = $arch->listContent();
