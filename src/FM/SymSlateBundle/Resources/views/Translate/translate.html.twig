@@ -1,0 +1,40 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
+	<h1>Translate!</h1>
+
+	{% for error in errors %}}
+		<p><span class="error">{{ error }}</span></p>
+	{% endfor %}
+	
+	{% if pack == null %}
+		<p><span class="error">The pack you are trying to translate does not exist!</span></p>	
+	{% endif %}
+	
+	{% if language == null %}
+		<p><span class="error">The language you are trying to translate into does not exist!</span></p>	
+	{% endif %}
+	
+	{% for warning in warnings %}}
+		<p><span class="warning">{{ warning }}</span></p>
+	{% endfor %}
+	
+	{% if language and pack %}
+		{% if messages == null %}
+			<p><span class="info">There are no messages to translate here!</span></p>
+		{% else %}
+			{% for category, s_ss in messages %}
+				{% for s, ss_m in s_ss %}
+					{% for ss, ms in ss_m %}
+						{%  for m in ms %}
+							<p>{{ m['text'] }}</p>
+							<p>{{ m['translation'] }}</p>
+						{%  endfor %}
+					{% endfor %}
+				{% endfor %}
+			{% endfor %}
+		{% endif %}	
+	{% endif %}
+
+{% endblock %}

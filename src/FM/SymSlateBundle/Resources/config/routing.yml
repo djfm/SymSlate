@@ -18,3 +18,7 @@ translationsimports:
 languages:
     resource: "@FMSymSlateBundle/Controller/LanguageController.php"
     type: annotation
+    
+translate:
+    resource: "@FMSymSlateBundle/Controller/TranslateController.php"
+    type: annotation

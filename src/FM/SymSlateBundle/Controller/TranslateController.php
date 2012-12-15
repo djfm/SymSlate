@@ -9,202 +9,90 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\TranslationsImport;
 use FM\SymSlateBundle\Form\TranslationsImportType;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
- * TranslationsImport controller.
+ * Translate controller.
  *
- * @Route("/translationsimports")
+ * @Route("/translate")
  */
-class TranslationsImportController extends Controller
+class TranslateController extends Controller
 {
     /**
-     * Lists all TranslationsImport entities.
+     * 
      *
-     * @Route("/", name="translationsimports")
+     * @Route("/{pack_id}/{language_code}", requirements={"pack_id" = "\d+", "language_code" = "[a-z]{2}"})
      * @Template()
      */
-    public function indexAction()
-    {
+    public function translateAction($pack_id, $language_code)
+    {	
         $em = $this->getDoctrine()->getManager();
-
-        $entities = $em->getRepository('FMSymSlateBundle:TranslationsImport')->findAll();
-
-        return array(
-            'entities' => $entities,
-        );
-    }
-
-    /**
-     * Finds and displays a TranslationsImport entity.
-     *
-     * @Route("/{id}/show", name="translationsimports_show")
-     * @Template()
-     */
-    public function showAction($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('FMSymSlateBundle:TranslationsImport')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find TranslationsImport entity.');
-        }
-
-        $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
-        );
-    }
-
-    /**
-     * Displays a form to create a new TranslationsImport entity.
-     *
-     * @Route("/new", name="translationsimports_new")
-     * @Template()
-     */
-    public function newAction()
-    {
-        $entity = new TranslationsImport();
-        $form   = $this->createForm(new TranslationsImportType(), $entity);
-
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
-    }
-
-    /**
-     * Creates a new TranslationsImport entity.
-     *
-     * @Route("/create", name="translationsimports_create")
-     * @Method("POST")
-     * @Template("FMSymSlateBundle:TranslationsImport:new.html.twig")
-     */
-    public function createAction(Request $request)
-    {
-        $entity  = new TranslationsImport();
-        $form = $this->createForm(new TranslationsImportType(), $entity);
-        $form->bind($request);
-
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+		
+		$pr = $em->getRepository("FMSymSlateBundle:Pack");
+		$lr = $em->getRepository("FMSymSlateBundle:Language");
+		
+		$pack = $pr->findOneById($pack_id);
+		$language = $lr->findOneByCode($language_code);
+		
+		$errors = array();
+		$warnings = array();
+		
+		if($pack and $language)
+		{
+			$query = $em->createQuery("SELECT m, c, ct, t FROM FMSymSlateBundle:Message m 
+										JOIN m.classifications c 
+										LEFT JOIN c.current_translations ct 
+										LEFT JOIN ct.translation t
+										WITH ct.language_id = :language_id 
+										WHERE c.pack_id = :pack_id AND t.id IS NOT NULL ");
+									   
+			$query->setParameter('pack_id', $pack_id);
+			$query->setParameter('language_id', $language->getId());
 			
-			$entity->setCreator($this->get("security.context")->getToken()->getUser());
-			$entity->upload();
+			$query->setFirstResult(0);
+			$query->setMaxResults(10);
 			
-            $em->persist($entity);
-            $em->flush();
-            
-			if(!$entity->getCreator())
+			$paginator = new Paginator($query, true);
+			
+			$messages = array();
+			
+			foreach($paginator as $message)
 			{
-				echo "<p><b>Creator Not Set!!!</b></p>";
+				$classifications = $message->getClassifications();
+				if(count($classifications) !== 1)
+				{
+					$warnings[] = "Message appears in several classifications: ".$message->getid();
+				}
+				foreach($classifications as $classification)
+				{
+					$translation = '';
+					
+					if(count($classification->getCurrentTranslations()) > 1)
+					{
+						$errors[] = "Message has multiple current translations (this is a DB bug): ".$message->getid();
+					}
+					else if(count($classification->getCurrentTranslations()) == 1)
+					{
+						$cts = $classification->getCurrentTranslations();
+						$translation = $cts[0]->getTranslation()->getText();
+					}
+					
+					$messages[$classification->getCategory()][$classification->getSection()][$classification->getSubSection()][] = array(
+						"text" => $message->getText(),
+						"translation" => $translation
+					);
+					
+					//echo "<p>".$message->getText()."</p>";
+				}
 			}
-			else
-            	$em->getRepository('FMSymSlateBundle:TranslationsImport')->saveTranslations($entity->getId(), $this->get('logger'));
-			
-            //return $this->redirect($this->generateUrl('translationsimports_show', array('id' => $entity->getId())));
-        }
-
+		}
+		
         return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
-    }
-
-    /**
-     * Displays a form to edit an existing TranslationsImport entity.
-     *
-     * @Route("/{id}/edit", name="translationsimports_edit")
-     * @Template()
-     */
-    public function editAction($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('FMSymSlateBundle:TranslationsImport')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find TranslationsImport entity.');
-        }
-
-        $editForm = $this->createForm(new TranslationsImportType(), $entity);
-        $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        );
-    }
-
-    /**
-     * Edits an existing TranslationsImport entity.
-     *
-     * @Route("/{id}/update", name="translationsimports_update")
-     * @Method("POST")
-     * @Template("FMSymSlateBundle:TranslationsImport:edit.html.twig")
-     */
-    public function updateAction(Request $request, $id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('FMSymSlateBundle:TranslationsImport')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find TranslationsImport entity.');
-        }
-
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createForm(new TranslationsImportType(), $entity);
-        $editForm->bind($request);
-
-        if ($editForm->isValid()) {
-            $em->persist($entity);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('translationsimports_edit', array('id' => $id)));
-        }
-
-        return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        );
-    }
-
-    /**
-     * Deletes a TranslationsImport entity.
-     *
-     * @Route("/{id}/delete", name="translationsimports_delete")
-     * @Method("POST")
-     */
-    public function deleteAction(Request $request, $id)
-    {
-        $form = $this->createDeleteForm($id);
-        $form->bind($request);
-
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('FMSymSlateBundle:TranslationsImport')->find($id);
-
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find TranslationsImport entity.');
-            }
-
-            $em->remove($entity);
-            $em->flush();
-        }
-
-        return $this->redirect($this->generateUrl('translationsimports'));
-    }
-
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder(array('id' => $id))
-            ->add('id', 'hidden')
-            ->getForm()
-        ;
-    }
+        	'errors' => $errors,
+        	'warnings' => $warnings,
+        	'pack' => $pack,
+        	'language' => $language,
+        	'messages' => isset($messages)?$messages:null
+		);
+	}
 }
