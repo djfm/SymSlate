@@ -1,12 +1,52 @@
 {% extends '::base.html.twig' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets '@FMSymSlateBundle/Resources/public/css/translate.css' %}
+	    <link rel="stylesheet" href="{{ asset_url }}" />
+	{% endstylesheets %}
+{% endblock %}
+	 
 {% block body %}
 
 	<h1>Translate!</h1>
-
-	{% for error in errors %}}
-		<p><span class="error">{{ error }}</span></p>
-	{% endfor %}
+	
+	<fieldset>
+		<legend>Quick Jump</legend>
+		<form>
+			Translate
+			category
+			<select class="autosubmit" id="translate_category" name="category">
+				{% for category in categories %}
+					<option value="{{ category["category"] }}">{{ category["category"] }}</option>
+				{% endfor %}
+			</select>
+			from
+			<select class="autosubmit" id="translate_source_language_code" name="source_language_code">
+				{% for language in languages %}
+					<option value="{{ language.code }}">{{ language.name }}</option>
+				{% endfor %}
+			</select>
+			into
+			<select class="autosubmit" id="translate_language_code" name="language_code">
+				{% for language in languages %}
+					<option value="{{ language.code }}">{{ language.name }}</option>
+				{% endfor %}
+			</select>
+			where translation
+			<select class="autosubmit" id="translate_empty" name="empty">
+				<option value="ONLY">is missing</option>
+				<option value="EXCEPT">is there</option>
+				<option value="MAYBE">is or is not there</option>
+			</select>
+			<br/>
+			Show only messages looking like <input type='text'/> and translations like <input type='text'/> (leave empty to not filter).
+			<br/>
+			<input type="submit" value="Jump!"/>
+		</form>
+	</fieldset>
+	
+	<br/>
 	
 	{% if pack == null %}
 		<p><span class="error">The pack you are trying to translate does not exist!</span></p>	
@@ -16,23 +56,46 @@
 		<p><span class="error">The language you are trying to translate into does not exist!</span></p>	
 	{% endif %}
 	
-	{% for warning in warnings %}}
-		<p><span class="warning">{{ warning }}</span></p>
-	{% endfor %}
-	
 	{% if language and pack %}
 		{% if messages == null %}
 			<p><span class="info">There are no messages to translate here!</span></p>
 		{% else %}
 			{% for category, s_ss in messages %}
-				{% for s, ss_m in s_ss %}
-					{% for ss, ms in ss_m %}
-						{%  for m in ms %}
-							<p>{{ m['text'] }}</p>
-							<p>{{ m['translation'] }}</p>
-						{%  endfor %}
+				{%  if category is not empty %}
+					<fieldset>
+						<legend>{{ category }}</legend>
+				{% endif %}
+					{% for section, ss_m in s_ss %}
+						{%  if section is not empty %}
+							<fieldset>
+							<legend>{{ section }}</legend>
+						{% endif %}
+							{% for subsection, ms in ss_m %}
+								{%  if subsection is not empty %}
+									<fieldset>
+									<legend>{{ subsection }}</legend>
+								{% endif %}
+									{%  for m in ms %}
+										<div class="translate_field">
+											{{ m['text'] }}
+											<br/>
+											<div><textarea class="translate">{{ m['translation'] }}</textarea></div>
+											<div class="translate_controls">
+												<input type="submit"></input>
+											</div>
+										</div>
+									{%  endfor %}
+								{%  if subsection is not empty %}
+									</fieldset>
+								{%  endif %}
+							{% endfor %}
+						{%  if section is not empty %}
+							</fieldset>
+						{% endif %}
 					{% endfor %}
-				{% endfor %}
+				{%  if category is not empty %}
+					</fieldset>
+				{% endif %}
 			{% endfor %}
 		{% endif %}	
 	{% endif %}

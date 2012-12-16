@@ -171,4 +171,73 @@ class TranslationSubmission
     {
         return $this->created;
     }
+
+    /**
+     * Set user
+     *
+     * @param \FM\SymSlateBundle\Entity\User $user
+     * @return TranslationSubmission
+     */
+    public function setUser(\FM\SymSlateBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+    
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \FM\SymSlateBundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set classification
+     *
+     * @param \FM\SymSlateBundle\Entity\Classification $classification
+     * @return TranslationSubmission
+     */
+    public function setClassification(\FM\SymSlateBundle\Entity\Classification $classification = null)
+    {
+        $this->classification = $classification;
+    
+        return $this;
+    }
+
+    /**
+     * Get classification
+     *
+     * @return \FM\SymSlateBundle\Entity\Classification 
+     */
+    public function getClassification()
+    {
+        return $this->classification;
+    }
+
+    /**
+     * Set translation
+     *
+     * @param \FM\SymSlateBundle\Entity\Translation $translation
+     * @return TranslationSubmission
+     */
+    public function setTranslation(\FM\SymSlateBundle\Entity\Translation $translation = null)
+    {
+        $this->translation = $translation;
+    
+        return $this;
+    }
+
+    /**
+     * Get translation
+     *
+     * @return \FM\SymSlateBundle\Entity\Translation 
+     */
+    public function getTranslation()
+    {
+        return $this->translation;
+    }
 }

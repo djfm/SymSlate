@@ -409,4 +409,27 @@ class Translation
     {
         return $this->current_translations;
     }
+
+    /**
+     * Set translation_submission
+     *
+     * @param \FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmission
+     * @return Translation
+     */
+    public function setTranslationSubmission(\FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmission = null)
+    {
+        $this->translation_submission = $translationSubmission;
+    
+        return $this;
+    }
+
+    /**
+     * Get translation_submission
+     *
+     * @return \FM\SymSlateBundle\Entity\TranslationSubmission 
+     */
+    public function getTranslationSubmission()
+    {
+        return $this->translation_submission;
+    }
 }
