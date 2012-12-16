@@ -13,6 +13,27 @@ div.translate_field
 	border-radius:4px;
 }
 
+div.translate_controls_container
+{
+	display: table;
+	vertical-align:middle;
+}
+
+div.translate_controls
+{
+	height:24px;
+	display:table-row;
+	vertical-align:middle;
+}
+
+div.cell
+{
+	display:table-cell;
+	vertical-align:middle;
+}
+
+
+
 fieldset
 {
 	border-radius:4px;
@@ -21,4 +42,16 @@ fieldset
 form
 {
 	margin:0;
+}
+
+div.translation_details
+{
+	display:none;
+	height:24px;
+	border: 1px solid #999999;
+	border-radius:4px;
+	margin-left:5px;
+	padding-left:5px;
+	padding-right:5px;
+	background-color: #ccc;
 }

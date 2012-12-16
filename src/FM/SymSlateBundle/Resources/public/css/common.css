@@ -5,3 +5,24 @@ textarea
 	  -moz-box-sizing  : border-box;
 	       box-sizing  : border-box;
 }
+
+.clickable
+{
+	cursor:pointer;
+}
+
+img.small
+{
+	width:24px;
+	height:24px;
+}
+
+.left
+{
+	float:left;
+}
+
+.clear
+{
+	clear:both;
+}

@@ -8,10 +8,52 @@
 {% endblock %}
 
 {% block javascripts %}
-	{% javascripts '@FMSymSlateBundle/Resources/public/js/translate.js' %}
-			    <script src="{{ asset_url }}"></script>
-			{% endjavascripts %}
-	{% endblock %}
+		{% javascripts '@FMSymSlateBundle/Resources/public/js/translate.js' %}
+		    <script src="{{ asset_url }}"></script>
+		{% endjavascripts %}
+		
+		<script type="text/javascript">
+			//this is here and not in translate.js because we need some twig helpers for URLs, so this is more convenient.
+			submit_translation = function(message_id, classification_id, translation_id, language_id)
+			{
+				var text = $('#translation_text_'+classification_id).val();
+
+				var img = $('#translation_submit_'+classification_id);
+
+				img.attr('src','{{ asset('bundles/fmsymslate/images/working.png') }}');
+
+				$('#submission_feedback_'+classification_id).hide();
+				
+				$.post('../submissions/create',{
+						message_id: message_id,
+						classification_id: classification_id,
+						translation_id: translation_id,
+						language_id: language_id,
+						text: text
+					},
+					function(data){
+						console.log(data);
+						if(data.success)
+						{
+							img.attr('src','{{ asset('bundles/fmsymslate/images/happy.png') }}');
+
+							$('#submission_feedback_'+classification_id).html(data['']);
+							$('#submission_feedback_'+classification_id).css('display','inline-block');
+						}
+						else
+						{
+							img.attr('src','{{ asset('bundles/fmsymslate/images/sad.png') }}');
+							
+							$('#submission_feedback_'+classification_id).html(data['error_message']);
+							$('#submission_feedback_'+classification_id).css('display','inline-block');
+						}
+					},
+					'json');
+			}
+
+		</script>
+		
+{% endblock %}
 {% block body %}
 
 	<h1>Translate!</h1>
@@ -103,10 +145,26 @@
 											{{ m['text'] }}
 											<br/>
 											<div><textarea id="translation_text_{{ m['classification_id'] }}" class="translate">{{ m['translation'] }}</textarea></div>
-											<div class="translate_controls">
-												<input type="submit" onclick="javascript:submit_translation({{ m['message_id'] }}, {{ m['classification_id'] }}, {{ m['translation_id'] | default('undefined') }}, {{ language.getId() }})"></input>
-												<img src="{{ asset('images/submit.png') }}" alt="Symfony!" />
+											<div class="translate_controls_container">
+												<div class="translate_controls">
+													<div class="cell">
+														<img 
+															 class="clickable small" 
+															 onclick="javascript:submit_translation({{ m['message_id'] }}, 
+															 									 	{{ m['classification_id'] }},
+															 									 	{{ m['translation_id'] | default('undefined') }},
+															 									 	{{ language.getId() }})" 
+															 src="{{ asset('bundles/fmsymslate/images/submit.png') }}"
+															 alt="Submit!" 
+															 id="translation_submit_{{ m['classification_id'] }}"
+														 />
+													 </div>
+													 <div class="cell">
+													 	<div class="translation_details submission_feedback" id="submission_feedback_{{ m['classification_id'] }}"></div>
+													 </div>
+												</div>
 											</div>
+											
 										</div>
 									{%  endfor %}
 								{%  if subsection is not empty %}
