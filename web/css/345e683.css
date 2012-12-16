@@ -1,0 +1,29 @@
+textarea.translate
+{
+	width:100%;
+	-webkit-box-sizing : border-box;
+	  -moz-box-sizing  : border-box;
+	       box-sizing  : border-box;
+	       
+   border:1px solid #AAAAAA;
+}
+
+div.translate_field
+{
+	border:1px solid #ccc;
+	margin-top:4px;
+	margin-bottom:4px;
+	padding:5px;
+	background-color:#F4F4F4;
+	border-radius:4px;
+}
+
+fieldset
+{
+	border-radius:4px;
+}
+
+form
+{
+	margin:0;
+}

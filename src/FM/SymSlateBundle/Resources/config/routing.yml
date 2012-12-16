@@ -22,3 +22,7 @@ languages:
 translate:
     resource: "@FMSymSlateBundle/Controller/TranslateController.php"
     type: annotation
+    
+submissions:
+    resource: "@FMSymSlateBundle/Controller/TranslationSubmissionController.php"
+    type: annotation

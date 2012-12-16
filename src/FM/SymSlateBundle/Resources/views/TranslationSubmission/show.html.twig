@@ -1,0 +1,45 @@
+<h1>TranslationSubmission</h1>
+
+<table class="record_properties">
+    <tbody>
+        <tr>
+            <th>Id</th>
+            <td>{{ entity.id }}</td>
+        </tr>
+        <tr>
+            <th>User_id</th>
+            <td>{{ entity.userid }}</td>
+        </tr>
+        <tr>
+            <th>Classification_id</th>
+            <td>{{ entity.classificationid }}</td>
+        </tr>
+        <tr>
+            <th>Translation_id</th>
+            <td>{{ entity.translationid }}</td>
+        </tr>
+        <tr>
+            <th>Created</th>
+            <td>{{ entity.created|date('Y-m-d H:i:s') }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<ul class="record_actions">
+    <li>
+        <a href="{{ path('translationsubmission') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('translationsubmission_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>
+        <form action="{{ path('translationsubmission_delete', { 'id': entity.id }) }}" method="post">
+            {{ form_widget(delete_form) }}
+            <button type="submit">Delete</button>
+        </form>
+    </li>
+</ul>

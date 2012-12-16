@@ -16,7 +16,7 @@ use FM\SymSlateBundle\Form\TranslationsImportType;
  * @Route("/translate")
  */
 class TranslateController extends Controller
-{
+{	
     /**
      * 
      *
@@ -59,11 +59,15 @@ class TranslateController extends Controller
 				}
 			}
 			
-			$result = $pr->getMessagesWithTranslations($pack_id,$language->getId(),$query_options);
+			$pagination_options = array();
+			if($p = $request->query->get('page'))
+			{
+				$pagination_options['page'] = $p;
+			}
+			
+			$result = $pr->getMessagesWithTranslations($pack_id,$language->getId(),$query_options, $pagination_options);
 			
 			if($e = $request->query->get('source_language_id'))
-			
-			$messages = $result['messages'];
 			
 			echo "<p>Results total: ".$result['pagination']['total_count']."</p>";
 			
@@ -78,9 +82,10 @@ class TranslateController extends Controller
         	'pack'       => $pack,
         	'language'   => $language,
         	'messages'   => isset($result)?$result['messages']:null,
-        	'count'      => isset($result)?$result['pagination']['total_count']:0,
+        	'pagination' => isset($result)?$result['pagination']:null,
         	'categories' => $categories,
         	'languages'  => $lr->findAll()
 		);
 	}
+
 }

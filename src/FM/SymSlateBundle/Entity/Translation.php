@@ -67,7 +67,7 @@ class Translation
     /**
      * @var integer
      *
-     * @ORM\Column(name="translations_import_id", type="integer")
+     * @ORM\Column(name="translations_import_id", type="integer", nullable=true)
      */
     private $translations_import_id;
 

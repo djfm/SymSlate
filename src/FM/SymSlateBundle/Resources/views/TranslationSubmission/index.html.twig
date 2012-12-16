@@ -1,0 +1,35 @@
+<h1>TranslationSubmission list</h1>
+
+<table class="records_list">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>User_id</th>
+            <th>Classification_id</th>
+            <th>Translation_id</th>
+            <th>Created</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for entity in entities %}
+        <tr>
+            <td><a href="{{ path('translationsubmission_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+            <td>{{ entity.userid }}</td>
+            <td>{{ entity.classificationid }}</td>
+            <td>{{ entity.translationid }}</td>
+            <td>{% if entity.created %}{{ entity.created|date('Y-m-d H:i:s') }}{% endif %}</td>
+            <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('translationsubmission_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('translationsubmission_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

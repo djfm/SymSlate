@@ -6,7 +6,12 @@
 	    <link rel="stylesheet" href="{{ asset_url }}" />
 	{% endstylesheets %}
 {% endblock %}
-	 
+
+{% block javascripts %}
+	{% javascripts '@FMSymSlateBundle/Resources/public/js/translate.js' %}
+			    <script src="{{ asset_url }}"></script>
+			{% endjavascripts %}
+	{% endblock %}
 {% block body %}
 
 	<h1>Translate!</h1>
@@ -18,31 +23,49 @@
 			category
 			<select class="autosubmit" id="translate_category" name="category">
 				{% for category in categories %}
-					<option value="{{ category["category"] }}">{{ category["category"] }}</option>
+					<option value="{{ category["category"] }}" {{ app.request.query.get('category')==category['category'] ? "selected='true'" : '' }}>
+						{{ category["category"] }}
+					</option>
 				{% endfor %}
 			</select>
 			from
 			<select class="autosubmit" id="translate_source_language_code" name="source_language_code">
 				{% for language in languages %}
-					<option value="{{ language.code }}">{{ language.name }}</option>
+					<option value="{{ language.code }}" {{ app.request.query.get('source_language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
 				{% endfor %}
 			</select>
 			into
 			<select class="autosubmit" id="translate_language_code" name="language_code">
 				{% for language in languages %}
-					<option value="{{ language.code }}">{{ language.name }}</option>
+					<option value="{{ language.code }}" {{ app.request.query.get('language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
 				{% endfor %}
 			</select>
 			where translation
 			<select class="autosubmit" id="translate_empty" name="empty">
-				<option value="ONLY">is missing</option>
-				<option value="EXCEPT">is there</option>
-				<option value="MAYBE">is or is not there</option>
+				<option value="ONLY" {{ app.request.query.get('empty')== "ONLY" ? "selected='true'" : '' }}>is missing</option>
+				<option value="EXCEPT" {{ app.request.query.get('empty')== "EXCEPT" ? "selected='true'" : '' }}>is there</option>
+				<option value="MAYBE" {{ app.request.query.get('empty')== "MAYBE" ? "selected='true'" : '' }}>is or is not there</option>
 			</select>
 			<br/>
-			Show only messages looking like <input type='text'/> and translations like <input type='text'/> (leave empty to not filter).
-			<br/>
+			Show only messages looking like <input name="message_like" type='text' value='{{ app.request.query.get('message_like')}}'/> and translations like 
+			<input type='text' name="translation_like" value='{{ app.request.query.get('translation_like')}}'/> (leave empty to not filter).
 			<input type="submit" value="Jump!"/>
+			<br/>
+			{% if pagination is not empty %}
+				<nav class='navigation'>
+					<input type="hidden" name="page" id="page" value="{{ app.request.query.get('page') | default('1') }}"}/>
+					{% if pagination['previous_page'] is defined %}
+						<a href="javascript:goto_page(1)">First</a>
+						<a href='javascript:previous_page()'>&lt;&lt;&nbsp;</a>
+					{%  endif  %}
+					Page {{ app.request.query.get('page') | default('1') }} of <a href="javascript:goto_page({{ pagination['page_count'] }})">{{ pagination['page_count'] }}</a>
+					{% if pagination['next_page'] is defined %}
+						<a href='javascript:next_page()'>&nbsp;&gt;&gt;</a>
+						<a href="javascript:goto_page({{ pagination['page_count'] }})">Last</a>
+					{%  endif  %}
+				</nav>
+			{% endif %}
+			
 		</form>
 	</fieldset>
 	
@@ -79,9 +102,10 @@
 										<div class="translate_field">
 											{{ m['text'] }}
 											<br/>
-											<div><textarea class="translate">{{ m['translation'] }}</textarea></div>
+											<div><textarea id="translation_text_{{ m['classification_id'] }}" class="translate">{{ m['translation'] }}</textarea></div>
 											<div class="translate_controls">
-												<input type="submit"></input>
+												<input type="submit" onclick="javascript:submit_translation({{ m['message_id'] }}, {{ m['classification_id'] }}, {{ m['translation_id'] | default('undefined') }}, {{ language.getId() }})"></input>
+												<img src="{{ asset('images/submit.png') }}" alt="Symfony!" />
 											</div>
 										</div>
 									{%  endfor %}

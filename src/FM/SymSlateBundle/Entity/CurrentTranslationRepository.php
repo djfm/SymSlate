@@ -14,17 +14,17 @@ class CurrentTranslationRepository extends EntityRepository
 {
 	public function actualizeWith($translation, $logger=null)
 	{
-		$logger->info("Actualizing translation with translation with key: ".$translation->getMkey());
+		if($logger)$logger->info("Actualizing translation with translation with key: ".$translation->getMkey());
 		$query = $this->getEntityManager()->createQuery('SELECT c from FMSymSlateBundle:Classification c JOIN c.message m WHERE m.mkey = :mkey');
 		$query->setParameter('mkey',$translation->getMkey());
 		$classifications = $query->getResult();
-		$logger->info("CurrentTranslations to create or update: ".count($classifications));
+		if($logger)$logger->info("CurrentTranslations to create or update: ".count($classifications));
 		foreach($classifications as $classification)
 		{
 			if($ct = $this->findOneBy(array("classification_id" => $classification->getId(), "language_id" => $translation->getLanguage()->getId())))
 			{
 				//update CurrentTranslation
-				
+				//deferred till after the if because this is done in both cases
 			}
 			else
 			{
