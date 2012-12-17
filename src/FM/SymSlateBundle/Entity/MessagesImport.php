@@ -295,7 +295,7 @@ class MessagesImport
 			$message = new Message();
 			$message->setMkey($row['Array Key']);
 			$message->setText($row['English String']);
-			$message->setType("STRING");
+			$message->setType( $row['Array Name'] ? 'STRING' : (preg_match("/\.html$/", $row['Storage File Path']) ? 'HTML' : 'TXT'));
 			
 			$m = array();
 			preg_match("/^(?:\s*\d+\s*-\s*)?(.*?)\s*$/",$row['Section'],$m);

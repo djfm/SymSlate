@@ -32,14 +32,14 @@ class MessagesImportRepository extends EntityRepository
 			//create the message
 			if($tmp = $mr->findOneByMkey($message->getMkey()))
 			{
-				//do nothing if the message is already there
+				//just update the type and text if the message is already there
+				$tmp->setType($message->getType());
+				$tmp->setText($message->getText());
 				$message = $tmp;
-			}			
-			else
-			{
-				$message->setMessagesImport($messages_import);
-				$em->persist($message);
 			}
+			
+			$message->setMessagesImport($messages_import);
+			$em->persist($message);
 			
 			//create OR UPDATE the classification
 			if($classification = $cr->findOneBy(array("pack_id" => $messages_import->getPackId(), "message_id" => $message->getId())))
@@ -55,6 +55,7 @@ class MessagesImportRepository extends EntityRepository
 			}
 			
 			$classification->setCategory($classification_data["category"]);
+			if(isset($classification_data["section"]))$classification->setSection($classification_data["section"]);
 			$em->persist($classification);
 			
 			//create OR UPDATE the storage
@@ -77,7 +78,7 @@ class MessagesImportRepository extends EntityRepository
 			
 			$em->persist($storage);
 			
-			if($logger)$logger->info('Size of unit of work: ' . $em->getUnitOfWork()->size());
+			//if($logger)$logger->info('Size of unit of work: ' . $em->getUnitOfWork()->size());
 			
 			/*$em->persist($em->merge($messages_import));
 			$em->persist($em->merge($messages_import->getPack()));*/

@@ -37,8 +37,9 @@
 						{
 							img.attr('src','{{ asset('bundles/fmsymslate/images/happy.png') }}');
 
+							$('#submission_feedback_'+classification_id).css('display','none');
 							$('#submission_feedback_'+classification_id).html(data['']);
-							$('#submission_feedback_'+classification_id).css('display','inline-block');
+							
 						}
 						else
 						{
@@ -142,9 +143,17 @@
 								{% endif %}
 									{%  for m in ms %}
 										<div class="translate_field">
-											{{ m['text'] }}
+											{% if m['type'] == "HTML" %}
+												<iframe class="translate" srcdoc="{{ m['text'] }}"></iframe>
+											{% elseif m['type'] == "TXT" %}
+												<pre class="translate">{{ m['text'] }}</pre>
+											{% else %}
+												{{ m['text'] }}
+											{% endif %}
 											<br/>
-											<div><textarea id="translation_text_{{ m['classification_id'] }}" class="translate">{{ m['translation'] }}</textarea></div>
+											<div>
+													<textarea id="translation_text_{{ m['classification_id'] }}" class="translate">{{ m['translation'] }}</textarea>
+											</div>
 											<div class="translate_controls_container">
 												<div class="translate_controls">
 													<div class="cell">
