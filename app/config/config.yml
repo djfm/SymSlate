@@ -69,3 +69,11 @@ fos_user:
     db_driver: orm
     user_class: FM\SymSlateBundle\Entity\User
     firewall_name: main
+    
+    
+services:
+    kernel.listener.fm_exception_listener:
+      class: FM\SymSlateBundle\EventListener\FMExceptionListener
+      tags:
+        - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
+  

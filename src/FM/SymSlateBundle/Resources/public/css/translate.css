@@ -20,12 +20,12 @@ pre.translate
 
 div.translate_field
 {
-	border:1px solid #ccc;
-	margin-top:4px;
-	margin-bottom:4px;
+	border:1px solid #666;
+	margin-top:7px;
+	margin-bottom:7px;
 	padding:5px;
-	background-color:#F4F4F4;
-	border-radius:4px;
+	background-color:#FAFAFA;
+	border-radius:3px;
 }
 
 div.translate_controls_container
@@ -51,7 +51,8 @@ div.cell
 
 fieldset
 {
-	border-radius:4px;
+	border-radius:3px;
+	border-color:#EEE;
 }
 
 form
@@ -63,10 +64,20 @@ div.translation_details
 {
 	display:none;
 	height:24px;
-	border: 1px solid #999999;
+	border: 1px solid #EEE;
 	border-radius:4px;
 	margin-left:5px;
 	padding-left:5px;
 	padding-right:5px;
 	background-color: #ccc;
+}
+
+iframe
+{
+	border:0px;
+}
+
+img.submit_translation
+{
+	margin:3px;
 }

@@ -12,11 +12,22 @@
 		    <script src="{{ asset_url }}"></script>
 		{% endjavascripts %}
 		
+		<script type="text/javascript" src="{{ asset('vendor/ckeditor/ckeditor.js') }}"></script>
+		
 		<script type="text/javascript">
 			//this is here and not in translate.js because we need some twig helpers for URLs, so this is more convenient.
 			submit_translation = function(message_id, classification_id, translation_id, language_id)
 			{
-				var text = $('#translation_text_'+classification_id).val();
+				var text = '';
+				var txtid = 'translation_text_'+classification_id;
+				if($('#'+txtid).hasClass('HTML'))
+				{
+					text = CKEDITOR.instances[txtid].getData();
+				}
+				else
+				{
+					text = $('#'+txtid).val();
+				}
 
 				var img = $('#translation_submit_'+classification_id);
 
@@ -152,13 +163,13 @@
 											{% endif %}
 											<br/>
 											<div>
-													<textarea id="translation_text_{{ m['classification_id'] }}" class="translate">{{ m['translation'] }}</textarea>
+													<textarea id="translation_text_{{ m['classification_id'] }}" class="translate {{ m['type'] }}">{{ m['translation'] }}</textarea>
 											</div>
 											<div class="translate_controls_container">
 												<div class="translate_controls">
 													<div class="cell">
 														<img 
-															 class="clickable small" 
+															 class="clickable small submit_translation" 
 															 onclick="javascript:submit_translation({{ m['message_id'] }}, 
 															 									 	{{ m['classification_id'] }},
 															 									 	{{ m['translation_id'] | default('undefined') }},

@@ -2,6 +2,9 @@ $(function(){
 	$('select.autosubmit').change(function(){
 		$(this).parents('form').submit();
 	});
+	$('textarea.HTML').each(function(i,t){
+		CKEDITOR.replace(t);
+	});
 });
 
 

@@ -88,4 +88,15 @@ class TranslateController extends Controller
 		);
 	}
 
+	/**
+     * 
+     *
+     * @Route("/{notfound}", requirements={"notfound" = ".shop_logo."})
+     * 
+     */
+    public function defaultImageAction($notfound)
+    {
+    	return $this->redirect($this->container->get('templating.helper.assets')->getUrl('bundles/fmsymslate/images/prestashop_logo.png'));
+	}
+
 }

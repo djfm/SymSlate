@@ -71,7 +71,16 @@ class TranslationSubmissionRepository extends EntityRepository {
 		 */
 
 		$this -> getEntityManager() -> getRepository('FMSymSlateBundle:CurrentTranslation') -> actualizeWith($translation);
-
+		
+		/*
+		 * Finally create the submission TODO
+		 */
+		
+		/*
+		$submission = new TranslationSubmission();
+		$submission->setTranslation($translation);*/
+		//$submission->setClassification()
+		
 		//if we got there, don't think twice, it's allright
 		$data['success'] = true;
 
