@@ -84,6 +84,11 @@ class TranslationsImportController extends Controller
      */
     public function createAction(Request $request)
     {
+    	/*
+    	$session = $this->get('session');
+    	$session->save();
+    	session_write_close();*/
+	
         $entity  = new TranslationsImport();
         $form = $this->createForm(new TranslationsImportType(), $entity);
         $form->bind($request);
