@@ -13,6 +13,18 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class TranslationSubmission
 {
+	/**
+	 * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="translation_submission")
+	 */
+	 private $current_translations;
+	 
+	 public function __construct()
+	 {
+		$this->current_translations = new \Doctrine\Common\Collections\ArrayCollection();
+	 }
+	
+	
+	
     /**
      * @var integer
      *
@@ -35,33 +47,6 @@ class TranslationSubmission
      */
     private $user_id;
 	
-	/**
-	 * @ORM\ManyToOne(targetEntity="Classification", inversedBy="translation_submissions")
-	 * @ORM\JoinColumn(name="classification_id", referencedColumnName="id", onDelete="CASCADE")
-	 */
-	private $classification;
-	
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="classification_id", type="integer")
-     */
-    private $classification_id;
-	
-	/**
-	 * @ORM\OneToOne(targetEntity="Translation", inversedBy="translation_submission")
-	 * @ORM\JoinColumn(name="translation_id", referencedColumnName="id", onDelete="CASCADE")
-	 */
-	private $translation;
-	
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="translation_id", type="integer")
-     */
-    private $translation_id;
-
     /**
      * @var \DateTime
      * @Gedmo\Timestampable(on="create")
@@ -102,53 +87,7 @@ class TranslationSubmission
     {
         return $this->user_id;
     }
-
-    /**
-     * Set classification_id
-     *
-     * @param integer $classificationId
-     * @return TranslationSubmission
-     */
-    public function setClassificationId($classificationId)
-    {
-        $this->classification_id = $classificationId;
-    
-        return $this;
-    }
-
-    /**
-     * Get classification_id
-     *
-     * @return integer 
-     */
-    public function getClassificationId()
-    {
-        return $this->classification_id;
-    }
-
-    /**
-     * Set translation_id
-     *
-     * @param integer $translationId
-     * @return TranslationSubmission
-     */
-    public function setTranslationId($translationId)
-    {
-        $this->translation_id = $translationId;
-    
-        return $this;
-    }
-
-    /**
-     * Get translation_id
-     *
-     * @return integer 
-     */
-    public function getTranslationId()
-    {
-        return $this->translation_id;
-    }
-
+	
     /**
      * Set created
      *
@@ -195,49 +134,37 @@ class TranslationSubmission
         return $this->user;
     }
 
+
     /**
-     * Set classification
+     * Add current_translations
      *
-     * @param \FM\SymSlateBundle\Entity\Classification $classification
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
      * @return TranslationSubmission
      */
-    public function setClassification(\FM\SymSlateBundle\Entity\Classification $classification = null)
+    public function addCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
     {
-        $this->classification = $classification;
+        $this->current_translations[] = $currentTranslations;
     
         return $this;
     }
 
     /**
-     * Get classification
+     * Remove current_translations
      *
-     * @return \FM\SymSlateBundle\Entity\Classification 
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
      */
-    public function getClassification()
+    public function removeCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
     {
-        return $this->classification;
+        $this->current_translations->removeElement($currentTranslations);
     }
 
     /**
-     * Set translation
+     * Get current_translations
      *
-     * @param \FM\SymSlateBundle\Entity\Translation $translation
-     * @return TranslationSubmission
+     * @return \Doctrine\Common\Collections\Collection 
      */
-    public function setTranslation(\FM\SymSlateBundle\Entity\Translation $translation = null)
+    public function getCurrentTranslations()
     {
-        $this->translation = $translation;
-    
-        return $this;
-    }
-
-    /**
-     * Get translation
-     *
-     * @return \FM\SymSlateBundle\Entity\Translation 
-     */
-    public function getTranslation()
-    {
-        return $this->translation;
+        return $this->current_translations;
     }
 }

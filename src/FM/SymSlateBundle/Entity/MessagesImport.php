@@ -305,7 +305,7 @@ class MessagesImport
 			$message->classification_data = array(
 				"category" => $category,
 				"section"  => $row['Group'],
-				"subsection" => ''
+				"subsection" => $row['SubGroup']
 			);
 			
 			$message->storage_data = array(

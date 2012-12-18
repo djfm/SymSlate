@@ -8,15 +8,7 @@
         </tr>
         <tr>
             <th>User_id</th>
-            <td>{{ entity.userid }}</td>
-        </tr>
-        <tr>
-            <th>Classification_id</th>
-            <td>{{ entity.classificationid }}</td>
-        </tr>
-        <tr>
-            <th>Translation_id</th>
-            <td>{{ entity.translationid }}</td>
+            <td>{{ entity.getUser().getUsername() }}</td>
         </tr>
         <tr>
             <th>Created</th>

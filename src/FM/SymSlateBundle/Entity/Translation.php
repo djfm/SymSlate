@@ -41,11 +41,6 @@ class Translation
 	 * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="translation")
 	 */
 	private $current_translations;
-	
-	/**
-	 * @ORM\OneToOne(targetEntity="TranslationSubmission", mappedBy="translation")
-	 */
-	 private $translation_submission;
 	 
 	public function __construct()
 	{

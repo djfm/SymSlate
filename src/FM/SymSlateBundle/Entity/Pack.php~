@@ -10,7 +10,6 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="project_name_version_idx", columns={"project", "name", "version"})})
  * @ORM\Entity(repositoryClass="FM\SymSlateBundle\Entity\PackRepository")
- * @ORM\Entity
  */
 class Pack
 {

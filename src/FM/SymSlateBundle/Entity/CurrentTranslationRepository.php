@@ -19,6 +19,9 @@ class CurrentTranslationRepository extends EntityRepository
 		$query->setParameter('mkey',$translation->getMkey());
 		$classifications = $query->getResult();
 		if($logger)$logger->info("CurrentTranslations to create or update: ".count($classifications));
+		
+		$cts = array();
+		
 		foreach($classifications as $classification)
 		{
 			if($ct = $this->findOneBy(array("classification_id" => $classification->getId(), "language_id" => $translation->getLanguage()->getId())))
@@ -35,6 +38,10 @@ class CurrentTranslationRepository extends EntityRepository
 			
 			$ct->setTranslation($translation);
 			$this->getEntityManager()->persist($ct);
+			
+			$cts[] = $ct;
 		}
+		
+		return $cts;
 	}
 }

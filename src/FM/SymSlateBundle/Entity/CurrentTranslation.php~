@@ -12,12 +12,25 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass="FM\SymSlateBundle\Entity\CurrentTranslationRepository")
  */
 class CurrentTranslation
-{
+{	
 	/**
 	 * @ORM\ManyToOne(targetEntity="Classification", inversedBy="current_translations")
 	 * @ORM\JoinColumn(name="classification_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
 	 */
 	private $classification;
+	
+	/**
+	 * @ORM\ManyToOne(targetEntity="TranslationSubmission", inversedBy="current_translations")
+	 * @ORM\JoinColumn(name="translation_submission_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
+	 */
+	private $translation_submission;
+	
+	/**
+     * @var integer
+     *
+     * @ORM\Column(name="translation_submission_id", type="integer", nullable=true)
+     */
+	private $translation_submission_id;
 	
 	/**
 	 * @ORM\ManyToOne(targetEntity="Translation", inversedBy="current_translations")

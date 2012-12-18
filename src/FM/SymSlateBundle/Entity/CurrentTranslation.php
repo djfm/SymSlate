@@ -12,12 +12,25 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\Entity(repositoryClass="FM\SymSlateBundle\Entity\CurrentTranslationRepository")
  */
 class CurrentTranslation
-{
+{	
 	/**
 	 * @ORM\ManyToOne(targetEntity="Classification", inversedBy="current_translations")
 	 * @ORM\JoinColumn(name="classification_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
 	 */
 	private $classification;
+	
+	/**
+	 * @ORM\ManyToOne(targetEntity="TranslationSubmission", inversedBy="current_translations")
+	 * @ORM\JoinColumn(name="translation_submission_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
+	 */
+	private $translation_submission;
+	
+	/**
+     * @var integer
+     *
+     * @ORM\Column(name="translation_submission_id", type="integer", nullable=true)
+     */
+	private $translation_submission_id;
 	
 	/**
 	 * @ORM\ManyToOne(targetEntity="Translation", inversedBy="current_translations")
@@ -180,5 +193,51 @@ class CurrentTranslation
     public function getTranslation()
     {
         return $this->translation;
+    }
+
+    /**
+     * Set translation_submission_id
+     *
+     * @param integer $translationSubmissionId
+     * @return CurrentTranslation
+     */
+    public function setTranslationSubmissionId($translationSubmissionId)
+    {
+        $this->translation_submission_id = $translationSubmissionId;
+    
+        return $this;
+    }
+
+    /**
+     * Get translation_submission_id
+     *
+     * @return integer 
+     */
+    public function getTranslationSubmissionId()
+    {
+        return $this->translation_submission_id;
+    }
+
+    /**
+     * Set translation_submission
+     *
+     * @param \FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmission
+     * @return CurrentTranslation
+     */
+    public function setTranslationSubmission(\FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmission = null)
+    {
+        $this->translation_submission = $translationSubmission;
+    
+        return $this;
+    }
+
+    /**
+     * Get translation_submission
+     *
+     * @return \FM\SymSlateBundle\Entity\TranslationSubmission 
+     */
+    public function getTranslationSubmission()
+    {
+        return $this->translation_submission;
     }
 }
