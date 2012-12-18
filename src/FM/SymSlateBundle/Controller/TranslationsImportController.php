@@ -13,7 +13,7 @@ use FM\SymSlateBundle\Form\TranslationsImportType;
 /**
  * TranslationsImport controller.
  *
- * @Route("/translationsimports")
+ * @Route("/import")
  */
 class TranslationsImportController extends Controller
 {

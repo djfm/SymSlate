@@ -229,4 +229,36 @@ class PackRepository extends EntityRepository
 					);
 		
 	}
+
+	public function computeStatistics($pack_id, $language_id)
+	{
+		$query = $this->getEntityManager()->createQuery(
+		"SELECT c.category, count(c.id) as total, count(ct.id) as translated FROM FMSymSlateBundle:Classification c LEFT JOIN c.current_translations ct
+		 WITH ct.language_id = :language_id
+		 WHERE c.pack_id = :pack_id
+		 GROUP BY c.category
+		"		
+		);
+		$query->setParameter(':language_id',$language_id);
+		$query->setParameter(':pack_id',$pack_id);
+		$results = $query->getResult();
+		
+		//print_r($results);
+		
+		$stats = array(null => array('total' => 0, 'translated' => 0, 'percent' => 0));
+		$cats  = array(null);
+		
+		foreach($results as $row)
+		{
+			$cats[] = $row['category'];
+			$stats[$row['category']] = array('total' => (int)$row['total'], 'translated' => (int)$row['translated'], 'percent' => 100 * (int)$row['translated'] / (int)$row['total'] );
+			$stats[null]['total'] += (int)$row['total'];
+			$stats[null]['translated'] += (int)$row['translated'];
+		}
+		
+		$stats[null]['percent'] = 100 * $stats[null]['translated'] / $stats[null]['total'];
+		
+		return array("categories" => $cats, "statistics" => $stats);
+	}
+
 }
