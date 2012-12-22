@@ -25,6 +25,11 @@ class Pack
 	 private $messages_imports;
 	 
 	 /**
+	 * @ORM\OneToMany(targetEntity="PackExport", mappedBy="pack", cascade={"remove"})
+	 */
+	 private $pack_exports;
+	 
+	 /**
 	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="pack")
 	 */
 	 private $storages;
@@ -34,6 +39,7 @@ class Pack
 	 	$this->classifications  = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->messages_imports = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->storages         = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->pack_exports     = new \Doctrine\Common\Collections\ArrayCollection();
 	 }
 	
 	public function getFullName()

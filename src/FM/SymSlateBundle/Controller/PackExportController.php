@@ -100,10 +100,12 @@ class PackExportController extends Controller
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+			$entity->setPack($this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:Pack')->find($entity->getPackId()));
             $em->persist($entity);
             $em->flush();
 			
 			$this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:PackExport')->performExport($entity->getId());
+			$em->flush();
 
             return $this->redirect($this->generateUrl('export_show', array('id' => $entity->getId())));
         }

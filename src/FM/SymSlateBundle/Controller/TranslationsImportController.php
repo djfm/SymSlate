@@ -109,7 +109,7 @@ class TranslationsImportController extends Controller
 			else
             	$em->getRepository('FMSymSlateBundle:TranslationsImport')->saveTranslations($entity->getId(), $this->get('logger'));
 			
-            //return $this->redirect($this->generateUrl('translationsimports_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('translationsimports_show', array('id' => $entity->getId())));
         }
 
         return array(

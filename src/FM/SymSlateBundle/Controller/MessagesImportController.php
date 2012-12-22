@@ -102,7 +102,7 @@ class MessagesImportController extends Controller
 			
 			
 			
-            //return $this->redirect($this->generateUrl('messagesimports_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('messagesimports_show', array('id' => $entity->getId())));
         }
 
         return array(

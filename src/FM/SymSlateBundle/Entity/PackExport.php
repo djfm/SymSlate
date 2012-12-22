@@ -23,6 +23,14 @@ class PackExport
 	 */
 	private $creator;
 	
+	/**
+	 * @var pack
+	 * 
+	 * @ORM\ManyToOne(targetEntity="Pack", inversedBy="pack_exports")
+	 * @ORM\JoinColumn(name="pack_id", referencedColumnName="id", onDelete="CASCADE")
+	 * 
+	 */
+	private $pack;
 	
     /**
      * @var integer
@@ -236,7 +244,12 @@ class PackExport
     {
         // the absolute directory path where uploaded
         // documents should be saved
-        return __DIR__.'/../../../../web/'.$this->getUploadDir();
+        $dir = __DIR__.'/../../../../web/'.$this->getUploadDir();
+		if (!is_dir($dir))
+		{
+		    mkdir($dir);
+		}
+		return $dir;
     }
 	
 	protected function getUploadDir()
@@ -254,6 +267,30 @@ class PackExport
         if ($file = $this->getAbsolutePath()) {
             unlink($file);
         }
+    }
+	
+
+    /**
+     * Set pack
+     *
+     * @param \FM\SymSlateBundle\Entity\Pack $pack
+     * @return PackExport
+     */
+    public function setPack(\FM\SymSlateBundle\Entity\Pack $pack = null)
+    {
+        $this->pack = $pack;
+    
+        return $this;
+    }
+
+    /**
+     * Get pack
+     *
+     * @return \FM\SymSlateBundle\Entity\Pack 
+     */
+    public function getPack()
+    {
+        return $this->pack;
     }
 	
 }

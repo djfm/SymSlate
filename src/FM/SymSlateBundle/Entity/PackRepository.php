@@ -230,6 +230,27 @@ class PackRepository extends EntityRepository
 		
 	}
 
+	public function getStoragesWithTranslations($pack_id, $language_id)
+	{
+		$qb = $this->getEntityManager()->createQueryBuilder();
+		$qb->select(array('s','m','c','ct','t'))
+		   ->from('FMSymSlateBundle:Storage', 's')
+		   ->innerJoin('s.message', 'm')
+		   ->innerJoin('m.classifications', 'c')
+		   ->innerJoin('c.current_translations', 'ct')
+		   ->innerJoin('ct.translation', 't')
+		   ->where('s.pack_id = :pack_id')
+		   ->andWhere('c.pack_id = :pack_id')
+		   ->andWhere('ct.language_id = :language_id');
+		   
+		$query = $qb->getQuery();
+		$query->setParameter('pack_id', $pack_id);
+		$query->setParameter('language_id', $language_id);
+		
+		return $query->getResult();
+		
+	}
+
 	public function computeStatistics($pack_id, $language_id)
 	{
 		$query = $this->getEntityManager()->createQuery(
