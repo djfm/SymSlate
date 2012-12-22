@@ -58,7 +58,7 @@ class PackController extends Controller
 		{
 			$st   = $em->getRepository('FMSymSlateBundle:Pack')->computeStatistics($entity->getId(), $language->getId());
 			$cats = $st['categories'];
-			$stats[$language->getName()] = $st['statistics'];
+			$stats[$language->getName()] = array('code' => $language->getCode(), 'statistics' => $st['statistics']);
 		}
 
         return array(

@@ -36,6 +36,11 @@ class Pack
 		$this->storages         = new \Doctrine\Common\Collections\ArrayCollection();
 	 }
 	
+	public function getFullName()
+	{
+		return $this->getProject() . " - " . $this->getName() . " - " . $this->getVersion();
+	}
+	
     /**
      * @var integer
      *

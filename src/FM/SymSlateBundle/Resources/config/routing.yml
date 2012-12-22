@@ -26,3 +26,7 @@ translate:
 submissions:
     resource: "@FMSymSlateBundle/Controller/TranslationSubmissionController.php"
     type: annotation
+    
+exports:
+    resource: "@FMSymSlateBundle/Controller/PackExportController.php"
+    type: annotation

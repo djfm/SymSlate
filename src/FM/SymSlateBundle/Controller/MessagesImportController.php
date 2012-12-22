@@ -67,7 +67,7 @@ class MessagesImportController extends Controller
     public function newAction()
     {
         $entity = new MessagesImport();
-        $form   = $this->createForm(new MessagesImportType(), $entity);
+        $form   = $this->createForm(new MessagesImportType(), $entity, array('packs' => $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:Pack')->getPackNames()));
 
         return array(
             'entity' => $entity,
@@ -85,7 +85,7 @@ class MessagesImportController extends Controller
     public function createAction(Request $request)
     {		
         $entity  = new MessagesImport();
-        $form = $this->createForm(new MessagesImportType(), $entity);
+        $form = $this->createForm(new MessagesImportType(), $entity, array('packs' => $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:Pack')->getPackNames()));
         $form->bind($request);
 
         if ($form->isValid()) {

@@ -134,4 +134,37 @@ class TranslationSubmission
         return $this->user;
     }
 
+
+    /**
+     * Add current_translations
+     *
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
+     * @return TranslationSubmission
+     */
+    public function addCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
+    {
+        $this->current_translations[] = $currentTranslations;
+    
+        return $this;
+    }
+
+    /**
+     * Remove current_translations
+     *
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
+     */
+    public function removeCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
+    {
+        $this->current_translations->removeElement($currentTranslations);
+    }
+
+    /**
+     * Get current_translations
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCurrentTranslations()
+    {
+        return $this->current_translations;
+    }
 }

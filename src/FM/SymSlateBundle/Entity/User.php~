@@ -33,6 +33,11 @@ class User extends BaseUser
 	 */
 	private $translations_imports;
 	
+	/**
+	 * @ORM\OneToMany(targetEntity="PackExport", mappedBy="creator")
+	 */
+	private $pack_exports;
+	
 	public function __construct()
 	{
 		$this->translations = new \Doctrine\Common\Collections\ArrayCollection();
@@ -40,6 +45,7 @@ class User extends BaseUser
 		$this->reviewed_translations = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->translations_imports = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->translation_submissions = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->pack_exports = new \Doctrine\Common\Collections\ArrayCollection();
 		
 		parent::__construct();
 	}
@@ -204,5 +210,38 @@ class User extends BaseUser
     public function getTranslationSubmissions()
     {
         return $this->translation_submissions;
+    }
+
+    /**
+     * Add pack_exports
+     *
+     * @param \FM\SymSlateBundle\Entity\PackExport $packExports
+     * @return User
+     */
+    public function addPackExport(\FM\SymSlateBundle\Entity\PackExport $packExports)
+    {
+        $this->pack_exports[] = $packExports;
+    
+        return $this;
+    }
+
+    /**
+     * Remove pack_exports
+     *
+     * @param \FM\SymSlateBundle\Entity\PackExport $packExports
+     */
+    public function removePackExport(\FM\SymSlateBundle\Entity\PackExport $packExports)
+    {
+        $this->pack_exports->removeElement($packExports);
+    }
+
+    /**
+     * Get pack_exports
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPackExports()
+    {
+        return $this->pack_exports;
     }
 }

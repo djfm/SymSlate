@@ -20,7 +20,7 @@ class TranslateController extends Controller
     /**
      * 
      *
-     * @Route("/{pack_id}", requirements={"pack_id" = "\d+"})
+     * @Route("/{pack_id}", requirements={"pack_id" = "\d+"}, name="translate")
      * @Template()
      */
     public function translateAction($pack_id)

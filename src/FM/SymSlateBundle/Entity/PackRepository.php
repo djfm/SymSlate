@@ -260,5 +260,15 @@ class PackRepository extends EntityRepository
 		
 		return array("categories" => $cats, "statistics" => $stats);
 	}
+	
+	public function getPackNames()
+	{
+		$packNames = array();
+		foreach($this->findAll() as $pack)
+		{
+			$packNames[$pack->getId()] = $pack->getFullName();
+		}
+		return $packNames;
+	}
 
 }

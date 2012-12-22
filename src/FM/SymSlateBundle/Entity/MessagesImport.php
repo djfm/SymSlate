@@ -304,8 +304,8 @@ class MessagesImport
 			//virtual properties
 			$message->classification_data = array(
 				"category" => $category,
-				"section"  => $row['Group'],
-				"subsection" => $row['SubGroup']
+				"section"  => isset($row['Group']) ? $row['Group'] : '',
+				"subsection" => isset($row['SubGroup']) ? $row['SubGroup'] : ''
 			);
 			
 			$message->storage_data = array(

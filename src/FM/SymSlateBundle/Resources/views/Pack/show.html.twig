@@ -36,7 +36,7 @@
 			<tr>
 				<th>{{ language }}</th>
 				{%  for cat in stats['categories'] %}
-					<td>{{ '%.1f' | format(statistics[cat]['percent']) }}%<br/>({{ statistics[cat]['translated'] }}/{{ statistics[cat]['total'] }})</td>
+					<td class="clickable" onclick="javascript:window.location='{{ path('translate', {'pack_id': entity.id, 'language_code': statistics['code'], 'category': cat}) }}'">{{ '%.1f' | format(statistics['statistics'][cat]['percent']) }}%<br/>({{ statistics['statistics'][cat]['translated'] }}/{{ statistics['statistics'][cat]['total'] }})</td>
 				{%  endfor %}
 			</tr>
 		{% endfor %}

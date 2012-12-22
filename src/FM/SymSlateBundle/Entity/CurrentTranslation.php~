@@ -194,4 +194,50 @@ class CurrentTranslation
     {
         return $this->translation;
     }
+
+    /**
+     * Set translation_submission_id
+     *
+     * @param integer $translationSubmissionId
+     * @return CurrentTranslation
+     */
+    public function setTranslationSubmissionId($translationSubmissionId)
+    {
+        $this->translation_submission_id = $translationSubmissionId;
+    
+        return $this;
+    }
+
+    /**
+     * Get translation_submission_id
+     *
+     * @return integer 
+     */
+    public function getTranslationSubmissionId()
+    {
+        return $this->translation_submission_id;
+    }
+
+    /**
+     * Set translation_submission
+     *
+     * @param \FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmission
+     * @return CurrentTranslation
+     */
+    public function setTranslationSubmission(\FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmission = null)
+    {
+        $this->translation_submission = $translationSubmission;
+    
+        return $this;
+    }
+
+    /**
+     * Get translation_submission
+     *
+     * @return \FM\SymSlateBundle\Entity\TranslationSubmission 
+     */
+    public function getTranslationSubmission()
+    {
+        return $this->translation_submission;
+    }
 }
