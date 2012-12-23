@@ -253,7 +253,7 @@ class PackRepository extends EntityRepository
 	}
 
 	public function computeStatistics($pack_id, $language_id)
-	{
+	{	
 		$query = $this->getEntityManager()->createQuery(
 		"SELECT c.category, count(c.id) as total, count(ct.id) as translated FROM FMSymSlateBundle:Classification c LEFT JOIN c.current_translations ct
 		 WITH ct.language_id = :language_id

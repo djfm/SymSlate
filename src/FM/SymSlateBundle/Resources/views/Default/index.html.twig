@@ -59,6 +59,8 @@
 				ids.push($(country).attr('id'));	
 			});
 
+			$('#status').html("Loading translation statistics...");
+			
 			$.post('{{ url('getcountrystats') }}',
 					  {
 				  		map_codes: ids
@@ -70,6 +72,7 @@
 						  {
 							  country(i).attr('fill',color(data[i]));
 						  }
+						  $('#status').html("");
 					  },
 					  'json'
 		    );
@@ -82,4 +85,5 @@
 {% block body %}
 	<h2 id="country">-</h2>
 	<object id="map" data="{{ asset('bundles/fmsymslate/images/map.svg') }}" type="image/svg+xml" height="600" width="800"> <img src="image-png.png" height="48" width="48" alt="this is a PNG" /> </object>
+	<p id="status">&nbsp;</p>
 {% endblock %}
