@@ -30,21 +30,29 @@ class Manager
 	
 	public function processNextJob()
 	{
-		if($job = $this->em->getRepository('FMSlowShowBundle:Task')->findOneBy(array('started' => false, 'completed' => false)))
+		//$this->em->getConnection()->exec('LOCK TABLES Task WRITE;'); //make sure we don't go over the job limit by harassing the server
+		if($this->em->createQuery("SELECT COUNT(t.id) FROM FMSlowShowBundle:Task t WHERE t.started = true AND t.completed = false")->getSingleScalarResult() < $this->max_concurrent_jobs)
 		{
-			$job->setStarted(true);
-			$this->em->persist($job);
-			$this->em->flush();
-			
-			$class  = $job->getClass();
-			$worker = new $class($this->em);
-			$worker->perform(json_decode($job->getArguments(),true));
-			
-			$job->setCompleted(true);
-			$this->em->persist($job);
-			$this->em->flush();
-			
+			if($job = $this->em->getRepository('FMSlowShowBundle:Task')->findOneBy(array('started' => false, 'completed' => false)))
+			{
+				
+				$job->setStarted(true);
+				$this->em->persist($job);
+				$this->em->flush();
+				//$this->em->getConnection()->exec('UNLOCK TABLES;');
+				
+				$class  = $job->getClass();
+				$worker = new $class($this->em);
+				$worker->perform(json_decode($job->getArguments(),true));
+				
+				$job->setCompleted(true);
+				$this->em->persist($job);
+				$this->em->flush();
+				
+			}
+			//else $this->em->getConnection()->exec('UNLOCK TABLES;');
 		}
+		//else $this->em->getConnection()->exec('UNLOCK TABLES;');
 	}
 	
 }

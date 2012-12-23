@@ -101,4 +101,4 @@ services:
         arguments:
           em: "@doctrine.orm.entity_manager"
           security_context: "@security.context"
-          max_concurrent_jobs: 4
+          max_concurrent_jobs: 2
