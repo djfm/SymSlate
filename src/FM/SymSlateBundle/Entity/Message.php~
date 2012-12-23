@@ -264,4 +264,37 @@ class Message
     {
         return $this->storages;
     }
+
+    /**
+     * Add translations
+     *
+     * @param \FM\SymSlateBundle\Entity\Translation $translations
+     * @return Message
+     */
+    public function addTranslation(\FM\SymSlateBundle\Entity\Translation $translations)
+    {
+        $this->translations[] = $translations;
+    
+        return $this;
+    }
+
+    /**
+     * Remove translations
+     *
+     * @param \FM\SymSlateBundle\Entity\Translation $translations
+     */
+    public function removeTranslation(\FM\SymSlateBundle\Entity\Translation $translations)
+    {
+        $this->translations->removeElement($translations);
+    }
+
+    /**
+     * Get translations
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getTranslations()
+    {
+        return $this->translations;
+    }
 }

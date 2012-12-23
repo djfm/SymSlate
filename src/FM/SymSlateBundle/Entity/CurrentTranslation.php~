@@ -8,7 +8,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * CurrentTranslation
  *
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="classification_id_language_id_idx", columns={"classification_id","language_id"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="fm_classification_id_language_id_idx", columns={"classification_id","language_id"})})
  * @ORM\Entity(repositoryClass="FM\SymSlateBundle\Entity\CurrentTranslationRepository")
  */
 class CurrentTranslation

@@ -55,6 +55,11 @@
 	        </a>
 	    </li>
 	    <li>
+	        <form action="{{ path('pack_autocomplete', { 'pack_id': entity.id }) }}" method="post">
+	            <button type="submit">Autocomplete</button>
+	        </form>
+	    </li>
+	    <li>
 	        <form action="{{ path('packs_delete', { 'id': entity.id }) }}" method="post">
 	            {{ form_widget(delete_form) }}
 	            <button type="submit">Delete</button>

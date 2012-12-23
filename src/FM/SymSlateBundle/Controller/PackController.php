@@ -112,6 +112,21 @@ class PackController extends Controller
             'form'   => $form->createView(),
         );
     }
+	
+	/**
+     * Autocompletes a Pack entity with translations as good as it can.
+     *
+     * @Route("/{pack_id}/autocomplete", name="pack_autocomplete", requirements={"pack_id" = "\d+"})
+     * @Method("POST")
+     * @Template("FMSymSlateBundle:Pack:show.html.twig")
+     */
+    public function autocompleteAction($pack_id)
+    {
+    	$this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:Pack')->performAutoCompletion($pack_id);
+		$this->getDoctrine()->getManager()->flush();
+    	return $this->showAction($pack_id);
+	}
+    	
 
     /**
      * Displays a form to edit an existing Pack entity.

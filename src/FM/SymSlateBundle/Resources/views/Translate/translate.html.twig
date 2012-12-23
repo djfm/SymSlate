@@ -8,6 +8,8 @@
 {% endblock %}
 
 {% block javascripts %}
+		{{ parent() }}
+		
 		{% javascripts '@FMSymSlateBundle/Resources/public/js/translate.js' %}
 		    <script src="{{ asset_url }}"></script>
 		{% endjavascripts %}
@@ -76,6 +78,7 @@
 			Translate
 			category
 			<select class="autosubmit" id="translate_category" name="category">
+				<option value="">Any Category</option>
 				{% for category in categories %}
 					<option value="{{ category["category"] }}" {{ app.request.query.get('category')==category['category'] ? "selected='true'" : '' }}>
 						{{ category["category"] }}

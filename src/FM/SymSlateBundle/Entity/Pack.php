@@ -55,6 +55,13 @@ class Pack
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
+	
+	/**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_current", type="boolean", nullable=true)
+     */
+    private $is_current;
 
     /**
      * @var string
@@ -338,5 +345,61 @@ class Pack
     public function getStorages()
     {
         return $this->storages;
+    }
+
+    /**
+     * Add pack_exports
+     *
+     * @param \FM\SymSlateBundle\Entity\PackExport $packExports
+     * @return Pack
+     */
+    public function addPackExport(\FM\SymSlateBundle\Entity\PackExport $packExports)
+    {
+        $this->pack_exports[] = $packExports;
+    
+        return $this;
+    }
+
+    /**
+     * Remove pack_exports
+     *
+     * @param \FM\SymSlateBundle\Entity\PackExport $packExports
+     */
+    public function removePackExport(\FM\SymSlateBundle\Entity\PackExport $packExports)
+    {
+        $this->pack_exports->removeElement($packExports);
+    }
+
+    /**
+     * Get pack_exports
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPackExports()
+    {
+        return $this->pack_exports;
+    }
+
+    /**
+     * Set is_current
+     *
+     * @param boolean $isCurrent
+     * @return Pack
+     */
+    public function setIsCurrent($isCurrent)
+    {
+        $this->is_current = $isCurrent;
+    
+        return $this;
+    }
+
+    /**
+     * Get is_current
+     *
+     * @return boolean 
+     */
+    public function getIsCurrent()
+    {
+        return $this->is_current;
     }
 }

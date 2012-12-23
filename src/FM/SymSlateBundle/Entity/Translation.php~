@@ -24,7 +24,7 @@ class Translation
 	 * @ORM\JoinColumn(name="created_by", referencedColumnName="id", onDelete="CASCADE", nullable=true)
 	 */
 	private $author;
-	 
+		 
     /**
 	 * @ORM\ManyToOne(targetEntity="User", inversedBy="authored_translations")
 	 * @ORM\JoinColumn(name="reviewed_by", referencedColumnName="id", onDelete="CASCADE", nullable=true)
@@ -426,5 +426,28 @@ class Translation
     public function getTranslationSubmission()
     {
         return $this->translation_submission;
+    }
+
+    /**
+     * Set message
+     *
+     * @param \FM\SymSlateBundle\Entity\Message $message
+     * @return Translation
+     */
+    public function setMessage(\FM\SymSlateBundle\Entity\Message $message = null)
+    {
+        $this->message = $message;
+    
+        return $this;
+    }
+
+    /**
+     * Get message
+     *
+     * @return \FM\SymSlateBundle\Entity\Message 
+     */
+    public function getMessage()
+    {
+        return $this->message;
     }
 }

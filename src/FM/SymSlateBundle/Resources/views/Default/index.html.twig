@@ -1,2 +1,49 @@
-Hi!!
-<a></a>
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+	{% stylesheets '@FMSymSlateBundle/Resources/public/css/map.css' %}
+	    <link rel="stylesheet" href="{{ asset_url }}" />
+	{% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+	{{ parent() }}
+	
+	<script type="text/javascript">
+		function country(id)
+		{
+			return $($('#map')[0].contentDocument.getElementById(id));
+		}
+		function countries()
+		{
+			return $($('#map')[0].contentDocument.getElementsByTagName('path'));
+		}
+
+		
+		
+		var colors = {};
+		
+		$(window).load(function(){
+
+			countries().attr('fill','#000');
+			
+			countries().hover(function(e){
+				$('#country').html($(e.target).attr('id'));
+				colors[$(e.target).attr('id')] = $(e.target).attr('fill');
+				$(e.target).attr('fill','#CCC');
+			},
+			function(e){
+				$('#country').html('-');
+				$(e.target).attr('fill',colors[$(e.target).attr('id')]);
+			})
+		});
+		
+	</script>
+{% endblock %}
+
+
+{% block body %}
+	<h2 id="country">-</h2>
+	<object id="map" data="{{ asset('bundles/fmsymslate/images/map.svg') }}" type="image/svg+xml" height="600" width="800"> <img src="image-png.png" height="48" width="48" alt="this is a PNG" /> </object>
+{% endblock %}
