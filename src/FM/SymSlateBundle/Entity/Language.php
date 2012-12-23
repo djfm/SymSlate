@@ -17,11 +17,21 @@ class Language
 	 */
 	private $translations;
 	
+	/**
+	 * @ORM\OneToMany(targetEntity="CountryLanguage", mappedBy="language")
+	 */
+	private $country_languages;
+	
 	public function __construct()
 	{
 		$this->translations = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->country_languages = new \Doctrine\Common\Collections\ArrayCollection();
 	}
 	
+	public function __toString()
+	{
+		return $this->getName();
+	}
 	
     /**
      * @var integer
@@ -164,5 +174,38 @@ class Language
     public function getTranslations()
     {
         return $this->translations;
+    }
+
+    /**
+     * Add country_languages
+     *
+     * @param \FM\SymSlateBundle\Entity\CountryLanguage $countryLanguages
+     * @return Language
+     */
+    public function addCountryLanguage(\FM\SymSlateBundle\Entity\CountryLanguage $countryLanguages)
+    {
+        $this->country_languages[] = $countryLanguages;
+    
+        return $this;
+    }
+
+    /**
+     * Remove country_languages
+     *
+     * @param \FM\SymSlateBundle\Entity\CountryLanguage $countryLanguages
+     */
+    public function removeCountryLanguage(\FM\SymSlateBundle\Entity\CountryLanguage $countryLanguages)
+    {
+        $this->country_languages->removeElement($countryLanguages);
+    }
+
+    /**
+     * Get country_languages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCountryLanguages()
+    {
+        return $this->country_languages;
     }
 }

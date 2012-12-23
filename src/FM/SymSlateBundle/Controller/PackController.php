@@ -126,6 +126,22 @@ class PackController extends Controller
 		$this->getDoctrine()->getManager()->flush();
     	return $this->showAction($pack_id);
 	}
+	
+	/**
+     * Sets the pack as the current pack
+     *
+     * @Route("/{pack_id}/setcurrent", name="pack_setcurrent", requirements={"pack_id" = "\d+"})
+     * @Method("POST")
+     * @Template("FMSymSlateBundle:Pack:show.html.twig")
+     */
+    public function setCurrentAction($pack_id)
+    {
+    	$this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:Pack')->setCurrent($pack_id);
+		
+		$this->getDoctrine()->getManager()->flush();
+		
+    	return $this->showAction($pack_id);
+	}
     	
 
     /**

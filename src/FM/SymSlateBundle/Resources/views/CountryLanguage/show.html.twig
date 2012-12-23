@@ -1,0 +1,41 @@
+<h1>CountryLanguage</h1>
+
+<table class="record_properties">
+    <tbody>
+        <tr>
+            <th>Id</th>
+            <td>{{ entity.id }}</td>
+        </tr>
+        <tr>
+            <th>Country_id</th>
+            <td>{{ entity.countryid }}</td>
+        </tr>
+        <tr>
+            <th>Language_id</th>
+            <td>{{ entity.languageid }}</td>
+        </tr>
+        <tr>
+            <th>Percent</th>
+            <td>{{ entity.percent }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<ul class="record_actions">
+    <li>
+        <a href="{{ path('countrylanguage') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('countrylanguage_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>
+        <form action="{{ path('countrylanguage_delete', { 'id': entity.id }) }}" method="post">
+            {{ form_widget(delete_form) }}
+            <button type="submit">Delete</button>
+        </form>
+    </li>
+</ul>

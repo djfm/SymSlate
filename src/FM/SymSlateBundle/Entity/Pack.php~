@@ -379,4 +379,27 @@ class Pack
     {
         return $this->pack_exports;
     }
+
+    /**
+     * Set is_current
+     *
+     * @param boolean $isCurrent
+     * @return Pack
+     */
+    public function setIsCurrent($isCurrent)
+    {
+        $this->is_current = $isCurrent;
+    
+        return $this;
+    }
+
+    /**
+     * Get is_current
+     *
+     * @return boolean 
+     */
+    public function getIsCurrent()
+    {
+        return $this->is_current;
+    }
 }

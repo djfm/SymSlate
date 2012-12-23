@@ -30,3 +30,11 @@ submissions:
 exports:
     resource: "@FMSymSlateBundle/Controller/PackExportController.php"
     type: annotation
+    
+countrylanguages:
+    resource: "@FMSymSlateBundle/Controller/CountryLanguageController.php"
+    type: annotation
+    
+countries:
+    resource: "@FMSymSlateBundle/Controller/CountryController.php"
+    type: annotation

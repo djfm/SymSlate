@@ -2,6 +2,13 @@
 
 {%  block body %}
 	<h1>Pack</h1>
+	<p>
+		{% if entity.getIsCurrent() %}
+			This is the current pack
+		{% else %}
+			This is NOT the current pack
+		{% endif %}
+	</p>
 	
 	<table class="record_properties">
 	    <tbody>
@@ -57,6 +64,11 @@
 	    <li>
 	        <form action="{{ path('pack_autocomplete', { 'pack_id': entity.id }) }}" method="post">
 	            <button type="submit">Autocomplete</button>
+	        </form>
+	    </li>
+	    <li>
+	        <form action="{{ path('pack_setcurrent', { 'pack_id': entity.id }) }}" method="post">
+	            <button type="submit">Set as current pack</button>
 	        </form>
 	    </li>
 	    <li>

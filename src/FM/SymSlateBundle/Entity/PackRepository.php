@@ -371,6 +371,14 @@ class PackRepository extends EntityRepository
 		}
 	}
 	
+	public function setCurrent($pack_id)
+	{
+		$this->getEntityManager()->createQuery("UPDATE FMSymSlateBundle:Pack p SET p.is_current = CASE WHEN p.id = :pack_id THEN true ELSE false END")
+								 ->setParameter('pack_id',$pack_id)
+								 ->getResult();
+	    
+	}
+	
 	public function getPackNames()
 	{
 		$packNames = array();
