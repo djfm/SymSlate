@@ -95,3 +95,10 @@ services:
     session.handler.pdo:
         class:     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
         arguments: [@pdo, %pdo.db_options%]
+        
+    queue_manager:
+        class: FM\Bundle\SlowShowBundle\Manager\Manager
+        arguments:
+          em: "@doctrine.orm.entity_manager"
+          security_context: "@security.context"
+          max_concurrent_jobs: 4

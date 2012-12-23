@@ -23,6 +23,11 @@ class Country
 	 	$this->country_languages = new \Doctrine\Common\Collections\ArrayCollection();
 	 }
 	
+	public function __toString()
+	{
+		return $this->getName();
+	}
+	
     /**
      * @var integer
      *
@@ -194,5 +199,28 @@ class Country
     public function getCountryLanguages()
     {
         return $this->country_languages;
+    }
+
+    /**
+     * Set map_code
+     *
+     * @param string $mapCode
+     * @return Country
+     */
+    public function setMapCode($mapCode)
+    {
+        $this->map_code = $mapCode;
+    
+        return $this;
+    }
+
+    /**
+     * Get map_code
+     *
+     * @return string 
+     */
+    public function getMapCode()
+    {
+        return $this->map_code;
     }
 }

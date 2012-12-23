@@ -1,0 +1,45 @@
+<h1>Task list</h1>
+
+<table class="records_list">
+    <thead>
+        <tr>
+            <th>Class</th>
+            <th>Status</th>
+            <th>Started</th>
+            <th>Completed</th>
+            <th>Failed</th>
+            <th>Progress</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for entity in entities %}
+        <tr>
+            <td>{{ entity.class }}</td>
+            <td>{{ entity.status }}</td>
+            <td>{{ entity.started ? "YES" : "NO" }}</td>
+            <td>{{ entity.completed ? "YES" : "NO" }}</td>
+            <td>{{ entity.failed ? "YES" : "NO" }}</td>
+            <td>{{ entity.progress | default("unknown") }}</td>
+            <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('tasks_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('tasks_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+<ul>
+    <li>
+        <a href="{{ path('tasks_new') }}">
+            Create a new entry
+        </a>
+    </li>
+</ul>

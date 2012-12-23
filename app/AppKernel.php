@@ -22,7 +22,8 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
             new Doctrine\Bundle\MigrationsBundle\DoctrineMigrationsBundle(),
-            new FM\SymSlateBundle\FMSymSlateBundle()
+            new FM\SymSlateBundle\FMSymSlateBundle(),
+            new FM\Bundle\SlowShowBundle\FMSlowShowBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
