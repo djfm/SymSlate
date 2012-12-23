@@ -12,4 +12,23 @@ use Doctrine\ORM\EntityRepository;
  */
 class CountryRepository extends EntityRepository
 {
+	public function computeStatistics($country_fields)
+	{
+		if($country = $this->findOneBy($country_fields))
+		{
+			if($pack = $this->getEntityManager()->getRepository('FMSymSlateBundle:Pack')->findOneBy(array('is_current' => true)))
+			{
+				$coverage = 0;
+				foreach($country->getCountryLanguages() as $country_language)
+				{
+					$stats = $this->getEntityManager()->getRepository('FMSymSlateBundle:Pack')->computeStatistics($pack->getId(), $country_language->getLanguageId());
+					$total = $stats['statistics'][null]['percent'];
+					$coverage += (double)$total * (double)$country_language->getPercent() / 100;
+				}
+				return $coverage;
+			}
+			else return 0;
+		}
+		else return 0;
+	}
 }

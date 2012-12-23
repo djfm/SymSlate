@@ -23,6 +23,20 @@
 		
 		
 		var colors = {};
+
+		function color(scale)
+		{
+			var mr = 0;
+			var mg = 255;
+			var mb = 0;
+
+			var r = Math.round((mr * scale / 100));
+			var g = Math.round((mg * scale / 100));
+			var b = Math.round((mb * scale / 100));
+
+			return 'rgb('+r+','+g+','+b+')';
+			
+		}
 		
 		$(window).load(function(){
 
@@ -36,8 +50,30 @@
 			function(e){
 				$('#country').html('-');
 				$(e.target).attr('fill',colors[$(e.target).attr('id')]);
-			})
-		});
+			});
+
+
+			var ids = [];
+			
+			countries().each(function(i, country){
+				ids.push($(country).attr('id'));	
+			});
+
+			$.post('{{ url('getcountrystats') }}',
+					  {
+				  		map_codes: ids
+					  },
+					  function(data)
+					  {
+						  console.log(data);
+						  for(var i in data)
+						  {
+							  country(i).attr('fill',color(data[i]));
+						  }
+					  },
+					  'json'
+		    );
+	    });
 		
 	</script>
 {% endblock %}
