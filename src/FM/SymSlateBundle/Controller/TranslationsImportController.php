@@ -111,10 +111,11 @@ class TranslationsImportController extends Controller
 				$manager = $this->get("queue_manager");
 				//$em->getRepository('FMSymSlateBundle:TranslationsImport')->saveTranslations($entity->getId(), $this->get('logger'));
 				$manager->enqueueJob('FM:SymSlateBundle:Job:TranslationsImportJob', array('translations_import_id' => $entity->getId()));
+				$manager->processNextJob();
 			}
             	
 			
-            return $this->redirect($this->generateUrl('translationsimports_show', array('id' => $entity->getId())));
+            return $this->redirect($this->generateUrl('translationsimports_show', array('id' => $entity->getId(), 'backgroundprocess' => true)));
         }
 
         return array(

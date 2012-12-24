@@ -19,6 +19,14 @@
     </head>
     <body>
         {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+        {% block javascripts %}
+        
+        {%  if app.request.query.get('backgroundprocess') == 1 %}
+	        <script type="text/javascript">
+	        	/*$.get('{{ url('tasks_dequeue') }}');*/
+	        </script>
+        {% endif %}
+        
+        {% endblock %}
     </body>
 </html>

@@ -30,29 +30,61 @@ class Manager
 	
 	public function processNextJob()
 	{
-		//$this->em->getConnection()->exec('LOCK TABLES Task WRITE;'); //make sure we don't go over the job limit by harassing the server
-		if($this->em->createQuery("SELECT COUNT(t.id) FROM FMSlowShowBundle:Task t WHERE t.started = true AND t.completed = false")->getSingleScalarResult() < $this->max_concurrent_jobs)
+		//$this->doProcessNextJob();
+		register_shutdown_function(array($this, 'doProcessNextJob'));
+	}
+	
+	public function doProcessNextJob()
+	{
+		//the TaskInfo entity has an optimist lock : should prevent us from starting too many parallel tasks!
+		if($running = $this->em->getRepository('FMSlowShowBundle:TaskInfo')->findOneByField('running'))
+		{
+			
+		}
+		else 
+		{
+			$running = new \FM\Bundle\SlowShowBundle\Entity\TaskInfo();
+			$running->setField('running');
+			$running->setValue(0);
+			$this->em->persist($running);
+			$this->em->flush();	
+		}
+		
+				
+		
+		if($running->getValue() < $this->max_concurrent_jobs)
 		{
 			if($job = $this->em->getRepository('FMSlowShowBundle:Task')->findOneBy(array('started' => false, 'completed' => false)))
 			{
-				
+				$job_id = $job->getId();
 				$job->setStarted(true);
+				$running->setValue($running->getValue() + 1);
+				$this->em->persist($running);	
 				$this->em->persist($job);
-				$this->em->flush();
-				//$this->em->getConnection()->exec('UNLOCK TABLES;');
+				$this->em->flush();//this should release the lock
 				
+				
+				//this will take a long time
 				$class  = $job->getClass();
 				$worker = new $class($this->em);
 				$worker->perform(json_decode($job->getArguments(),true));
 				
+				//reload the job entity from the DB because the em was probably cleared in the mean time
+				$job = $this->em->getRepository('FMSlowShowBundle:Task')->find($job_id);
 				$job->setCompleted(true);
+				//decrement counter
+				$running = $this->em->getRepository('FMSlowShowBundle:TaskInfo')->findOneByField('running');
+				$running->setValue($running->getValue() - 1);
+				$this->em->persist($running);
 				$this->em->persist($job);
 				$this->em->flush();
 				
 			}
-			//else $this->em->getConnection()->exec('UNLOCK TABLES;');
 		}
-		//else $this->em->getConnection()->exec('UNLOCK TABLES;');
+
+		//run again if needed
+		$this->processNextJob();
+
 	}
 	
 }
