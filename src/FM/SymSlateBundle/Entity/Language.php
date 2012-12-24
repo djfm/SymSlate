@@ -33,6 +33,12 @@ class Language
 		return $this->getName();
 	}
 	
+	public function getAName()
+	{
+		if($n = $this->getName())return $n;
+		else return $this->getCode();
+	}
+	
     /**
      * @var integer
      *
