@@ -65,95 +65,48 @@
 					'json');
 			}
 
-			CKEDITOR.on('currentInstance',function(e){
-				var editor = CKEDITOR.currentInstance;
-				if(editor){
-					var tmp = editor.name.split("_");
-					var id  = tmp[tmp.length - 1];
-					gotFocus(id);
-				}
-			});
-
-			$('textarea.translate').focus(function(e){
-				var tmp = $(e.target).attr('id').split("_");
-				var id  = tmp[tmp.length - 1];
-				gotFocus(id);
-			});
-
-			function gotFocus(id)
-			{
-				$('.controls_active').removeClass('controls_active').css('display','none');
-				console.log("I got the focus! " + id);
-				$('#controls_'+id).css('display','table').addClass('controls_active');
-			}
-						
 		</script>
 		
 {% endblock %}
-{% block body %}	
+{% block body %}
+
+	<h1>Translate!</h1>
+	
 	<fieldset id="jump">
 		<legend>Quick Jump</legend>
 		<form>
-			<table>
-				<tr>
-					<td>Source Language</td>
-					<td>
-						<select style="width:100%" class="autosubmit" id="translate_source_language_code" name="source_language_code">
-							{% for language in languages %}
-								<option value="{{ language.code }}" {{ app.request.query.get('source_language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
-							{% endfor %}
-						</select>
-					</td>
-					<td>
-						Category
-					</td>
-					<td>
-						<select style="width:100%" class="autosubmit" id="translate_category" name="category">
-							<option value="">Any Category</option>
-							{% for category in categories %}
-								<option value="{{ category["category"] }}" {{ app.request.query.get('category')==category['category'] ? "selected='true'" : '' }}>
-									{{ category["category"] }}
-								</option>
-							{% endfor %}
-						</select>
-					</td>
-					<td>
-						Message like
-					</td>
-					<td>
-						<input name="message_like" type='text' value='{{ app.request.query.get('message_like')}}'/>
-					</td>
-					<td rowspan="2"><input type="submit" value="Jump!" style="height:100%"/></td>
-				</tr>
-				<tr>
-					<td>Destination Language</td>
-					<td>
-						<select style="width:100%" class="autosubmit" id="translate_language_code" name="language_code">
-							{% for language in languages %}
-								<option value="{{ language.code }}" {{ app.request.query.get('language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
-							{% endfor %}
-						</select>
-					</td>
-					<td>
-						Translation
-					</td>
-					<td>
-						<select style="width:100%" class="autosubmit" id="translate_empty" name="empty">
-							<option value="ONLY" {{ app.request.query.get('empty')== "ONLY" ? "selected='true'" : '' }}>is missing</option>
-							<option value="EXCEPT" {{ app.request.query.get('empty')== "EXCEPT" ? "selected='true'" : '' }}>is there</option>
-							<option value="MAYBE" {{ app.request.query.get('empty')== "MAYBE" ? "selected='true'" : '' }}>is or is not there</option>
-						</select>
-					</td>
-					<td>
-						Translation like
-					</td>
-					<td>
-						<input type='text' name="translation_like" value='{{ app.request.query.get('translation_like')}}'/>
-					</td>
-				</tr>
-			</table>
-			
-			
+			Translate
+			category
+			<select class="autosubmit" id="translate_category" name="category">
+				<option value="">Any Category</option>
+				{% for category in categories %}
+					<option value="{{ category["category"] }}" {{ app.request.query.get('category')==category['category'] ? "selected='true'" : '' }}>
+						{{ category["category"] }}
+					</option>
+				{% endfor %}
+			</select>
+			from
+			<select class="autosubmit" id="translate_source_language_code" name="source_language_code">
+				{% for language in languages %}
+					<option value="{{ language.code }}" {{ app.request.query.get('source_language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
+				{% endfor %}
+			</select>
+			into
+			<select class="autosubmit" id="translate_language_code" name="language_code">
+				{% for language in languages %}
+					<option value="{{ language.code }}" {{ app.request.query.get('language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
+				{% endfor %}
+			</select>
+			where translation
+			<select class="autosubmit" id="translate_empty" name="empty">
+				<option value="ONLY" {{ app.request.query.get('empty')== "ONLY" ? "selected='true'" : '' }}>is missing</option>
+				<option value="EXCEPT" {{ app.request.query.get('empty')== "EXCEPT" ? "selected='true'" : '' }}>is there</option>
+				<option value="MAYBE" {{ app.request.query.get('empty')== "MAYBE" ? "selected='true'" : '' }}>is or is not there</option>
+			</select>
+			<br/>
+			Show only messages looking like <input name="message_like" type='text' value='{{ app.request.query.get('message_like')}}'/> and translations like 
+			<input type='text' name="translation_like" value='{{ app.request.query.get('translation_like')}}'/> (leave empty to not filter).
+			<input type="submit" value="Jump!"/>
 			<br/>
 			{% if pagination is not empty %}
 				<nav class='navigation'>
@@ -189,8 +142,8 @@
 		{% else %}
 			{% for category, s_ss in messages %}
 				{%  if category is not empty %}
-					<div class="category">
-						<p>{{ category }}</p>
+					<fieldset class="category">
+						<legend>{{ category }}</legend>
 				{% endif %}
 					{% for section, ss_m in s_ss %}
 						{%  if section is not empty %}
@@ -206,7 +159,7 @@
 										<div class="translate_field">
 											<div id="translation_message_{{ m['classification_id'] }}" class="translate_message">
 												{% if m['type'] == "HTML" %}
-													<iframe id="iframe_{{ m['classification_id'] }}" class="translate" srcdoc="{{ m['text'] }}"></iframe>
+													<iframe class="translate" srcdoc="{{ m['text'] }}"></iframe>
 												{% elseif m['type'] == "TXT" %}
 													<pre class="translate">{{ m['text'] }}</pre>
 												{% else %}
@@ -214,11 +167,9 @@
 												{% endif %}
 											</div>
 											<div class="translate_translation">
-													<textarea ckadjust="iframe_{{ m['classification_id'] }}" same_height="translation_message_{{ m['classification_id'] }}" id="translation_text_{{ m['classification_id'] }}" class="translate {{ m['type'] }}">{{ m['translation'] }}</textarea>
+													<textarea height_of="translation_message_{{ m['classification_id'] }}" id="translation_text_{{ m['classification_id'] }}" class="translate {{ m['type'] }}">{{ m['translation'] }}</textarea>
 											</div>
-											<div class="clear"></div>
-											
-											<div class="translate_controls_container" id="controls_{{ m['classification_id'] }}">
+											<div class="translate_controls_container">
 												<div class="translate_controls">
 													<div class="cell">
 														<img 
@@ -240,16 +191,16 @@
 											
 										</div>
 									{%  endfor %}
-							{%  if subsection is not empty %}	
+								{%  if subsection is not empty %}
 									</fieldset>
-							{% endif %}	
+								{%  endif %}
 							{% endfor %}
-					{%  if section is not empty %}	
+						{%  if section is not empty %}
 							</fieldset>
-					{% endif %}
+						{% endif %}
 					{% endfor %}
-				{%  if category is not empty %}	
-					</div>
+				{%  if category is not empty %}
+					</fieldset>
 				{% endif %}
 			{% endfor %}
 		{% endif %}	

@@ -20,18 +20,54 @@ pre.translate
 
 div.translate_field
 {
-	border:1px solid #666;
-	margin-top:7px;
+	border:1px solid #ccc;
+	border-bottom:0;
+	
+	/*margin-top:7px;
 	margin-bottom:7px;
 	padding:5px;
-	background-color:#FAFAFA;
-	border-radius:3px;
+	background-color:rgba(210,210,210,0.5);
+	border-radius:3px;*/
 }
+
+div.translate_message
+{	
+	background-color:rgb(255,255,240);
+	float:left;
+	
+	
+	/*
+	border: 1px solid black;
+	margin: -1px;*/
+	
+	
+	width:50%;
+	
+	
+}
+
+div.translate_translation
+{
+	float:left;
+	width:50%;
+}
+
+textarea.translate
+{
+	
+	/*
+	border:1px solid black;
+	margin-top:-1px;
+	margin-bottom:-2px;*/
+}
+
+
 
 div.translate_controls_container
 {
-	display: table;
+	display: none;
 	vertical-align:middle;
+	width:100%;
 }
 
 div.translate_controls
@@ -45,9 +81,8 @@ div.cell
 {
 	display:table-cell;
 	vertical-align:middle;
+	float:right;
 }
-
-
 
 fieldset
 {
@@ -55,10 +90,38 @@ fieldset
 	border-color:#EEE;
 }
 
+fieldset#jump
+{
+	background-color:rgba(255,255,255,0.8);
+	
+}
+
+fieldset.category, fieldset.section, fieldset.subsection
+{
+	border-radius:0;
+	border-left:0;
+	border-right:0;
+	border-bottom:0;
+	margin:0;
+	padding:0;
+}
+
+fieldset.category
+{
+}
+
+fieldset.section
+{
+	background-color:rgba(255,255,255,0.5);
+}
+
 form
 {
 	margin:0;
 }
+
+
+
 
 div.translation_details
 {

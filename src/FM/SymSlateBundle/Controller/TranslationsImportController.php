@@ -115,7 +115,7 @@ class TranslationsImportController extends Controller
 			}
             	
 			
-            return $this->redirect($this->generateUrl('translationsimports_show', array('id' => $entity->getId(), 'backgroundprocess' => true)));
+            return $this->redirect($this->generateUrl('translationsimports_show', array('id' => $entity->getId())));
         }
 
         return array(

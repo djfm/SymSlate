@@ -26,13 +26,19 @@
 
 		function color(scale)
 		{
+			var lr = 255;
+			if(scale == 0)lr = 0;
+			var lg = 0;
+			var lb = 0;
+
+			
 			var mr = 0;
 			var mg = 255;
 			var mb = 0;
 
-			var r = Math.round((mr * scale / 100));
-			var g = Math.round((mg * scale / 100));
-			var b = Math.round((mb * scale / 100));
+			var r = Math.round(lr + ((mr-lr) * scale / 100));
+			var g = Math.round(lg + ((mg-lg) * scale / 100));
+			var b = Math.round(lb + ((mb-lb) * scale / 100));
 
 			return 'rgb('+r+','+g+','+b+')';
 			
@@ -81,5 +87,7 @@
 
 {% block body %}
 	<h2 id="country">-</h2>
-	<object id="map" data="{{ asset('bundles/fmsymslate/images/map.svg') }}" type="image/svg+xml" height="600" width="800"> <img src="image-png.png" height="48" width="48" alt="this is a PNG" /> </object>
+	<div class="center">
+		<object id="map" data="{{ asset('bundles/fmsymslate/images/map.svg') }}" type="image/svg+xml" height="600" width="800"> <img src="image-png.png" height="48" width="48" alt="this is a PNG" /> </object>
+	</div>
 {% endblock %}
