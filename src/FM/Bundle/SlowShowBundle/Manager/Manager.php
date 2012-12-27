@@ -32,6 +32,7 @@ class Manager
 	{
 		//$this->doProcessNextJob();
 		//procrastinate
+		
 		register_shutdown_function(array($this, 'doProcessNextJob'));
 	}
 	
