@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
+
     <head>
+    
         <meta charset="UTF-8" />
         <title>{% block title %}Welcome!{% endblock %}</title>
         {% block stylesheets %}{% endblock %}
@@ -17,8 +19,29 @@
 		{% endstylesheets %}
 		
     </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
+    
+    <body style="background-image:url({{ asset('bundles/fmsymslate/images/stripes.png') }})">
+    	<div id="banner">
+    		<div class="table">
+    			<div class="table-row">
+    				<div class="table-cell toplink" onclick="javascript:window.location='{{ url('fm_symslate_default_index') }}'">
+    					Home
+    				</div>
+    				<div class="table-cell toplink" onclick="javascript:window.location='{{ url('packs') }}'">
+    					Translate
+    				</div>
+    				<div class="table-cell toplink" onclick="javascript:window.location='{{ url('translationsimports_new') }}'">
+    					Import
+    				</div>
+    			</div>
+    		</div>
+    	</div>
+    	<div id="contents">
+    		 {% block body %}{% endblock %}
+    	</div>
+        {% block javascripts %}
+        
+        {% endblock %}
     </body>
+    
 </html>

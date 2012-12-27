@@ -37,3 +37,7 @@ countrylanguages:
 countries:
     resource: "@FMSymSlateBundle/Controller/CountryController.php"
     type: annotation
+    
+tasks:
+    resource: "@FMSlowShowBundle/Controller/TaskController.php"
+    type: annotation

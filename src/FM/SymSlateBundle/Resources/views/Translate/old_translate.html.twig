@@ -1,0 +1,209 @@
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {% stylesheets '@FMSymSlateBundle/Resources/public/css/translate.css' %}
+	    <link rel="stylesheet" href="{{ asset_url }}" />
+	{% endstylesheets %}
+{% endblock %}
+
+{% block javascripts %}
+		{{ parent() }}
+		
+		{% javascripts '@FMSymSlateBundle/Resources/public/js/translate.js' %}
+		    <script src="{{ asset_url }}"></script>
+		{% endjavascripts %}
+		
+		<script type="text/javascript" src="{{ asset('vendor/ckeditor/ckeditor.js') }}"></script>
+		
+		<script type="text/javascript">
+			//this is here and not in translate.js because we need some twig helpers for URLs, so this is more convenient.
+			submit_translation = function(message_id, classification_id, translation_id, language_id)
+			{
+				var text = '';
+				var txtid = 'translation_text_'+classification_id;
+				if($('#'+txtid).hasClass('HTML'))
+				{
+					text = CKEDITOR.instances[txtid].getData();
+				}
+				else
+				{
+					text = $('#'+txtid).val();
+				}
+
+				var img = $('#translation_submit_'+classification_id);
+
+				img.attr('src','{{ asset('bundles/fmsymslate/images/working.png') }}');
+
+				$('#submission_feedback_'+classification_id).hide();
+				
+				$.post('../submissions/create',{
+						message_id: message_id,
+						classification_id: classification_id,
+						translation_id: translation_id,
+						language_id: language_id,
+						text: text
+					},
+					function(data){
+						console.log(data);
+						if(data.success)
+						{
+							img.attr('src','{{ asset('bundles/fmsymslate/images/happy.png') }}');
+
+							$('#submission_feedback_'+classification_id).css('display','none');
+							$('#submission_feedback_'+classification_id).html(data['']);
+							
+						}
+						else
+						{
+							img.attr('src','{{ asset('bundles/fmsymslate/images/sad.png') }}');
+							
+							$('#submission_feedback_'+classification_id).html(data['error_message']);
+							$('#submission_feedback_'+classification_id).css('display','inline-block');
+						}
+					},
+					'json');
+			}
+
+		</script>
+		
+{% endblock %}
+{% block body %}
+
+	<h1>Translate!</h1>
+	
+	<fieldset id="jump">
+		<legend>Quick Jump</legend>
+		<form>
+			Translate
+			category
+			<select class="autosubmit" id="translate_category" name="category">
+				<option value="">Any Category</option>
+				{% for category in categories %}
+					<option value="{{ category["category"] }}" {{ app.request.query.get('category')==category['category'] ? "selected='true'" : '' }}>
+						{{ category["category"] }}
+					</option>
+				{% endfor %}
+			</select>
+			from
+			<select class="autosubmit" id="translate_source_language_code" name="source_language_code">
+				{% for language in languages %}
+					<option value="{{ language.code }}" {{ app.request.query.get('source_language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
+				{% endfor %}
+			</select>
+			into
+			<select class="autosubmit" id="translate_language_code" name="language_code">
+				{% for language in languages %}
+					<option value="{{ language.code }}" {{ app.request.query.get('language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
+				{% endfor %}
+			</select>
+			where translation
+			<select class="autosubmit" id="translate_empty" name="empty">
+				<option value="ONLY" {{ app.request.query.get('empty')== "ONLY" ? "selected='true'" : '' }}>is missing</option>
+				<option value="EXCEPT" {{ app.request.query.get('empty')== "EXCEPT" ? "selected='true'" : '' }}>is there</option>
+				<option value="MAYBE" {{ app.request.query.get('empty')== "MAYBE" ? "selected='true'" : '' }}>is or is not there</option>
+			</select>
+			<br/>
+			Show only messages looking like <input name="message_like" type='text' value='{{ app.request.query.get('message_like')}}'/> and translations like 
+			<input type='text' name="translation_like" value='{{ app.request.query.get('translation_like')}}'/> (leave empty to not filter).
+			<input type="submit" value="Jump!"/>
+			<br/>
+			{% if pagination is not empty %}
+				<nav class='navigation'>
+					<input type="hidden" name="page" id="page" value="{{ app.request.query.get('page') | default('1') }}"}/>
+					{% if pagination['previous_page'] is defined %}
+						<a href="javascript:goto_page(1)">First</a>
+						<a href='javascript:previous_page()'>&lt;&lt;&nbsp;</a>
+					{%  endif  %}
+					Page {{ app.request.query.get('page') | default('1') }} of <a href="javascript:goto_page({{ pagination['page_count'] }})">{{ pagination['page_count'] }}</a>
+					{% if pagination['next_page'] is defined %}
+						<a href='javascript:next_page()'>&nbsp;&gt;&gt;</a>
+						<a href="javascript:goto_page({{ pagination['page_count'] }})">Last</a>
+					{%  endif  %}
+				</nav>
+			{% endif %}
+			
+		</form>
+	</fieldset>
+	
+	<br/>
+	
+	{% if pack == null %}
+		<p><span class="error">The pack you are trying to translate does not exist!</span></p>	
+	{% endif %}
+	
+	{% if language == null %}
+		<p><span class="error">The language you are trying to translate into does not exist!</span></p>	
+	{% endif %}
+	
+	{% if language and pack %}
+		{% if messages == null %}
+			<p><span class="info">There are no messages to translate here!</span></p>
+		{% else %}
+			{% for category, s_ss in messages %}
+				{%  if category is not empty %}
+					<fieldset class="category">
+						<legend>{{ category }}</legend>
+				{% endif %}
+					{% for section, ss_m in s_ss %}
+						{%  if section is not empty %}
+							<fieldset class="section">
+							<legend>{{ section }}</legend>
+						{% endif %}
+							{% for subsection, ms in ss_m %}
+								{%  if subsection is not empty %}
+									<fieldset class="subsection">
+									<legend>{{ subsection }}</legend>
+								{% endif %}
+									{%  for m in ms %}
+										<div class="translate_field">
+											<div id="translation_message_{{ m['classification_id'] }}" class="translate_message">
+												{% if m['type'] == "HTML" %}
+													<iframe class="translate" srcdoc="{{ m['text'] }}"></iframe>
+												{% elseif m['type'] == "TXT" %}
+													<pre class="translate">{{ m['text'] }}</pre>
+												{% else %}
+													{{ m['text'] }}
+												{% endif %}
+											</div>
+											<div class="translate_translation">
+													<textarea height_of="translation_message_{{ m['classification_id'] }}" id="translation_text_{{ m['classification_id'] }}" class="translate {{ m['type'] }}">{{ m['translation'] }}</textarea>
+											</div>
+											<div class="translate_controls_container">
+												<div class="translate_controls">
+													<div class="cell">
+														<img 
+															 class="clickable small submit_translation" 
+															 onclick="javascript:submit_translation({{ m['message_id'] }}, 
+															 									 	{{ m['classification_id'] }},
+															 									 	{{ m['translation_id'] | default('undefined') }},
+															 									 	{{ language.getId() }})" 
+															 src="{{ asset('bundles/fmsymslate/images/submit.png') }}"
+															 alt="Submit!" 
+															 id="translation_submit_{{ m['classification_id'] }}"
+														 />
+													 </div>
+													 <div class="cell">
+													 	<div class="translation_details submission_feedback" id="submission_feedback_{{ m['classification_id'] }}"></div>
+													 </div>
+												</div>
+											</div>
+											
+										</div>
+									{%  endfor %}
+								{%  if subsection is not empty %}
+									</fieldset>
+								{%  endif %}
+							{% endfor %}
+						{%  if section is not empty %}
+							</fieldset>
+						{% endif %}
+					{% endfor %}
+				{%  if category is not empty %}
+					</fieldset>
+				{% endif %}
+			{% endfor %}
+		{% endif %}	
+	{% endif %}
+
+{% endblock %}

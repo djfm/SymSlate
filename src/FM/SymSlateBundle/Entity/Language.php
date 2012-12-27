@@ -30,7 +30,13 @@ class Language
 	
 	public function __toString()
 	{
-		return $this->getName();
+		return $this->getAName();
+	}
+	
+	public function getAName()
+	{
+		if($n = $this->getName())return $n;
+		else return $this->getCode();
 	}
 	
     /**
