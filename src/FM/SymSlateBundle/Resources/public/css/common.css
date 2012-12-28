@@ -89,3 +89,8 @@ th
 {
 	text-align: center;
 }
+
+fieldset.bordered
+{
+	margin:5px;
+}

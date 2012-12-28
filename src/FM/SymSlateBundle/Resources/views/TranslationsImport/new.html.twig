@@ -2,13 +2,14 @@
 
 {% block body %}
 
-<h1>TranslationsImport creation</h1>
-
 <form action="{{ path('translationsimports_create') }}" method="post" {{ form_enctype(form) }}>
-    {{ form_widget(form) }}
-    <p>
-        <button type="submit">Create</button>
-    </p>
+	<legend>Import a translation pack</legend>
+	<fieldset>
+	    {{ form_widget(form) }}
+	    
+	    <button type="submit" class="btn">Create</button>
+	   
+    </fieldset>
 </form>
 
 <ul class="record_actions">

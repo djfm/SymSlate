@@ -2,6 +2,10 @@ $(function(){
 	$('select.autosubmit').change(function(){
 		$(this).parents('form').submit();
 	});
+
+	$('legend.toggleable').click(function(e){
+		$(e.target).parent().children('div.toggleable').toggle();
+	});
 	
 	$('[same_height]').each(function(i,e){
 		var h = $('#'+$(e).attr('same_height')).css('height');
@@ -29,6 +33,7 @@ $(function(){
 		var editor = CKEDITOR.replace(t,conf); 
 	});
 });
+
 
 
 next_page = function()

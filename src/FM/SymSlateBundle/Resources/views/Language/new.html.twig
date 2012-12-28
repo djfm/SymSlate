@@ -1,3 +1,6 @@
+{% extends '::base.html.twig' %}
+
+{%  block body %}
 <h1>Language creation</h1>
 
 <form action="{{ path('languages_create') }}" method="post" {{ form_enctype(form) }}>
@@ -14,3 +17,4 @@
         </a>
     </li>
 </ul>
+{% endblock %}

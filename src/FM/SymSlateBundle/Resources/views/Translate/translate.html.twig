@@ -90,7 +90,8 @@
 		</script>
 		
 {% endblock %}
-{% block body %}	
+{% block body %}
+	<!--	
 	<fieldset id="jump">
 		<legend>Quick Jump</legend>
 		<form>
@@ -123,7 +124,7 @@
 					<td>
 						<input name="message_like" type='text' value='{{ app.request.query.get('message_like')}}'/>
 					</td>
-					<td rowspan="2"><input type="submit" value="Jump!" style="height:100%"/></td>
+					
 				</tr>
 				<tr>
 					<td>Destination Language</td>
@@ -153,11 +154,63 @@
 				</tr>
 			</table>
 			
-			
+			<button class="btn" type="submit" value="Jump!"/>
+			-->
+			<form class="form-inline">
+		  		
+				<input type="hidden" name="page" id="page" value="{{ app.request.query.get('page') | default(1) }}"/>
+
+		  		<fieldset class="pull-left bordered">
+		  			<legend>Language</legend>
+			  		<select class="autosubmit" id="translate_source_language_code" name="source_language_code">
+						{% for language in languages %}
+							<option value="{{ language.code }}" {{ app.request.query.get('source_language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
+						{% endfor %}
+					</select>
+					=>
+					<select class="autosubmit" id="translate_language_code" name="language_code">
+						{% for language in languages %}
+							<option value="{{ language.code }}" {{ app.request.query.get('language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
+						{% endfor %}
+					</select>
+				</fieldset>
+			  
+			<div class="pull-right">
+				<fieldset class="pull-left bordered">
+					<legend>Message</legend>
+					<input name="message_like" type='text' value='{{ app.request.query.get('message_like')}}' placeholder="Type in a query here"/>
+					<br/>in category<br/>
+					<select style="" class="autosubmit" id="translate_category" name="category">
+						<option value="">Any Category</option>
+						{% for category in categories %}
+							<option value="{{ category["category"] }}" {{ app.request.query.get('category')==category['category'] ? "selected='true'" : '' }}>
+								{{ category["category"] }}
+							</option>
+						{% endfor %}
+					</select>
+				</fieldset>
+
+				<fieldset class="pull-left bordered">
+					<legend>Translation</legend>
+					<input type='text' name="translation_like" value='{{ app.request.query.get('translation_like')}}' placeholder="Type in a query here"/>
+					<br/>presence<br/>
+					<select  class="autosubmit" id="translate_empty" name="empty">
+						<option value="ONLY" {{ app.request.query.get('empty')== "ONLY" ? "selected='true'" : '' }}>is missing</option>
+						<option value="EXCEPT" {{ app.request.query.get('empty')== "EXCEPT" ? "selected='true'" : '' }}>is there</option>
+						<option value="MAYBE" {{ app.request.query.get('empty')== "MAYBE" ? "selected='true'" : '' }}>is or is not there</option>
+					</select>
+					
+					
+				</fieldset>
+			</div>
+				<div class="clearfix"></div>
+			  	<button type="submit" class="btn">Go!</button>
+
+			</form>
+
 			<br/>
 			{% if pagination is not empty %}
 				<nav class='navigation'>
-					<input type="hidden" name="page" id="page" value="{{ app.request.query.get('page') | default('1') }}"}/>
 					{% if pagination['previous_page'] is defined %}
 						<a href="javascript:goto_page(1)">First</a>
 						<a href='javascript:previous_page()'>&lt;&lt;&nbsp;</a>
@@ -188,69 +241,71 @@
 			<p><span class="info">There are no messages to translate here!</span></p>
 		{% else %}
 			{% for category, s_ss in messages %}
-				{%  if category is not empty %}
-					<div class="category">
-						<p>{{ category }}</p>
-				{% endif %}
-					{% for section, ss_m in s_ss %}
-						{%  if section is not empty %}
-							<fieldset class="section">
-							<legend>{{ section }}</legend>
-						{% endif %}
+				<fieldset class="translate_category">
+					<legend class="toggleable clickable">{{ category }}</legend>
+					<div class="toggleable">
+					{% for section, ss_m in s_ss %}	
+						{% if section is not empty %}
+							<fieldset class="translate_section">
+								<legend class="toggleable clickable">{{ section }}</legend>
+								<div class="toggleable">
+						{% endif %}				
 							{% for subsection, ms in ss_m %}
-								{%  if subsection is not empty %}
-									<fieldset class="subsection">
-									<legend>{{ subsection }}</legend>
-								{% endif %}
+
 									{%  for m in ms %}
-										<div class="translate_field">
-											<div id="translation_message_{{ m['classification_id'] }}" class="translate_message">
-												{% if m['type'] == "HTML" %}
-													<iframe id="iframe_{{ m['classification_id'] }}" class="translate" srcdoc="{{ m['text'] }}"></iframe>
-												{% elseif m['type'] == "TXT" %}
-													<pre class="translate">{{ m['text'] }}</pre>
-												{% else %}
-													{{ m['text'] }}
-												{% endif %}
+
+
+										<div class="translate_row">
+
+
+											<div class="translate_row_right">
+												<img 
+													 class="clickable small submit_translation" 
+													 onclick="javascript:submit_translation({{ m['message_id'] }}, 
+													 									 	{{ m['classification_id'] }},
+													 									 	{{ m['translation_id'] | default('undefined') }},
+													 									 	{{ language.getId() }})" 
+													 src="{{ asset('bundles/fmsymslate/images/submit.png') }}"
+													 alt="Submit!" 
+													 id="translation_submit_{{ m['classification_id'] }}"
+												 />
 											</div>
-											<div class="translate_translation">
+
+											<div class="translate_row_left">
+												<div class="translate_row_message pull-left " id="translation_message_{{ m['classification_id'] }}">
+													
+													{% if m['type'] == "HTML" %}
+														<iframe id="iframe_{{ m['classification_id'] }}" class="translate" srcdoc="{{ m['text'] }}"></iframe>
+													{% elseif m['type'] == "TXT" %}
+														<pre class="translate">{{ m['text'] }}</pre>
+													{% else %}
+														{{ m['text'] }}
+													{% endif %}
+												
+												
+												</div>
+												<div class="translate_row_translation pull-right">
+													
 													<textarea ckadjust="iframe_{{ m['classification_id'] }}" same_height="translation_message_{{ m['classification_id'] }}" id="translation_text_{{ m['classification_id'] }}" class="translate {{ m['type'] }}">{{ m['translation'] }}</textarea>
-											</div>
-											<div class="clear"></div>
-											
-											<div class="translate_controls_container" id="controls_{{ m['classification_id'] }}">
-												<div class="translate_controls">
-													<div class="cell">
-														<img 
-															 class="clickable small submit_translation" 
-															 onclick="javascript:submit_translation({{ m['message_id'] }}, 
-															 									 	{{ m['classification_id'] }},
-															 									 	{{ m['translation_id'] | default('undefined') }},
-															 									 	{{ language.getId() }})" 
-															 src="{{ asset('bundles/fmsymslate/images/submit.png') }}"
-															 alt="Submit!" 
-															 id="translation_submit_{{ m['classification_id'] }}"
-														 />
-													 </div>
-													 <div class="cell">
-													 	<div class="translation_details submission_feedback" id="submission_feedback_{{ m['classification_id'] }}"></div>
-													 </div>
+													
+													
 												</div>
 											</div>
+
 											
 										</div>
+										<div class="clearfix"></div>		
+										
 									{%  endfor %}
-							{%  if subsection is not empty %}	
-									</fieldset>
-							{% endif %}	
+								
 							{% endfor %}
-					{%  if section is not empty %}	
+						{% if section is not empty %}
+							</div>
 							</fieldset>
-					{% endif %}
+						{% endif %}
 					{% endfor %}
-				{%  if category is not empty %}	
-					</div>
-				{% endif %}
+				</div>
+				</fieldset>
 			{% endfor %}
 		{% endif %}	
 	{% endif %}
