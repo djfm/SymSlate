@@ -91,71 +91,6 @@
 		
 {% endblock %}
 {% block body %}
-	<!--	
-	<fieldset id="jump">
-		<legend>Quick Jump</legend>
-		<form>
-			<table>
-				<tr>
-					<td>Source Language</td>
-					<td>
-						<select style="width:100%" class="autosubmit" id="translate_source_language_code" name="source_language_code">
-							{% for language in languages %}
-								<option value="{{ language.code }}" {{ app.request.query.get('source_language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
-							{% endfor %}
-						</select>
-					</td>
-					<td>
-						Category
-					</td>
-					<td>
-						<select style="width:100%" class="autosubmit" id="translate_category" name="category">
-							<option value="">Any Category</option>
-							{% for category in categories %}
-								<option value="{{ category["category"] }}" {{ app.request.query.get('category')==category['category'] ? "selected='true'" : '' }}>
-									{{ category["category"] }}
-								</option>
-							{% endfor %}
-						</select>
-					</td>
-					<td>
-						Message like
-					</td>
-					<td>
-						<input name="message_like" type='text' value='{{ app.request.query.get('message_like')}}'/>
-					</td>
-					
-				</tr>
-				<tr>
-					<td>Destination Language</td>
-					<td>
-						<select style="width:100%" class="autosubmit" id="translate_language_code" name="language_code">
-							{% for language in languages %}
-								<option value="{{ language.code }}" {{ app.request.query.get('language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
-							{% endfor %}
-						</select>
-					</td>
-					<td>
-						Translation
-					</td>
-					<td>
-						<select style="width:100%" class="autosubmit" id="translate_empty" name="empty">
-							<option value="ONLY" {{ app.request.query.get('empty')== "ONLY" ? "selected='true'" : '' }}>is missing</option>
-							<option value="EXCEPT" {{ app.request.query.get('empty')== "EXCEPT" ? "selected='true'" : '' }}>is there</option>
-							<option value="MAYBE" {{ app.request.query.get('empty')== "MAYBE" ? "selected='true'" : '' }}>is or is not there</option>
-						</select>
-					</td>
-					<td>
-						Translation like
-					</td>
-					<td>
-						<input type='text' name="translation_like" value='{{ app.request.query.get('translation_like')}}'/>
-					</td>
-				</tr>
-			</table>
-			
-			<button class="btn" type="submit" value="Jump!"/>
-			-->
 			<form class="form-inline">
 		  		
 				<input type="hidden" name="page" id="page" value="{{ app.request.query.get('page') | default(1) }}"/>
@@ -178,8 +113,8 @@
 			<div class="pull-right">
 				<fieldset class="pull-left bordered">
 					<legend>Message</legend>
-					<input name="message_like" type='text' value='{{ app.request.query.get('message_like')}}' placeholder="Type in a query here"/>
-					<br/>in category<br/>
+					<input name="message_like" type='text' value='{{ app.request.query.get('message_like')}}' placeholder="Filter messages..."/>
+					<br/>Select category<br/>
 					<select style="" class="autosubmit" id="translate_category" name="category">
 						<option value="">Any Category</option>
 						{% for category in categories %}
@@ -192,12 +127,12 @@
 
 				<fieldset class="pull-left bordered">
 					<legend>Translation</legend>
-					<input type='text' name="translation_like" value='{{ app.request.query.get('translation_like')}}' placeholder="Type in a query here"/>
-					<br/>presence<br/>
+					<input type='text' name="translation_like" value='{{ app.request.query.get('translation_like')}}' placeholder="Filter translations..."/>
+					<br/>That are...<br/>
 					<select  class="autosubmit" id="translate_empty" name="empty">
-						<option value="ONLY" {{ app.request.query.get('empty')== "ONLY" ? "selected='true'" : '' }}>is missing</option>
-						<option value="EXCEPT" {{ app.request.query.get('empty')== "EXCEPT" ? "selected='true'" : '' }}>is there</option>
-						<option value="MAYBE" {{ app.request.query.get('empty')== "MAYBE" ? "selected='true'" : '' }}>is or is not there</option>
+						<option value="ONLY" {{ app.request.query.get('empty')== "ONLY" ? "selected='true'" : '' }}>missing</option>
+						<option value="EXCEPT" {{ app.request.query.get('empty')== "EXCEPT" ? "selected='true'" : '' }}>there</option>
+						<option value="MAYBE" {{ app.request.query.get('empty')== "MAYBE" ? "selected='true'" : '' }}>there or not</option>
 					</select>
 					
 					
@@ -209,17 +144,13 @@
 			</form>
 
 			<br/>
+
 			{% if pagination is not empty %}
-				<nav class='navigation'>
-					{% if pagination['previous_page'] is defined %}
-						<a href="javascript:goto_page(1)">First</a>
-						<a href='javascript:previous_page()'>&lt;&lt;&nbsp;</a>
-					{%  endif  %}
-					Page {{ app.request.query.get('page') | default('1') }} of <a href="javascript:goto_page({{ pagination['page_count'] }})">{{ pagination['page_count'] }}</a>
-					{% if pagination['next_page'] is defined %}
-						<a href='javascript:next_page()'>&nbsp;&gt;&gt;</a>
-						<a href="javascript:goto_page({{ pagination['page_count'] }})">Last</a>
-					{%  endif  %}
+				<div class='pagination'>
+
+					<ul>
+						{% for page, text in pagination %}<li><a href="javascript:goto_page({{ page }})">{{ text }}</a></li>{% endfor %}
+					</ul>
 				</nav>
 			{% endif %}
 			
@@ -254,8 +185,7 @@
 
 									{%  for m in ms %}
 
-
-										<div class="translate_row">
+										<div class="translate_row {{ cycle(['odd', 'even'], loop.index) }}">
 
 
 											<div class="translate_row_right">

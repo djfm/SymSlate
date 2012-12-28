@@ -66,23 +66,57 @@ class TranslateController extends Controller
 			}
 			
 			$result = $pr->getMessagesWithTranslations($pack_id,$language->getId(),$query_options, $pagination_options);
-			
-			if($e = $request->query->get('source_language_id'))
-			
-			echo "<p>Results total: ".$result['pagination']['total_count']."</p>";
-			
-			
+						
 		}
 		
 		$categories = $em->createQuery('SELECT DISTINCT c.category FROM FMSymSlateBundle:Classification c WHERE c.pack_id = :pack_id')
 					     ->setParameter('pack_id', $pack_id)
 					     ->getResult();
 		
+		/*
+		'total_count' => count($paginator),
+			'page' => $pagination_options['page'],
+			'page_size' => $pagination_options['page_size'],
+			'page_count' */
+
+		$pagination = null;
+		if(isset($result['pagination']))
+		{
+			if($result['pagination']['total_count'] > 0 and $request->query->get('page') < $result['pagination']['page_count'])
+			{
+
+				$pagination = array();
+
+				if($result['pagination']['page'] > 1)$pagination[$result['pagination']['page'] - 1] = "<<";
+				if($result['pagination']['page'] < $result['pagination']['page_count'])$pagination[$result['pagination']['page'] + 1] = ">>";
+
+				$window = 3;
+				for($i = $result['pagination']['page'] - $window; $i <= $result['pagination']['page'] + $window; $i+=1)
+				{
+					if($i > 0 and $i < $result['pagination']['page_count'])
+					{
+						$pagination[$i] = $i;
+					}
+				}
+
+				$pagination[1] = 'First';
+				$pagination[$result['pagination']['page']] = '['.$result['pagination']['page'].']';
+				$pagination[$result['pagination']['page_count']] = 'Last ('.$result['pagination']['page_count'].')';
+
+				
+
+				
+
+				ksort($pagination);
+
+			}
+		}
+
         return array(
         	'pack'       => $pack,
         	'language'   => $language,
         	'messages'   => isset($result)?$result['messages']:null,
-        	'pagination' => isset($result)?$result['pagination']:null,
+        	'pagination' => $pagination,
         	'categories' => $categories,
         	'languages'  => $lr->findAll()
 		);

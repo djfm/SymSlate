@@ -216,15 +216,6 @@ class PackRepository extends EntityRepository
 			'page_count' => round((int)count($paginator)/(int)$pagination_options['page_size'])
 		);
 		
-		if((int)$pagination_options['page'] > 1)
-		{
-			$pagination['previous_page'] = (int)$pagination_options['page'] - 1;
-		}
-		if((int)$pagination_options['page'] < $pagination['page_count'])
-		{
-			$pagination['next_page'] = (int)$pagination_options['page'] + 1;
-		}
-		
 		return array('messages' => $messages, 
 					 'pagination' => $pagination
 					);
