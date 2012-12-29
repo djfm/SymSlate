@@ -1,6 +1,8 @@
 # app/config/security.yml
 security:
     providers:
+        main:
+            entity: { class: FM\SymSlateBundle\Entity\User, property: username }
         fos_userbundle:
             id: fos_user.user_provider.username
 

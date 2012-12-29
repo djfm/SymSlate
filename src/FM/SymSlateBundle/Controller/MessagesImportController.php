@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\MessagesImport;
 use FM\SymSlateBundle\Form\MessagesImportType;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 
 /**
  * MessagesImport controller.
@@ -50,6 +51,8 @@ class MessagesImportController extends Controller
             throw $this->createNotFoundException('Unable to find MessagesImport entity.');
         }
 
+
+
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
@@ -63,6 +66,7 @@ class MessagesImportController extends Controller
      *
      * @Route("/new", name="messagesimports_new")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function newAction()
     {
