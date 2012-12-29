@@ -17,7 +17,7 @@ framework:
     trust_proxy_headers: false # Whether or not the Request object should trust proxy headers (X_FORWARDED_FOR/HTTP_CLIENT_IP)
     session:
         handler_id:     session.handler.pdo
-        
+
 parameters:
     pdo.db_options:
         db_table:    session
@@ -57,7 +57,7 @@ doctrine:
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         auto_mapping: true
-        
+
 stof_doctrine_extensions:
     default_locale: en_US
     orm:
@@ -72,19 +72,17 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
-    
+
 fos_user:
     db_driver: orm
     user_class: FM\SymSlateBundle\Entity\User
     firewall_name: main
-    
-    
+
 services:
     kernel.listener.fm_exception_listener:
       class: FM\SymSlateBundle\EventListener\FMExceptionListener
       tags:
         - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
-    
     pdo:
         class: PDO
         arguments:
@@ -95,7 +93,7 @@ services:
     session.handler.pdo:
         class:     Symfony\Component\HttpFoundation\Session\Storage\Handler\PdoSessionHandler
         arguments: [@pdo, %pdo.db_options%]
-        
+
     queue_manager:
         class: FM\Bundle\SlowShowBundle\Manager\Manager
         arguments:

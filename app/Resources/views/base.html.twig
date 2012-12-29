@@ -24,21 +24,18 @@
     </head>
     
     <body style="background-image:url({{ asset('bundles/fmsymslate/images/stripes.png') }})">
-    	<div id="banner">
-    		<div class="table">
-    			<div class="table-row">
-    				<div class="table-cell toplink" onclick="javascript:window.location='{{ url('fm_symslate_default_index') }}'">
-    					Home
-    				</div>
-    				<div class="table-cell toplink" onclick="javascript:window.location='{{ url('packs') }}'">
-    					Translate
-    				</div>
-    				<div class="table-cell toplink" onclick="javascript:window.location='{{ url('translationsimports_new') }}'">
-    					Import
-    				</div>
-    			</div>
-    		</div>
-    	</div>
+        
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <a class="brand" href="{{ url('fm_symslate_default_index') }}">Home</a>
+                <ul class="nav">
+                    <li><a href="{{ url('packs') }}">Translate</a></li>
+                    <li><a href="{{ url('translationsimports_new') }}">Import</a></li>
+                    <li><a href="{{ url('tasks') }}">(Background jobs)</a></li>
+                </ul>
+            </div>
+        </div>
+
     	<div id="contents">
     		 {% block body %}{% endblock %}
     	</div>

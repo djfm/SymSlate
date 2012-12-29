@@ -24,6 +24,17 @@ pre.translate
 	 background-color: rgba(255,255,255,0.3);
 }
 
+form.translate
+{
+	margin:0;
+}
+
+div.pagination
+{
+	margin: 0;
+	margin-bottom:15px;
+}
+
 iframe
 {
 	border:0px;
@@ -89,4 +100,12 @@ fieldset.translate_section> legend:first-child
 {
 	color:#666;
 	background-color: rgba(255,255,255,0.3);
+}
+
+#submit_translation_filter
+{
+	margin-left: 10px;
+	margin-top:65px;
+	height:62px;
+	width:62px;
 }

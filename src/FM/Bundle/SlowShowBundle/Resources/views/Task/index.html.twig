@@ -1,15 +1,20 @@
+{% extends '::base.html.twig' %}
+
+
+{% block body %}
+
 <h1>Task list</h1>
 
-<table class="records_list">
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>Class</th>
+            <th>Task type</th>
             <th>Status</th>
             <th>Started</th>
             <th>Completed</th>
             <th>Failed</th>
             <th>Progress</th>
-            <th>Actions</th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -22,6 +27,7 @@
             <td>{{ entity.failed ? "YES" : "NO" }}</td>
             <td>{{ entity.progress | default("unknown") }}</td>
             <td>
+                <!--
                 <ul>
                     <li>
                         <a href="{{ path('tasks_show', { 'id': entity.id }) }}">show</a>
@@ -30,16 +36,14 @@
                         <a href="{{ path('tasks_edit', { 'id': entity.id }) }}">edit</a>
                     </li>
                 </ul>
+            -->
+             <form action="{{ path('tasks_delete', { 'id': entity.id }) }}" method="post">
+                <button type="submit" class="btn btn-danger">Remove</button>
+            </form>
             </td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
 
-<ul>
-    <li>
-        <a href="{{ path('tasks_new') }}">
-            Create a new entry
-        </a>
-    </li>
-</ul>
+{% endblock %}

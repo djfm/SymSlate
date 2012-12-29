@@ -91,30 +91,35 @@
 		
 {% endblock %}
 {% block body %}
-			<form class="form-inline">
+			<form class="form-inline translate">
 		  		
 				<input type="hidden" name="page" id="page" value="{{ app.request.query.get('page') | default(1) }}"/>
 
 		  		<fieldset class="pull-left bordered">
 		  			<legend>Language</legend>
+		  			<label for="translate_source_language_code" class="input-label small">From</label>
 			  		<select class="autosubmit" id="translate_source_language_code" name="source_language_code">
 						{% for language in languages %}
 							<option value="{{ language.code }}" {{ app.request.query.get('source_language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
 						{% endfor %}
 					</select>
-					=>
+					<br/>
+					<label for="translate_language_code" class="input-label small">Into</label>
 					<select class="autosubmit" id="translate_language_code" name="language_code">
 						{% for language in languages %}
 							<option value="{{ language.code }}" {{ app.request.query.get('language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
 						{% endfor %}
 					</select>
+					
 				</fieldset>
 			  
-			<div class="pull-right">
+			<div class="pull-left">
 				<fieldset class="pull-left bordered">
 					<legend>Message</legend>
-					<input name="message_like" type='text' value='{{ app.request.query.get('message_like')}}' placeholder="Filter messages..."/>
-					<br/>Select category<br/>
+					<label for = "message_like" class="input-label medium">Filter</label>
+					<input id="message_like" name="message_like" type='text' value='{{ app.request.query.get('message_like')}}' placeholder="Filter messages..."/>
+					<br/>
+					<label for="translate_category" class="input-label medium">Category</label>
 					<select style="" class="autosubmit" id="translate_category" name="category">
 						<option value="">Any Category</option>
 						{% for category in categories %}
@@ -127,8 +132,10 @@
 
 				<fieldset class="pull-left bordered">
 					<legend>Translation</legend>
-					<input type='text' name="translation_like" value='{{ app.request.query.get('translation_like')}}' placeholder="Filter translations..."/>
-					<br/>That are...<br/>
+					<label for="translation_like" class="input-label medium">Filter</label>
+					<input type='text' id="translation_like" name="translation_like" value='{{ app.request.query.get('translation_like')}}' placeholder="Filter translations..."/>
+					<br/>
+					<label for="translate_empty" class="input-label medium">Status</label>
 					<select  class="autosubmit" id="translate_empty" name="empty">
 						<option value="ONLY" {{ app.request.query.get('empty')== "ONLY" ? "selected='true'" : '' }}>missing</option>
 						<option value="EXCEPT" {{ app.request.query.get('empty')== "EXCEPT" ? "selected='true'" : '' }}>there</option>
@@ -138,8 +145,10 @@
 					
 				</fieldset>
 			</div>
+			<button type="submit" id="submit_translation_filter" class="btn btn-primary">Go!</button>
+			
 				<div class="clearfix"></div>
-			  	<button type="submit" class="btn">Go!</button>
+			  	
 
 			</form>
 
@@ -151,13 +160,11 @@
 					<ul>
 						{% for page, text in pagination %}<li><a href="javascript:goto_page({{ page }})">{{ text }}</a></li>{% endfor %}
 					</ul>
-				</nav>
+				</div>
 			{% endif %}
 			
 		</form>
 	</fieldset>
-	
-	<br/>
 	
 	{% if pack == null %}
 		<p><span class="error">The pack you are trying to translate does not exist!</span></p>	

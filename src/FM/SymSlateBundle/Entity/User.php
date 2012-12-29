@@ -13,6 +13,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class User extends BaseUser
 {
+    /**
+     * @ORM\Column(type="array", name="roles")
+     */
+     protected $roles;
 	/**
 	 * @ORM\OneToMany(targetEntity="Translation", mappedBy="author")
 	 */
