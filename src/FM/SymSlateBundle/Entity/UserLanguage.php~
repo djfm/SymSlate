@@ -1,0 +1,49 @@
+<?php
+
+namespace FM\SymSlateBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * UserLanguage
+ *
+ * @ORM\Table()
+ * @ORM\Entity()
+ */
+class UserLanguage
+{
+	 /**
+	 * @ORM\ManyToOne(targetEntity="User", inversedBy="user_languages")
+	 * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+	 */
+	 private $user;
+	 
+	 /**
+	 * @ORM\ManyToOne(targetEntity="Language", inversedBy="user_languages")
+	 * @ORM\JoinColumn(name="language_id", referencedColumnName="id", onDelete="CASCADE")
+	 */
+	 private $language;
+	
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="user_id", type="integer")
+     */
+    private $user_id;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="language_id", type="integer")
+     */
+    private $language_id;
+}

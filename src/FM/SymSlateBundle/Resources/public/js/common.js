@@ -32,21 +32,25 @@ $(function(){
 		};
 		var editor = CKEDITOR.replace(t,conf); 
 	});
+
+	$('form:has("#page")').submit(function(){
+		if(!just_switching_page)
+		{
+			$('#page').val(1);
+		}
+		else
+		{
+			just_switching_page = false;
+		}
+	});
+
 });
 
-
-
-next_page = function()
-{
-	$('#page').val(parseInt($('#page').val())+1).parents('form').submit();	
-}
-
-previous_page = function()
-{
-	$('#page').val(parseInt($('#page').val())-1).parents('form').submit();	
-}
+just_switching_page = false;
 
 goto_page = function(page)
 {
+	just_switching_page = true;
 	$('#page').val(page).parents('form').submit();	
 }
+

@@ -42,10 +42,16 @@
 			{%  endfor %}
 		</tr>
 		{% for language, statistics in stats['statistics'] %}
-			<tr>
+			<tr class="translation_stat">
 				<th>{{ language }}</th>
 				{%  for cat in stats['categories'] %}
-					<td class="clickable" onclick="javascript:window.location='{{ path('translate', {'pack_id': entity.id, 'language_code': statistics['code'], 'category': cat}) }}'">{{ '%.1f' | format(statistics['statistics'][cat]['percent']) }}%<br/>({{ statistics['statistics'][cat]['translated'] }}/{{ statistics['statistics'][cat]['total'] }})</td>
+					<td
+						class="clickable translation_stat"
+					    style="background-color:{{ color_shade("#800","#080",statistics['statistics'][cat]['percent']/100, 0.7) }}; border: 1px solid {{ last_color_shade() }};" 
+					    onclick="javascript:window.location='{{ path('translate', {'pack_id': entity.id, 'language_code': statistics['code'], 'category': cat}) }}'">
+					    <span class="translation_stat_percent">{{ '%.1f' | format(statistics['statistics'][cat]['percent']) }}%</span>
+					    <br/>({{ statistics['statistics'][cat]['translated'] }}/{{ statistics['statistics'][cat]['total'] }})
+					</td>
 				{%  endfor %}
 			</tr>
 		{% endfor %}

@@ -37,6 +37,11 @@ class User extends BaseUser
 	 * @ORM\OneToMany(targetEntity="PackExport", mappedBy="creator")
 	 */
 	private $pack_exports;
+
+    /**
+     * @ORM\OneToMany(targetEntity="UserLanguage", mappedBy="user")
+     */
+    private $user_languages;
 	
 	public function __construct()
 	{
@@ -46,6 +51,7 @@ class User extends BaseUser
 		$this->translations_imports = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->translation_submissions = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->pack_exports = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->user_languages = new \Doctrine\Common\Collections\ArrayCollection();
 		
 		parent::__construct();
 	}
@@ -57,7 +63,16 @@ class User extends BaseUser
 	
 	public function canTranslateInto(Language $language)
 	{
-		return true;
+        if(in_array("ROLE_SUPER_ADMIN", $this->getRoles()))return true;
+        else
+        {
+            foreach($this->getUserLanguages() as $ul)
+            {
+                if($ul->getLanguageId() == $language->getId())return true;
+            }
+        }
+        
+		return false;
 	}
 	
     /**
@@ -243,5 +258,38 @@ class User extends BaseUser
     public function getPackExports()
     {
         return $this->pack_exports;
+    }
+
+    /**
+     * Add user_languages
+     *
+     * @param \FM\SymSlateBundle\Entity\UserLanguage $userLanguages
+     * @return User
+     */
+    public function addUserLanguage(\FM\SymSlateBundle\Entity\UserLanguage $userLanguages)
+    {
+        $this->user_languages[] = $userLanguages;
+    
+        return $this;
+    }
+
+    /**
+     * Remove user_languages
+     *
+     * @param \FM\SymSlateBundle\Entity\UserLanguage $userLanguages
+     */
+    public function removeUserLanguage(\FM\SymSlateBundle\Entity\UserLanguage $userLanguages)
+    {
+        $this->user_languages->removeElement($userLanguages);
+    }
+
+    /**
+     * Get user_languages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getUserLanguages()
+    {
+        return $this->user_languages;
     }
 }

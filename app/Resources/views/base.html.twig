@@ -15,11 +15,13 @@
 		    <script src="{{ asset_url }}"></script>
 		{% endjavascripts %}
 		
+        <link rel="stylesheet" href="{{ asset('vendor/bootstrap/css/bootstrap.css') }}" />
+
 		{% stylesheets '@FMSymSlateBundle/Resources/public/css/common.css' %}
 		    <link rel="stylesheet" href="{{ asset_url }}" />
 		{% endstylesheets %}
 
-        <link rel="stylesheet" href="{{ asset('vendor/bootstrap/css/bootstrap.css') }}" />
+        
 		
     </head>
     
@@ -32,6 +34,13 @@
                     <li><a href="{{ url('packs') }}">Translate</a></li>
                     <li><a href="{{ url('translationsimports_new') }}">Import</a></li>
                     <li><a href="{{ url('tasks') }}">(Background jobs)</a></li>
+                    {% if is_granted('ROLE_SUPER_ADMIN') %}
+                        <li><a href="{{ url('messagesimports') }}">Pack Messages</a></li>
+                        <li><a href="{{ url('languages') }}">Languages</a></li>
+                        <li><a href="{{ url('countries') }}">Countries</a></li>
+                        <li><a href="{{ url('countrylanguage') }}">Countries & Languages</a></li>
+                        <li><a href="{{ url('userlanguages') }}">Permissions</a></li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

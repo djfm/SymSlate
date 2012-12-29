@@ -3,7 +3,7 @@
 
 {% block body %}
 
-<h1>Task list</h1>
+<h1>Background tasks</h1>
 
 <table class="table table-striped">
     <thead>
@@ -22,24 +22,16 @@
         <tr>
             <td>{{ entity.class }}</td>
             <td>{{ entity.status }}</td>
-            <td>{{ entity.started ? "YES" : "NO" }}</td>
-            <td>{{ entity.completed ? "YES" : "NO" }}</td>
-            <td>{{ entity.failed ? "YES" : "NO" }}</td>
-            <td>{{ entity.progress | default("unknown") }}</td>
+            <td>{{ entity.started ? "<span class='label label-success'>YES</span>" : "<span class='label label-info'>NO</span>" }}</td>
+            <td>{{ entity.completed ? "<span class='label label-success'>YES</span>" : "<span class='label label-info'>NO</span>" }}</td>
+            <td>{{ entity.failed ? "<span class='label label-important'>YES</span>" : "<span class='label label-success'>NO</span>" }}</td>
+            <td><span class="label">{{ entity.progress | default("unknown") }}</label></td>
             <td>
-                <!--
-                <ul>
-                    <li>
-                        <a href="{{ path('tasks_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('tasks_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-            -->
-             <form action="{{ path('tasks_delete', { 'id': entity.id }) }}" method="post">
-                <button type="submit" class="btn btn-danger">Remove</button>
-            </form>
+                {% if app.user.getId() == entity.getUserId() %}
+                     <form action="{{ path('tasks_delete', { 'id': entity.id }) }}" method="post">
+                        <button type="submit" class="btn btn-danger">Remove</button>
+                    </form>
+                {% endif %}
             </td>
         </tr>
     {% endfor %}

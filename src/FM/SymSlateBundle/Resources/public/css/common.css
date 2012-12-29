@@ -1,3 +1,13 @@
+h1
+{
+	display:block;
+	font-size: xx-large;
+	background-color: rgba(255,255,255,0.5);
+	padding:5px;
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 30px;
+}
+
 div#main-menu
 {
 	background-color: #111;
@@ -99,4 +109,34 @@ fieldset.bordered
 	border-radius: 3px;
 	padding:2px;
 	padding-left: 4px;
+}
+
+div.pagination
+{
+	margin:25px;
+}
+
+
+tr.translation_stat
+{
+
+}
+
+td.translation_stat
+{
+	border-collapse:separate;
+	border-spacing: 1px;
+	text-align: center;
+}
+
+td[style].translation_stat:hover
+{
+	/*border:1px solid #ccc !important;*/
+	color:black;
+}
+
+span.translation_stat_percent
+{
+	color:#444;
+	font-weight: bold;
 }

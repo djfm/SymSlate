@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\Pack;
 use FM\SymSlateBundle\Form\PackType;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 
 /**
  * Pack controller.
@@ -73,6 +74,7 @@ class PackController extends Controller
      *
      * @Route("/new", name="packs_new")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function newAction()
     {
@@ -91,6 +93,7 @@ class PackController extends Controller
      * @Route("/create", name="packs_create")
      * @Method("POST")
      * @Template("FMSymSlateBundle:Pack:new.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function createAction(Request $request)
     {
@@ -119,6 +122,7 @@ class PackController extends Controller
      * @Route("/{pack_id}/autocomplete", name="pack_autocomplete", requirements={"pack_id" = "\d+"})
      * @Method("POST")
      * @Template("FMSymSlateBundle:Pack:show.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function autocompleteAction($pack_id)
     {
@@ -133,6 +137,7 @@ class PackController extends Controller
      * @Route("/{pack_id}/setcurrent", name="pack_setcurrent", requirements={"pack_id" = "\d+"})
      * @Method("POST")
      * @Template("FMSymSlateBundle:Pack:show.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function setCurrentAction($pack_id)
     {
@@ -149,6 +154,7 @@ class PackController extends Controller
      *
      * @Route("/{id}/edit", name="packs_edit")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function editAction($id)
     {

@@ -1,0 +1,23 @@
+{% extends '::base.html.twig' %}
+
+
+{% block body %}
+
+<h1>UserLanguage creation</h1>
+
+<form action="{{ path('userlanguages_create') }}" method="post" {{ form_enctype(form) }}>
+    {{ form_widget(form) }}
+    <p>
+        <button class="btn btn-primary" type="submit">Create</button>
+    </p>
+</form>
+
+<ul class="record_actions">
+    <li>
+        <a href="{{ path('userlanguages') }}">
+            Back to the list
+        </a>
+    </li>
+</ul>
+
+{% endblock %}

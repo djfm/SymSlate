@@ -100,14 +100,14 @@
 		  			<label for="translate_source_language_code" class="input-label small">From</label>
 			  		<select class="autosubmit" id="translate_source_language_code" name="source_language_code">
 						{% for language in languages %}
-							<option value="{{ language.code }}" {{ app.request.query.get('source_language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
+							<option value="{{ language.code }}" {{ app.request.query.get('source_language_code','en')==language.code ? "selected='true'" : '' }}>{{ language }}</option>
 						{% endfor %}
 					</select>
 					<br/>
 					<label for="translate_language_code" class="input-label small">Into</label>
 					<select class="autosubmit" id="translate_language_code" name="language_code">
 						{% for language in languages %}
-							<option value="{{ language.code }}" {{ app.request.query.get('language_code')==language.code ? "selected='true'" : '' }}>{{ language.name }}</option>
+							<option value="{{ language.code }}" {{ app.request.query.get('language_code')==language.code ? "selected='true'" : '' }}>{{ language }}</option>
 						{% endfor %}
 					</select>
 					
@@ -156,7 +156,6 @@
 
 			{% if pagination is not empty %}
 				<div class='pagination'>
-
 					<ul>
 						{% for page, text in pagination %}<li><a href="javascript:goto_page({{ page }})">{{ text }}</a></li>{% endfor %}
 					</ul>
@@ -244,6 +243,15 @@
 				</div>
 				</fieldset>
 			{% endfor %}
+
+			{% if pagination is not empty %}
+				<div class='pagination'>
+					<ul>
+						{% for page, text in pagination %}<li><a href="javascript:goto_page({{ page }})">{{ text }}</a></li>{% endfor %}
+					</ul>
+				</div>
+			{% endif %}
+			
 		{% endif %}	
 	{% endif %}
 

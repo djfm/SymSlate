@@ -1,0 +1,5 @@
+services:
+    fm.twig.fm_extension:
+        class: FM\SymSlateBundle\Twig\FMExtension
+        tags:
+            - { name: twig.extension }

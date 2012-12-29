@@ -265,4 +265,73 @@ class Task
     {
         return $this->updated;
     }
+
+    /**
+     * Set started
+     *
+     * @param boolean $started
+     * @return Task
+     */
+    public function setStarted($started)
+    {
+        $this->started = $started;
+    
+        return $this;
+    }
+
+    /**
+     * Get started
+     *
+     * @return boolean 
+     */
+    public function getStarted()
+    {
+        return $this->started;
+    }
+
+    /**
+     * Set completed
+     *
+     * @param boolean $completed
+     * @return Task
+     */
+    public function setCompleted($completed)
+    {
+        $this->completed = $completed;
+    
+        return $this;
+    }
+
+    /**
+     * Get completed
+     *
+     * @return boolean 
+     */
+    public function getCompleted()
+    {
+        return $this->completed;
+    }
+
+    /**
+     * Set failed
+     *
+     * @param boolean $failed
+     * @return Task
+     */
+    public function setFailed($failed)
+    {
+        $this->failed = $failed;
+    
+        return $this;
+    }
+
+    /**
+     * Get failed
+     *
+     * @return boolean 
+     */
+    public function getFailed()
+    {
+        return $this->failed;
+    }
 }

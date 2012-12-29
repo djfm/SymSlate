@@ -58,9 +58,9 @@ class TranslationsImportRepository extends EntityRepository
 					$translation->setAuthor($user);
 					$translation->setLanguage($language);
 					$this->getEntityManager()->persist($translation);
+					//only actualize for new translations
+					$this->getEntityManager()->getRepository('FMSymSlateBundle:CurrentTranslation')->actualizeWith($translation, $logger);
 				}
-				
-				$this->getEntityManager()->getRepository('FMSymSlateBundle:CurrentTranslation')->actualizeWith($translation, $logger);
 				
 				$this->getEntityManager()->flush();
 				$this->getEntityManager()->clear();
