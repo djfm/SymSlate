@@ -70,7 +70,8 @@ class TranslationSubmissionRepository extends EntityRepository {
 		 * For all packs, create or update the CurrentTranslation with the one we just got.
 		 */
 
-		$cts = $this -> getEntityManager() -> getRepository('FMSymSlateBundle:CurrentTranslation') -> actualizeWith($translation);
+		$actualization = $this -> getEntityManager() -> getRepository('FMSymSlateBundle:CurrentTranslation') -> actualizeWith($translation);
+		$data['actualization'] = $actualization;
 		
 		/*
 		 * Finally create the submission TODO
@@ -79,12 +80,11 @@ class TranslationSubmissionRepository extends EntityRepository {
 		
 		$submission = new TranslationSubmission();
 		$submission->setUser($user);
-		foreach($cts as $ct)
-		{
-			$submission->addCurrentTranslation($ct);
-			$ct->setTranslationSubmission($submission);
-		}
+		$submission->setTranslation($translation);
+		$translation->setTranslationSubmission($submission);
+
 		$this->getEntityManager()->persist($submission);
+		$this->getEntityManager()->persist($translation);
 		
 		//if we got there, don't think twice, it's allright
 		$data['success'] = true;

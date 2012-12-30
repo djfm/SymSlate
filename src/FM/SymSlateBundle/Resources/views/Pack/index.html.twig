@@ -1,49 +1,41 @@
 {% extends '::base.html.twig' %}
 
-
-
 {% block body %}
 
-<h1>Pack list</h1>
+<h1>Translation packs</h1>
+
+<p>
+    Click on a pack to access its translations and various actions.
+</p>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Id</th>
             <th>Project</th>
             <th>Name</th>
             <th>Version</th>
-            <th>Actions</th>
+            {% if is_granted('ROLE_SUPER_ADMIN') %}<th>Actions</th>{% endif %}
         </tr>
     </thead>
     <tbody>
     {% for entity in entities %}
-        <tr>
-            <td><a href="{{ path('packs_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+        <tr class="clickable" onclick="javascript:window.location='{{ path('packs_show', { 'id': entity.id }) }}'">
             <td>{{ entity.project }}</td>
             <td>{{ entity.name }}</td>
             <td>{{ entity.version }}</td>
-            <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('packs_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('packs_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
-            </td>
+            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                <td>
+                    <form action="{{ path('packs_edit', { 'id': entity.id }) }}"><button class="btn btn-primary">Edit</button></form>
+                </td>
+            {% endif %}
         </tr>
     {% endfor %}
     </tbody>
 </table>
 
-<ul>
-    <li>
-        <a href="{{ path('packs_new') }}">
-            Create a new entry
-        </a>
-    </li>
-</ul>
+
+{% if is_granted('ROLE_SUPER_ADMIN') %}
+    <form action="{{ path('packs_new') }}"><button class="btn btn-primary">Create a new pack</button></form>
+{% endif %}
 
 {% endblock %}

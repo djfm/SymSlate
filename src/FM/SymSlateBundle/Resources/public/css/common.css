@@ -19,34 +19,9 @@ div#contents
 	padding:5px;
 }
 
-div.table
+table.table-small
 {
-	display: table;
-	height:60px;
-}
-
-div.table-row
-{
-	display:table-row;
-}
-
-div.table-cell
-{
-	vertical-align:middle;
-	display: table-cell;
-}
-
-div.toplink
-{
-	color:white;
-	font-weight:bold;
-	padding:5px;
-}
-
-div.toplink:hover
-{
-	background-color:#444;
-	cursor:pointer;
+	width:33%;
 }
 
 body
@@ -67,6 +42,11 @@ textarea
 .clickable
 {
 	cursor:pointer;
+}
+
+tr.clickable:hover
+{
+	background-color:rgba(100,220,100,0.5);
 }
 
 img.small

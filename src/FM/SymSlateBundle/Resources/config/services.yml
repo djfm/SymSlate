@@ -3,3 +3,17 @@ services:
         class: FM\SymSlateBundle\Twig\FMExtension
         tags:
             - { name: twig.extension }
+
+    translations_importer:
+        class: FM\SymSlateBundle\Service\TranslationsImportService
+        arguments:
+          em: "@doctrine.orm.entity_manager"
+          security_context: "@security.context"
+          logger: "@logger"
+
+    autocompleter:
+        class: FM\SymSlateBundle\Service\AutocompleteService
+        arguments:
+          em: "@doctrine.orm.entity_manager"
+          security_context: "@security.context"
+          logger: "@logger"

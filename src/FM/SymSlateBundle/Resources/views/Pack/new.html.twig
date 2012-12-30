@@ -1,16 +1,16 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+
 <h1>Pack creation</h1>
 
 <form action="{{ path('packs_create') }}" method="post" {{ form_enctype(form) }}>
     {{ form_widget(form) }}
     <p>
-        <button type="submit">Create</button>
+        <button type="submit" class="btn btn-primary">Create</button>
     </p>
 </form>
 
-<ul class="record_actions">
-    <li>
-        <a href="{{ path('packs') }}">
-            Back to the list
-        </a>
-    </li>
-</ul>
+<form action="{{ path('packs') }}"><button class="btn btn-link">Go back to the list</button></form>
+
+{% endblock %}

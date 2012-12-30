@@ -126,8 +126,8 @@ class PackController extends Controller
      */
     public function autocompleteAction($pack_id)
     {
-    	$this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:Pack')->performAutoCompletion($pack_id);
-		$this->getDoctrine()->getManager()->flush();
+    	$manager = $this->get('queue_manager');
+        $manager->enqueueJob('autocompleter', array('language_ids' => array()));
     	return $this->showAction($pack_id);
 	}
 	

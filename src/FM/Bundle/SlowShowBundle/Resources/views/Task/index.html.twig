@@ -8,7 +8,7 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Task type</th>
+            <th>Task</th>
             <th>Status</th>
             <th>Started</th>
             <th>Completed</th>
@@ -20,7 +20,7 @@
     <tbody>
     {% for entity in entities %}
         <tr>
-            <td>{{ entity.class }}</td>
+            <td>{{ entity.service }}</td>
             <td>{{ entity.status }}</td>
             <td>{{ entity.started ? "<span class='label label-success'>YES</span>" : "<span class='label label-info'>NO</span>" }}</td>
             <td>{{ entity.completed ? "<span class='label label-success'>YES</span>" : "<span class='label label-info'>NO</span>" }}</td>

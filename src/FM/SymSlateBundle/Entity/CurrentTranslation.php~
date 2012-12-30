@@ -58,7 +58,7 @@ class CurrentTranslation
     /**
      * @var integer
      *
-     * @ORM\Column(name="classification_id", type="integer")
+     * @ORM\Column(name="message_id", type="integer")
      */
     private $message_id;
 
@@ -190,10 +190,10 @@ class CurrentTranslation
     /**
      * Set language
      *
-     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $language
+     * @param \FM\SymSlateBundle\Entity\Language $language
      * @return CurrentTranslation
      */
-    public function setLanguage(\FM\SymSlateBundle\Entity\CurrentTranslation $language = null)
+    public function setLanguage(\FM\SymSlateBundle\Entity\Language $language = null)
     {
         $this->language = $language;
     
@@ -203,7 +203,7 @@ class CurrentTranslation
     /**
      * Get language
      *
-     * @return \FM\SymSlateBundle\Entity\CurrentTranslation 
+     * @return \FM\SymSlateBundle\Entity\Language 
      */
     public function getLanguage()
     {

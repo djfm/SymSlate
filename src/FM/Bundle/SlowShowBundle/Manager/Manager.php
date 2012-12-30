@@ -8,35 +8,37 @@ class Manager
 	private $security_context;
 	private $max_concurrent_jobs;
 	
-	public function __construct($em, $security_context, $max_concurrent_jobs = 1)
+	public function __construct($service_container, $em, $security_context, $max_concurrent_jobs = 1)
 	{
+		$this->service_container = $service_container;
 		$this->em = $em;
 		$this->security_context = $security_context;
 		$this->max_concurrent_jobs = $max_concurrent_jobs;
 	}
 	
-	public function enqueueJob($job,$arguments)
+	public function enqueueJob($job,$arguments=array(), $later=true)
 	{
 		$task = new \FM\Bundle\SlowShowBundle\Entity\Task();
 		$task->setUserId($this->security_context->getToken()->getUser()->getId());
-		$task->setClass(str_replace(":",'\\',$job));
+		$task->setService($job);
 		$task->setArguments(json_encode($arguments));
 		$task->setStarted(false);
 		$task->setCompleted(false);
 		$task->setFailed(false);
 		$this->em->persist($task);
 		$this->em->flush();
+
+		$this->processNextJob($later);
 	}
 	
 	public function processNextJob($later=true)
 	{
-		//$this->doProcessNextJob();
 		//procrastinate
 		if($later)
 		{
 			register_shutdown_function(array($this, 'doProcessNextJob'));
 		}
-		else
+		else //process now, intended for debugging
 		{
 			$this->doProcessNextJob();
 		}
@@ -64,9 +66,21 @@ class Manager
 			//the job is safely marked as started, unlock the table
 			$this->em->getConnection()->exec('UNLOCK TABLES;');
 			
-			$class  = $job->getClass();
-			$worker = new $class($this->em);
-			$worker->perform(json_decode($job->getArguments(),true));
+			
+			$worker = $this->service_container->get($job->getService());
+
+			try
+			{
+				$worker->run(json_decode($job->getArguments(),true));
+			}
+			catch(\Exception $e)
+			{
+				$job = $this->em->getRepository('FMSlowShowBundle:Task')->find($job_id);
+				$job->setFailed(true);
+				$this->em->persist($job);
+				$this->em->flush();
+				throw $e;
+			}
 			
 			$job = $this->em->getRepository('FMSlowShowBundle:Task')->find($job_id);
 			$job->setCompleted(true);
