@@ -8,35 +8,28 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * CurrentTranslation
  *
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="fm_classification_id_language_id_idx", columns={"classification_id","language_id"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="fm_message_id_language_id_idx", columns={"message_id","language_id"})})
  * @ORM\Entity(repositoryClass="FM\SymSlateBundle\Entity\CurrentTranslationRepository")
  */
 class CurrentTranslation
 {	
 	/**
-	 * @ORM\ManyToOne(targetEntity="Classification", inversedBy="current_translations")
-	 * @ORM\JoinColumn(name="classification_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+	 * @ORM\ManyToOne(targetEntity="Message", inversedBy="current_translations")
+	 * @ORM\JoinColumn(name="message_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
-	private $classification;
-	
-	/**
-	 * @ORM\ManyToOne(targetEntity="TranslationSubmission", inversedBy="current_translations")
-	 * @ORM\JoinColumn(name="translation_submission_id", referencedColumnName="id", onDelete="CASCADE", nullable=true)
-	 */
-	private $translation_submission;
-	
-	/**
-     * @var integer
-     *
-     * @ORM\Column(name="translation_submission_id", type="integer", nullable=true)
-     */
-	private $translation_submission_id;
-	
+	private $message;
+		
 	/**
 	 * @ORM\ManyToOne(targetEntity="Translation", inversedBy="current_translations")
-	 * @ORM\JoinColumn(name="translation_id", referencedColumnName="id", onDelete="CASCADE", nullable=false)
+	 * @ORM\JoinColumn(name="translation_id", referencedColumnName="id", onDelete="CASCADE")
 	 */
 	private $translation;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Language", inversedBy="current_translations")
+     * @ORM\JoinColumn(name="language_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $language;
 	
 	
     /**
@@ -67,8 +60,7 @@ class CurrentTranslation
      *
      * @ORM\Column(name="classification_id", type="integer")
      */
-    private $classification_id;
-
+    private $message_id;
 
     /**
      * Get id
@@ -127,49 +119,49 @@ class CurrentTranslation
     }
 
     /**
-     * Set classification_id
+     * Set message_id
      *
-     * @param integer $classificationId
+     * @param integer $messageId
      * @return CurrentTranslation
      */
-    public function setClassificationId($classificationId)
+    public function setMessageId($messageId)
     {
-        $this->classification_id = $classificationId;
+        $this->message_id = $messageId;
     
         return $this;
     }
 
     /**
-     * Get classification_id
+     * Get message_id
      *
      * @return integer 
      */
-    public function getClassificationId()
+    public function getMessageId()
     {
-        return $this->classification_id;
+        return $this->message_id;
     }
 
     /**
-     * Set classification
+     * Set message
      *
-     * @param \FM\SymSlateBundle\Entity\Classification $classification
+     * @param \FM\SymSlateBundle\Entity\Message $message
      * @return CurrentTranslation
      */
-    public function setClassification(\FM\SymSlateBundle\Entity\Classification $classification)
+    public function setMessage(\FM\SymSlateBundle\Entity\Message $message = null)
     {
-        $this->classification = $classification;
+        $this->message = $message;
     
         return $this;
     }
 
     /**
-     * Get classification
+     * Get message
      *
-     * @return \FM\SymSlateBundle\Entity\Classification 
+     * @return \FM\SymSlateBundle\Entity\Message 
      */
-    public function getClassification()
+    public function getMessage()
     {
-        return $this->classification;
+        return $this->message;
     }
 
     /**
@@ -196,48 +188,25 @@ class CurrentTranslation
     }
 
     /**
-     * Set translation_submission_id
+     * Set language
      *
-     * @param integer $translationSubmissionId
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $language
      * @return CurrentTranslation
      */
-    public function setTranslationSubmissionId($translationSubmissionId)
+    public function setLanguage(\FM\SymSlateBundle\Entity\CurrentTranslation $language = null)
     {
-        $this->translation_submission_id = $translationSubmissionId;
+        $this->language = $language;
     
         return $this;
     }
 
     /**
-     * Get translation_submission_id
+     * Get language
      *
-     * @return integer 
+     * @return \FM\SymSlateBundle\Entity\CurrentTranslation 
      */
-    public function getTranslationSubmissionId()
+    public function getLanguage()
     {
-        return $this->translation_submission_id;
-    }
-
-    /**
-     * Set translation_submission
-     *
-     * @param \FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmission
-     * @return CurrentTranslation
-     */
-    public function setTranslationSubmission(\FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmission = null)
-    {
-        $this->translation_submission = $translationSubmission;
-    
-        return $this;
-    }
-
-    /**
-     * Get translation_submission
-     *
-     * @return \FM\SymSlateBundle\Entity\TranslationSubmission 
-     */
-    public function getTranslationSubmission()
-    {
-        return $this->translation_submission;
+        return $this->language;
     }
 }

@@ -30,11 +30,17 @@ class Message
 	 * @ORM\OneToMany(targetEntity="Storage", mappedBy="message")
 	 */
 	 private $storages;
+
+     /**
+     * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="message")
+     */
+     private $current_translations;
 	 
 	 public function __construct()
 	 {
 	 	$this->classifications = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->storages = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->current_translations = new \Doctrine\Common\Collections\ArrayCollection();
 	 }
 	
     /**
@@ -296,5 +302,38 @@ class Message
     public function getTranslations()
     {
         return $this->translations;
+    }
+
+    /**
+     * Add current_translations
+     *
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
+     * @return Message
+     */
+    public function addCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
+    {
+        $this->current_translations[] = $currentTranslations;
+    
+        return $this;
+    }
+
+    /**
+     * Remove current_translations
+     *
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
+     */
+    public function removeCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
+    {
+        $this->current_translations->removeElement($currentTranslations);
+    }
+
+    /**
+     * Get current_translations
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCurrentTranslations()
+    {
+        return $this->current_translations;
     }
 }

@@ -48,21 +48,21 @@ class PackRepository extends EntityRepository
 		
 		if(!$query_options['source_language_id'])
 		{	
-			$qb->select(array('m','c','ct','t'));
+			$qb->select(array('c','m','ct','t'));
 		}
 		else
 		{
-			$qb->select(array('m','c','ct','t', 'sct', 'st'));
+			$qb->select(array('c','m','ct','t', 'sct', 'st'));
 		}
 		
-		$qb->from('FMSymSlateBundle:Message','m')
-		   ->innerJoin('m.classifications', 'c')
-		   ->leftJoin ('c.current_translations','ct','WITH','ct.language_id = :language_id')
+		$qb->from('FMSymSlateBundle:Classification','c')
+		   ->innerJoin('c.message', 'm')
+		   ->leftJoin ('m.current_translations','ct','WITH','ct.language_id = :language_id')
 		   ->leftJoin ('ct.translation','t');
 			
 		if($query_options['source_language_id'])
 		{
-			$qb->leftJoin ('c.current_translations','sct','WITH','sct.language_id = :source_language_id')
+			$qb->leftJoin ('m.current_translations','sct','WITH','sct.language_id = :source_language_id')
 		       ->leftJoin ('sct.translation','st');
 		}	
 			
@@ -125,88 +125,52 @@ class PackRepository extends EntityRepository
 			
 		}
 			
-		foreach($paginator as $message)
+		foreach($paginator as $classification)
 		{
-			$classifications = $message->getClassifications();
-			if(count($classifications) !== 1)
+			
+			$translation = '';
+			$text        = null;
+			$translation_id = null;
+			
+			$message = $classification->getMessage();
+
+			$cts     = $message->getCurrentTranslations();
+
+			
+			/**
+			 * There are 0 - 2 $cts depending on
+			 *  -whether we requested a source language translation
+			 *  -whether the source and dest language translations were found
+			 */
+
+			foreach($cts as $ct)
 			{
-				echo "<p><span class='warning'>Message appears in several classifications: ".$message->getid().'</span></p>';
+				//get the translation
+				if($ct->getLanguageId() == $language_id)
+				{
+					$translation    = $ct->getTranslation()->getText();
+					$translation_id = $ct->getTranslation()->getId();
+				}
+				//get the message translation if required
+				if(isset($query_options['source_language_id']) and $ct->getLanguageId() == $query_options['source_language_id'])
+				{
+					$text = $ct->getTranslation()->getText();
+				}
 			}
-			foreach($classifications as $classification)
-			{
-				$translation = '';
-				$text        = '';
-				$translation_id = null;
-				
-				if($num = count($ct = $classification->getCurrentTranslations()) > 1)
-				{
-					$too_many_translations = false; //be optimistic :)
-					if($num == 2)
-					{	
-						if(($ct[0]->getLanguageId() == $language_id) and ($ct[1]->getLanguageId() == $query_options['source_language_id']))
-						{
-							$text           = $ct[1]->getTranslation()->getText();
-							$translation    = $ct[0]->getTranslation()->getText();
-							$translation_id = $ct[0]->getTranslation()->getId();
-						}
-						else if(($ct[0]->getLanguageId() == $language_id) and ($ct[1]->getLanguageId() == $query_options['source_language_id']))
-						{
-							$text           = $ct[0]->getTranslation()->getText();
-							$translation    = $ct[1]->getTranslation()->getText();
-							$translation_id = $ct[1]->getTranslation()->getId();
-						}
-						else $too_many_translations = true;
-						
-						if(!$too_many_translations)
-						{
-							if(count(trim($text)) == 0)
-							{
-								$text = $message->getText();
-							}
-						}
-					}
-					if($num > 2 or $too_many_translations)
-					{
-						echo "<p><span class='error'>Message has multiple current translations (this is a DB bug): ".$message->getid().'</span></p>';
-						echo "<ul>";
-						foreach($classification->getCurrentTranslations() as $ct)
-						{
-							echo "<li>".$ct->getTranslation()->getText()."</li>";
-						}
-						echo "</ul>";
-					}
-				}
-				else if(count($classification->getCurrentTranslations()) == 1)
-				{
-					$cts  = $classification->getCurrentTranslations();
-					$t = $cts[0]->getTranslation();
-					if($t->getLanguageId() == $language_id)
-					{
-						$text = $message->getText();
-						$translation = $t->getText();
-						$translation_id = $t->getId();
-					}
-					else
-					{
-						$text = $t->getText();
-					}
-				}
-				else
-				{
-						$text = $message->getText();
-				}
-				
-				$messages[$classification->getCategory()][$classification->getSection()][$classification->getSubSection()][] = array(
-					"text" => $text,
-					"translation" => $translation,
-					"translation_id" => $translation_id,
-					"type" => $message->getType(),
-					"classification_id" => $classification->getId(),
-					"message_id" => $message->getId()
-				);
+
+			//set the default message text if message translation in source language was not found or not requested
+			if(null === $text)$text = $message->getText();
+			
+			$messages[$classification->getCategory()][$classification->getSection()][$classification->getSubSection()][] = array(
+				"text" => $text,
+				"translation" => $translation,
+				"translation_id" => $translation_id,
+				"type" => $message->getType(),
+				"classification_id" => $classification->getId(),
+				"message_id" => $message->getId()
+			);
 				
 				//echo "<p>".$message->getText()."</p>";
-			}
 		}
 		
 		$pagination = array(
@@ -246,7 +210,10 @@ class PackRepository extends EntityRepository
 	public function computeStatistics($pack_id, $language_id)
 	{	
 		$query = $this->getEntityManager()->createQuery(
-		"SELECT c.category, count(c.id) as total, count(ct.id) as translated FROM FMSymSlateBundle:Classification c LEFT JOIN c.current_translations ct
+		"SELECT c.category, count(c.id) as total, count(ct.id) as translated 
+		 FROM FMSymSlateBundle:Classification c 
+		 LEFT JOIN c.message m
+		 LEFT JOIN m.current_translations ct
 		 WITH ct.language_id = :language_id
 		 WHERE c.pack_id = :pack_id
 		 GROUP BY c.category

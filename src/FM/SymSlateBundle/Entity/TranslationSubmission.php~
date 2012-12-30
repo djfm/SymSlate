@@ -13,18 +13,12 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class TranslationSubmission
 {
-	/**
-	 * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="translation_submission")
-	 */
-	 private $current_translations;
+	
+    /**
+     * @ORM\OneToOne(targetEntity="Translation", mappedBy="translation_submission")
+     */
+     private $translation;
 	 
-	 public function __construct()
-	 {
-		$this->current_translations = new \Doctrine\Common\Collections\ArrayCollection();
-	 }
-	
-	
-	
     /**
      * @var integer
      *
@@ -53,6 +47,7 @@ class TranslationSubmission
      * @ORM\Column(name="created", type="datetime")
      */
     private $created;
+
 
 
     /**
@@ -87,7 +82,7 @@ class TranslationSubmission
     {
         return $this->user_id;
     }
-	
+
     /**
      * Set created
      *
@@ -112,6 +107,29 @@ class TranslationSubmission
     }
 
     /**
+     * Set translation
+     *
+     * @param \FM\SymSlateBundle\Entity\Translation $translation
+     * @return TranslationSubmission
+     */
+    public function setTranslation(\FM\SymSlateBundle\Entity\Translation $translation = null)
+    {
+        $this->translation = $translation;
+    
+        return $this;
+    }
+
+    /**
+     * Get translation
+     *
+     * @return \FM\SymSlateBundle\Entity\Translation 
+     */
+    public function getTranslation()
+    {
+        return $this->translation;
+    }
+
+    /**
      * Set user
      *
      * @param \FM\SymSlateBundle\Entity\User $user
@@ -132,39 +150,5 @@ class TranslationSubmission
     public function getUser()
     {
         return $this->user;
-    }
-
-
-    /**
-     * Add current_translations
-     *
-     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
-     * @return TranslationSubmission
-     */
-    public function addCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
-    {
-        $this->current_translations[] = $currentTranslations;
-    
-        return $this;
-    }
-
-    /**
-     * Remove current_translations
-     *
-     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
-     */
-    public function removeCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
-    {
-        $this->current_translations->removeElement($currentTranslations);
-    }
-
-    /**
-     * Get current_translations
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getCurrentTranslations()
-    {
-        return $this->current_translations;
     }
 }

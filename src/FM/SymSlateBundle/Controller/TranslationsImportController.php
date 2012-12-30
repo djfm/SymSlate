@@ -109,9 +109,9 @@ class TranslationsImportController extends Controller
 			else
 			{
 				$manager = $this->get("queue_manager");
-				//$em->getRepository('FMSymSlateBundle:TranslationsImport')->saveTranslations($entity->getId(), $this->get('logger'));
-				$manager->enqueueJob('FM:SymSlateBundle:Job:TranslationsImportJob', array('translations_import_id' => $entity->getId()));
-				$manager->processNextJob();
+				$em->getRepository('FMSymSlateBundle:TranslationsImport')->saveTranslations($entity->getId(), $this->get('logger'));
+				/*$manager->enqueueJob('FM:SymSlateBundle:Job:TranslationsImportJob', array('translations_import_id' => $entity->getId()));
+				$manager->processNextJob();*/
 			}
             	
 			

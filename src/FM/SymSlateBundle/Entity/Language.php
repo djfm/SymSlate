@@ -16,6 +16,11 @@ class Language
 	 * @ORM\OneToMany(targetEntity="Translation", mappedBy="language")
 	 */
 	private $translations;
+
+    /**
+     * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="language")
+     */
+    private $current_translations;
 	
 	/**
 	 * @ORM\OneToMany(targetEntity="CountryLanguage", mappedBy="language")
@@ -32,6 +37,7 @@ class Language
 		$this->translations = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->country_languages = new \Doctrine\Common\Collections\ArrayCollection();
         $this->user_languages = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->current_translations = new \Doctrine\Common\Collections\ArrayCollection();
 	}
 	
 	public function __toString()
@@ -252,5 +258,38 @@ class Language
     public function getUserLanguages()
     {
         return $this->user_languages;
+    }
+
+    /**
+     * Add current_translations
+     *
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
+     * @return Language
+     */
+    public function addCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
+    {
+        $this->current_translations[] = $currentTranslations;
+    
+        return $this;
+    }
+
+    /**
+     * Remove current_translations
+     *
+     * @param \FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations
+     */
+    public function removeCurrentTranslation(\FM\SymSlateBundle\Entity\CurrentTranslation $currentTranslations)
+    {
+        $this->current_translations->removeElement($currentTranslations);
+    }
+
+    /**
+     * Get current_translations
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCurrentTranslations()
+    {
+        return $this->current_translations;
     }
 }

@@ -28,15 +28,22 @@ class Manager
 		$this->em->flush();
 	}
 	
-	public function processNextJob()
+	public function processNextJob($later=true)
 	{
 		//$this->doProcessNextJob();
 		//procrastinate
+		if($later)
+		{
+			register_shutdown_function(array($this, 'doProcessNextJob'));
+		}
+		else
+		{
+			$this->doProcessNextJob();
+		}
 		
-		register_shutdown_function(array($this, 'doProcessNextJob'));
 	}
 	
-	public function doProcessNextJob()
+	private function doProcessNextJob()
 	{
 		//TODO: warning: table will probably stay locked if something bad happens during the next part!!!
 						

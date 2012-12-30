@@ -15,6 +15,27 @@ class CurrentTranslationRepository extends EntityRepository
 	public function actualizeWith($translation, $logger=null)
 	{
 		if($logger)$logger->info("Actualizing translation with translation with key: ".$translation->getMkey());
+
+
+		//see if there is a message corresponding to this translation
+		if($message = $this->getEntityManager()->getRepository('FMSymSlateBundle:Message')->findOneByMkey($translation->getMkey()))
+		{
+			//see if it is already associated to a translation
+			if($ct = $this->findOneBy(array('message_id' => $message->getId(), 'language_id' => $translation->getLanguageId())))
+			{
+				//don't update
+			}
+			else
+			{
+				$ct = new CurrentTranslation();
+				$ct->setMessage($message);
+				$ct->setTranslation($translation);
+				$ct->setLanguage($translation->getLanguage());
+				$this->getEntityManager()->persist($ct);
+			}
+		}
+
+		/*
 		$query = $this->getEntityManager()->createQuery('SELECT c from FMSymSlateBundle:Classification c JOIN c.message m WHERE m.mkey = :mkey');
 		$query->setParameter('mkey',$translation->getMkey());
 		$classifications = $query->getResult();
@@ -42,6 +63,6 @@ class CurrentTranslationRepository extends EntityRepository
 			$cts[] = $ct;
 		}
 		
-		return $cts;
+		return $cts;*/
 	}
 }

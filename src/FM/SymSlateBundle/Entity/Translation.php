@@ -41,6 +41,12 @@ class Translation
 	 * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="translation")
 	 */
 	private $current_translations;
+
+    /**
+     * @ORM\OneToOne(targetEntity="TranslationSubmission", inversedBy="translation")
+     * @ORM\JoinColumn(name="translation_submission_id", referencedColumnName="id")
+     */
+    private $translation_submission;
 	 
 	public function __construct()
 	{
@@ -65,6 +71,13 @@ class Translation
      * @ORM\Column(name="translations_import_id", type="integer", nullable=true)
      */
     private $translations_import_id;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="translation_submission_id", type="integer", nullable=true)
+     */
+    private $translation_submission_id;
 
     /**
      * @var integer
@@ -449,5 +462,28 @@ class Translation
     public function getMessage()
     {
         return $this->message;
+    }
+
+    /**
+     * Set translation_submission_id
+     *
+     * @param integer $translationSubmissionId
+     * @return Translation
+     */
+    public function setTranslationSubmissionId($translationSubmissionId)
+    {
+        $this->translation_submission_id = $translationSubmissionId;
+    
+        return $this;
+    }
+
+    /**
+     * Get translation_submission_id
+     *
+     * @return integer 
+     */
+    public function getTranslationSubmissionId()
+    {
+        return $this->translation_submission_id;
     }
 }

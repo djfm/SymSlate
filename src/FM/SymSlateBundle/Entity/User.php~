@@ -63,7 +63,16 @@ class User extends BaseUser
 	
 	public function canTranslateInto(Language $language)
 	{
-		return true;
+        if(in_array("ROLE_SUPER_ADMIN", $this->getRoles()))return true;
+        else
+        {
+            foreach($this->getUserLanguages() as $ul)
+            {
+                if($ul->getLanguageId() == $language->getId())return true;
+            }
+        }
+        
+		return false;
 	}
 	
     /**
@@ -249,5 +258,38 @@ class User extends BaseUser
     public function getPackExports()
     {
         return $this->pack_exports;
+    }
+
+    /**
+     * Add user_languages
+     *
+     * @param \FM\SymSlateBundle\Entity\UserLanguage $userLanguages
+     * @return User
+     */
+    public function addUserLanguage(\FM\SymSlateBundle\Entity\UserLanguage $userLanguages)
+    {
+        $this->user_languages[] = $userLanguages;
+    
+        return $this;
+    }
+
+    /**
+     * Remove user_languages
+     *
+     * @param \FM\SymSlateBundle\Entity\UserLanguage $userLanguages
+     */
+    public function removeUserLanguage(\FM\SymSlateBundle\Entity\UserLanguage $userLanguages)
+    {
+        $this->user_languages->removeElement($userLanguages);
+    }
+
+    /**
+     * Get user_languages
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getUserLanguages()
+    {
+        return $this->user_languages;
     }
 }

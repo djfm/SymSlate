@@ -33,21 +33,9 @@ class Classification
 	 */
 	 private $pack;
 	 
-	 
-	 /**
-     * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="classification")
-     */
-     private $current_translations;
-	 
-	 /**
-     * @ORM\OneToMany(targetEntity="TranslationSubmission", mappedBy="classification")
-     */
-     private $translation_submissions;
-	 
-	 
 	 public function __construct()
 	 {
-	 	$this->current_translations = new \Doctrine\Common\Collections\ArrayCollection();
+        
 	 }
 	
     /**
