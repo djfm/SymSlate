@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\PackExport;
 use FM\SymSlateBundle\Form\PackExportType;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * PackExport controller.
@@ -69,7 +70,7 @@ class PackExportController extends Controller
         $entity = new PackExport();
         $form   = $this->createForm(new PackExportType(), $entity, array(
         	'packs' => $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:Pack')->getPackNames(),
-        	'languages' => $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:Language')->getLanguageNames()
+        	'languages' => $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:Language')->findAll()
 			)
 		);
 
@@ -91,7 +92,7 @@ class PackExportController extends Controller
         $entity  = new PackExport();
         $form = $this->createForm(new PackExportType(), $entity, array(
 			'packs' => $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:Pack')->getPackNames(),
-        	'languages' => $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:Language')->getLanguageNames()
+        	'languages' => $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:Language')->findAll()
 		));
 		
 		$entity->setCreator($this->get('security.context')->getToken()->getUser());
@@ -114,6 +115,107 @@ class PackExportController extends Controller
             'entity' => $entity,
             'form'   => $form->createView(),
         );
+    }
+
+    /**
+     * Gets the latest pack export
+     *
+     * @Route("/{pack_id}/{language_code}/latest/info", name="latest_export_info", requirements={"pack_id" = "\d+", "language_code" = "[a-z]{2}"})
+     * @Method("GET")
+     */
+    public function getLatestAction($pack_id, $language_code)
+    {
+        $data = array('success' => false, 'found' => false);
+
+        if($language = $this->getDoctrine()->getEntityManager()->getRepository('FMSymSlateBundle:Language')->findOneByCode($language_code))
+        {
+            if($export = $this->getDoctrine()->getEntityManager()->getRepository('FMSymSlateBundle:PackExport')->findLatest($pack_id, $language))
+            {
+                $data['success']  = true;
+                $data['found']    = true;
+                $data['web_path'] = $this->generateUrl('latest_export_file', array('pack_id' => $pack_id, 'language_code' => $language_code));
+                $data['generate_path'] = $this->generateUrl('generate_gzip', array('pack_id' => $pack_id, 'language_code' => $language_code));
+                $data['created']  = (string)$export->getCreated()->format('Y-m-d H:i:s');
+            }
+            else
+            {
+                $data['success'] = true;
+                $data['found']   = false;
+            }
+        }
+        else
+        {
+            $data['error_message'] = 'Unknown language.';
+        }
+
+        $response = new Response(json_encode($data));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+    /**
+     * Gets the latest pack export
+     *
+     * @Route("/{pack_id}/{language_code}/latest/file", name="latest_export_file", requirements={"pack_id" = "\d+", "language_code" = "[a-z]{2}"})
+     * @Method("GET")
+     */
+    public function downloadLatestAction($pack_id, $language_code)
+    {
+        $data = array('success' => false);
+
+        if($language = $this->getDoctrine()->getEntityManager()->getRepository('FMSymSlateBundle:Language')->findOneByCode($language_code))
+        {
+            if($export = $this->getDoctrine()->getEntityManager()->getRepository('FMSymSlateBundle:PackExport')->findLatest($pack_id, $language))
+            {
+                return new Response(
+                            file_get_contents($export->getAbsolutePath()),
+                            200,
+                            array(
+                                 'Content-Type' => 'application/gzip',
+                                 'Content-Disposition' => 'attachment; filename="'.$language_code.'.gzip"'
+                            )
+                );
+            }
+        }
+
+        $response = new Response(json_encode($data));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+    }
+
+    /**
+     * Export a pack
+     *
+     * @Route("/{pack_id}/{language_code}/generate", name="generate_gzip", requirements={"pack_id" = "\d+", "language_code" = "[a-z]{2}"})
+     * @Method("POST")
+     */
+    public function generateAction($pack_id, $language_code)
+    {
+        $data = array('success' => false);
+
+        if($language = $this->getDoctrine()->getEntityManager()->getRepository('FMSymSlateBundle:Language')->findOneByCode($language_code))
+        {
+            if($pack = $this->getDoctrine()->getEntityManager()->getRepository('FMSymSlateBundle:Pack')->find($pack_id))
+            {
+                $export = new PackExport();
+
+                $export->setCreator($this->get('security.context')->getToken()->getUser());
+                $export->setLanguageId($language->getId());
+                $export->setPack($pack);
+
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($export);
+                $em->flush();
+
+                $this->get('queue_manager')->enqueueJob('pack_exporter', array('pack_export_id' => $export->getId()));
+
+                $data['success'] = true;
+            }
+        }
+
+        $response = new Response(json_encode($data));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
     }
 
     /**

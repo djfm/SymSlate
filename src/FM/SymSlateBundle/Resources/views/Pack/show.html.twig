@@ -1,5 +1,43 @@
 {% extends '::base.html.twig' %}
 
+{% block javascripts %}
+	<script type="text/javascript">
+
+		function generate(url)
+		{
+			$.post(url,{},function(data){
+				console.log(data);
+			},
+			'json');
+		}
+
+		$('#gzip_language').change(function(e){
+			var info_url = "{{ path('latest_export_info', {'pack_id': entity.id, 'language_code': 'xx'}) }}".replace('xx',$(e.target).val());
+			console.log(info_url);
+			$.getJSON(info_url, function(data){
+				console.log(data);
+				if(data['success'] && data['found'])
+				{
+					$('#download_link').html('<a class="label label-info" href="'+data['web_path']+'">Download GZIP, generated on '+data['created']+'</a>')
+				}
+				else
+				{
+					$('#download_link').html('<span class="label label-warning">This pack was never generated, please generate it!</span>');
+				}
+
+				if(data['success'])
+				{
+					$('#generate_link').html('<a onclick="javascript:generate(\''+data['generate_path']+'\')" class="label label-success">Generate GZIP</a>');
+				}
+				else
+				{
+					$('#generate_link').html('');
+				}
+			});
+		});
+	</script>
+{% endblock %}
+
 {%  block body %}
 	<h1>Pack &amp; translations management interface</h1>
 
@@ -49,7 +87,7 @@
 				{% endfor %}
 			</select>
 
-			<label for="translate_category" class="input-label medium">Category</label>
+			<label for="translate_category" class="input-label">Category</label>
 			<select id="translate_category" name="category">
 				<option value="">Any Category</option>
 				{% for category in categories %}
@@ -64,12 +102,17 @@
 
 	<h2>Download or (re)build GZIP</h2>
 
-	<label for="gzip_language" class="input-label">Target language</label>
-	<select id="gzip_language" name="gzip_language">
-		{% for language in languages %}
-			<option value="{{ language.code }}">{{ language }}</option>
-		{% endfor %}
-	</select>
+	<span class="form form-inline">
+		<label for="gzip_language" class="input-label">Choose language</label>
+		<select id="gzip_language" class="" name="gzip_language">
+			<option value="" selected="true"></option>
+			{% for language in languages %}
+				<option value="{{ language.code }}">{{ language }}</option>
+			{% endfor %}
+		</select>
+		<span id="generate_link"></span>
+		<span id="download_link"></span>
+	</span>
 
 	<h2>Detailed statistics</h2>
 

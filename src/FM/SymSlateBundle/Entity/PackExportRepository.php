@@ -12,5 +12,20 @@ use Doctrine\ORM\EntityRepository;
  */
 class PackExportRepository extends EntityRepository
 {
-	
+	public function findLatest($pack_id, $language)
+	{
+		$query = $this->getEntityManager()->createQuery("SELECT e FROM FMSymSlateBundle:PackExport e 
+								 						 WHERE e.id = (
+								 						 				SELECT MAX(f.id) FROM FMSymSlateBundle:PackExport f 
+								 						 				WHERE f.pack_id = :pack_id AND f.language_id = :language_id AND f.filepath IS NOT NULL
+								 						 			   )
+														");
+		$query->setParameter('pack_id', $pack_id);
+		$query->setParameter('language_id', $language->getId());
+
+		$result = $query->getResult();
+
+		if(count($result) == 1)return $result[0];
+		else return null;
+	}
 }

@@ -88,7 +88,7 @@ NOW;
 			$file_contents[$path] .= $data;
 		}
 		
-		$export->setFilepath($export->getId() . "_" . $language->getName() . "_" . $export->getPack()->getFullName() . ".gzip");
+		$export->setFilepath($export->getId() . "_" . $language->getAName() . "_" . $export->getPack()->getFullName() . ".gzip");
 		$archive = new \Archive_Tar($export->getAbsolutePath(), 'gz');
 		
 		foreach($file_contents as $path => $data)
