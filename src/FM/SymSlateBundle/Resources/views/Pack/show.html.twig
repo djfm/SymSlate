@@ -55,7 +55,12 @@
 				{%  endfor %}
 			</tr>
 		{% endfor %}
-		
+		<tr>
+			<th></th>
+			{%  for cat in stats['categories'] %}
+				<th>{{ cat | default("Overall")}}</th>
+			{%  endfor %}
+		</tr>
 	</table>
 	
 	<ul class="record_actions">
