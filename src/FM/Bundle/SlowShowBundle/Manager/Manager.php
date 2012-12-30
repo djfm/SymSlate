@@ -45,7 +45,7 @@ class Manager
 		
 	}
 	
-	private function doProcessNextJob()
+	public function doProcessNextJob()
 	{
 		//TODO: warning: table will probably stay locked if something bad happens during the next part!!!
 						

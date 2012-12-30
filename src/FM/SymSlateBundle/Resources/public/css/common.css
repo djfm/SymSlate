@@ -1,8 +1,19 @@
 h1
 {
 	display:block;
-	font-size: xx-large;
+	font-size: x-large;
 	background-color: rgba(255,255,255,0.5);
+	padding:5px;
+	border-bottom: 1px solid #ccc;
+	margin-bottom: 30px;
+}
+
+h2
+{
+	display:block;
+	font-size: large;
+	background-color: rgba(255,255,255,0.3);
+	color:#444;
 	padding:5px;
 	border-bottom: 1px solid #ccc;
 	margin-bottom: 30px;

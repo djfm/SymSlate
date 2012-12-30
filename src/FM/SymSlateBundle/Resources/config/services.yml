@@ -17,3 +17,10 @@ services:
           em: "@doctrine.orm.entity_manager"
           security_context: "@security.context"
           logger: "@logger"
+
+    pack_exporter:
+        class: FM\SymSlateBundle\Service\PackExportService
+        arguments:
+          em: "@doctrine.orm.entity_manager"
+          security_context: "@security.context"
+          logger: "@logger"

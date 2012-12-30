@@ -189,14 +189,12 @@ class PackRepository extends EntityRepository
 	public function getStoragesWithTranslations($pack_id, $language_id)
 	{
 		$qb = $this->getEntityManager()->createQueryBuilder();
-		$qb->select(array('s','m','c','ct','t'))
+		$qb->select(array('s','m','ct','t'))
 		   ->from('FMSymSlateBundle:Storage', 's')
 		   ->innerJoin('s.message', 'm')
-		   ->innerJoin('m.classifications', 'c')
-		   ->innerJoin('c.current_translations', 'ct')
+		   ->innerJoin('m.current_translations', 'ct')
 		   ->innerJoin('ct.translation', 't')
 		   ->where('s.pack_id = :pack_id')
-		   ->andWhere('c.pack_id = :pack_id')
 		   ->andWhere('ct.language_id = :language_id');
 		   
 		$query = $qb->getQuery();

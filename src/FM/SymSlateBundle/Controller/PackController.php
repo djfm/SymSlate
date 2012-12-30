@@ -65,7 +65,9 @@ class PackController extends Controller
         return array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
-            'stats' => array('categories' => $cats, 'statistics' => $stats)
+            'stats' => array('categories' => $cats, 'statistics' => $stats),
+            'languages'  => $em->getRepository('FMSymSlateBundle:Language')->findAll(),
+            'categories' => $cats
         );
     }
 

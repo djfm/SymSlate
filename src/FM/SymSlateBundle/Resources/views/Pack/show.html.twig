@@ -1,10 +1,12 @@
 {% extends '::base.html.twig' %}
 
 {%  block body %}
-	<h1>Pack</h1>
+	<h1>Pack &amp; translations management interface</h1>
+
+	<h2>Info</h2>
 	<p>
 		{% if entity.getIsCurrent() %}
-			This is the latest pack, please help translating it fully!
+			<span class="label label-info">This is the latest pack, please help translating it fully!</span>
 		{% else %}
 			This pack is available but it is not the latest pack, please consider translating the latest one!
 		{% endif %}
@@ -28,6 +30,48 @@
 	</table>
 	
 	<br/>
+	
+	<h2>Quick access to translations</h2>
+
+	<form class="form-inline translate" action="{{ path('translate', {'pack_id': entity.id}) }}">
+  		<fieldset class="">
+  			<label for="translate_source_language_code" class="input-label">Source language</label>
+	  		<select id="translate_source_language_code" name="source_language_code">
+				{% for language in languages %}
+					<option value="{{ language.code }}" {{ app.request.query.get('source_language_code','en')==language.code ? "selected='true'" : '' }}>{{ language }}</option>
+				{% endfor %}
+			</select>
+
+			<label for="translate_language_code" class="input-label">Target language</label>
+			<select id="translate_language_code" name="language_code">
+				{% for language in languages %}
+					<option value="{{ language.code }}">{{ language }}</option>
+				{% endfor %}
+			</select>
+
+			<label for="translate_category" class="input-label medium">Category</label>
+			<select id="translate_category" name="category">
+				<option value="">Any Category</option>
+				{% for category in categories %}
+					<option value="{{ category }}">
+						{{ category }}
+					</option>
+				{% endfor %}
+			</select>
+			<button type="submit" class="btn btn-primary">Go!</button>
+		</fieldset>
+	</form>
+
+	<h2>Download or (re)build GZIP</h2>
+
+	<label for="gzip_language" class="input-label">Target language</label>
+	<select id="gzip_language" name="gzip_language">
+		{% for language in languages %}
+			<option value="{{ language.code }}">{{ language }}</option>
+		{% endfor %}
+	</select>
+
+	<h2>Detailed statistics</h2>
 
 	<table class="table">
 	
@@ -60,31 +104,30 @@
 	</table>
 	
 	<ul class="record_actions">
-	    <li>
-	        <a href="{{ path('packs') }}">
-	            Back to the list
-	        </a>
-	    </li>
-	    <li>
-	        <a href="{{ path('packs_edit', { 'id': entity.id }) }}">
-	            Edit
-	        </a>
-	    </li>
-	    <li>
-	        <form action="{{ path('pack_autocomplete', { 'pack_id': entity.id }) }}" method="post">
-	            <button type="submit">Autocomplete</button>
+	    
+	        <form action="{{ path('packs') }}" method="get">
+	            <button type="submit" class="btn btn-link">&lt;&lt; Back to the list of Packs</button>
 	        </form>
+	    	    
+	        
 	    </li>
-	    <li>
-	        <form action="{{ path('pack_setcurrent', { 'pack_id': entity.id }) }}" method="post">
-	            <button type="submit">Set as current pack</button>
-	        </form>
-	    </li>
-	    <li>
-	        <form action="{{ path('packs_delete', { 'id': entity.id }) }}" method="post">
-	            {{ form_widget(delete_form) }}
-	            <button type="submit">Delete</button>
-	        </form>
-	    </li>
+	    {% if is_granted('ROLE_SUPER_ADMIN') %}
+	    	
+		        <form action="{{ path('pack_setcurrent', { 'pack_id': entity.id }) }}" method="post" class="pull-left">
+		            <button type="submit" class="btn btn-success input-large">Set as current pack</button>
+		        </form>
+		    	<form action="{{ path('pack_autocomplete', { 'pack_id': entity.id }) }}" method="post" class="pull-left">
+		            <button type="submit" class="btn btn-primary input-large" >Autocomplete</button>
+		        </form>
+		       
+		        <form action="{{ path('packs_delete', { 'id': entity.id }) }}" method="post" class="pull-right">
+		            {{ form_widget(delete_form) }}
+		            <button type="submit" class="btn btn-danger input-large">Delete</button>
+		        </form>
+		        <form action="{{ path('packs_edit', { 'id': entity.id }) }}" method="get" class="pull-right">
+		            <button type="submit" class="btn btn-warning input-large">Edit</button>
+		        </form>
+		        
+	    {% endif %}
 	</ul>
 {% endblock %}

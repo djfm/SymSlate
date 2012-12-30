@@ -1,3 +1,7 @@
+{% extends '::base.html.twig' %}
+
+{%  block body %}
+
 <h1>PackExport creation</h1>
 
 <form action="{{ path('export_create') }}" method="post" {{ form_enctype(form) }}>
@@ -14,3 +18,4 @@
         </a>
     </li>
 </ul>
+{% endblock %}
