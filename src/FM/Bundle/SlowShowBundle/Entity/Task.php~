@@ -72,14 +72,6 @@ class Task
      */
     private $updated;
 
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="reserved", type="boolean", nullable = false)
-     */
-    private $reserved;
-
 	/**
      * @var boolean
      *

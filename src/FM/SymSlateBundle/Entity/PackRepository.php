@@ -238,6 +238,45 @@ class PackRepository extends EntityRepository
 		
 		return array("categories" => $cats, "statistics" => $stats);
 	}
+
+	public function computeAllStatistics($pack_id, $force_refresh=false, $refresh_interval=60)
+	{
+		$pack = $this->find($pack_id);
+
+		
+		if(!$force_refresh and null !== $pack->getStatisticsUpdated())
+		{
+			$now   = new \DateTime("now");
+			$delta = $now->diff($pack->getStatisticsUpdated());
+			$minutes = ($delta->days * 24 + $delta->h) * 60 + $delta->i;
+
+			if($minutes < $refresh_interval)
+			{
+				$result = json_decode($pack->getStatistics(),true);
+				//print_r($result);
+				return $result;
+			}
+		}
+
+		$stats = array();
+		$cats  = null;
+		foreach($this->getEntityManager()->getRepository('FMSymSlateBundle:Language')->findAll() as $language)
+		{
+			$st   = $this->computeStatistics($pack_id, $language->getId());
+			$cats = $st['categories'];
+			$stats[$language->getAName()] = array('code' => $language->getCode(), 'statistics' => $st['statistics']);
+		}
+		$result = array('categories' => $cats, 'statistics' => $stats);
+
+		$pack = $this->find($pack_id);
+		$pack->setStatistics(json_encode($result));
+		$pack->setStatisticsUpdated(new \DateTime("now"));
+
+		$this->getEntityManager()->persist($pack);
+		$this->getEntityManager()->flush();
+
+		return $result;
+	}
 	
 	public function setCurrent($pack_id)
 	{

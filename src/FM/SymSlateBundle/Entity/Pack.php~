@@ -83,6 +83,20 @@ class Pack
      * @ORM\Column(name="version", type="string", length=255)
      */
     private $version;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="statistics", type="text")
+     */
+    private $statistics;
+
+    /**
+     * @var datetime $statistics_updated
+     *
+     * @ORM\Column(type="datetime")
+     */
+    private $statistics_updated;
 	
 	
 	/**

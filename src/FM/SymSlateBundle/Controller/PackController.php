@@ -52,22 +52,15 @@ class PackController extends Controller
         }
 
         $deleteForm = $this->createDeleteForm($id);
-		
-		$stats = array();
-		$cats  = null;
-		foreach($em->getRepository('FMSymSlateBundle:Language')->findAll() as $language)
-		{
-			$st   = $em->getRepository('FMSymSlateBundle:Pack')->computeStatistics($entity->getId(), $language->getId());
-			$cats = $st['categories'];
-			$stats[$language->getAName()] = array('code' => $language->getCode(), 'statistics' => $st['statistics']);
-		}
+
+        $stats = $em->getRepository('FMSymSlateBundle:Pack')->computeAllStatistics($entity->getId(), $this->getRequest()->query->get('refresh_stats','false') == 'true');
 
         return array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
-            'stats' => array('categories' => $cats, 'statistics' => $stats),
+            'stats' => $stats,
             'languages'  => $em->getRepository('FMSymSlateBundle:Language')->findAll(),
-            'categories' => $cats
+            'categories' => $stats['categories']
         );
     }
 
