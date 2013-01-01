@@ -10,6 +10,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\PackExport;
 use FM\SymSlateBundle\Form\PackExportType;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
  * PackExport controller.
@@ -134,7 +136,6 @@ class PackExportController extends Controller
                 $data['success']  = true;
                 $data['found']    = true;
                 $data['web_path'] = $this->generateUrl('latest_export_file', array('pack_id' => $pack_id, 'language_code' => $language_code));
-                $data['generate_path'] = $this->generateUrl('generate_gzip', array('pack_id' => $pack_id, 'language_code' => $language_code));
                 $data['created']  = (string)$export->getCreated()->format('Y-m-d H:i:s');
             }
             else
@@ -142,6 +143,8 @@ class PackExportController extends Controller
                 $data['success'] = true;
                 $data['found']   = false;
             }
+
+            $data['generate_path'] = $this->generateUrl('generate_gzip', array('pack_id' => $pack_id, 'language_code' => $language_code));
         }
         else
         {
@@ -191,7 +194,6 @@ class PackExportController extends Controller
      */
     public function generateAction($pack_id, $language_code)
     {
-        $data = array('success' => false);
 
         if($language = $this->getDoctrine()->getEntityManager()->getRepository('FMSymSlateBundle:Language')->findOneByCode($language_code))
         {
@@ -206,16 +208,17 @@ class PackExportController extends Controller
                 $em = $this->getDoctrine()->getManager();
                 $em->persist($export);
                 $em->flush();
-
-                $this->get('queue_manager')->enqueueJob('pack_exporter', array('pack_export_id' => $export->getId()));
-
-                $data['success'] = true;
+                
+                $ran = $this->get('queue_manager')->enqueueJob('pack_exporter', array('pack_export_id' => $export->getId()), false);
+                
+                if($ran)
+                {
+                    return new JsonResponse(array('success' => true, 'got_file' => true, 'web_path' => $this->generateUrl('latest_export_file', array('pack_id' => $pack_id, 'language_code' => $language_code))));
+                }
             }
         }
-
-        $response = new Response(json_encode($data));
-        $response->headers->set('Content-Type', 'application/json');
-        return $response;
+        
+       return $this->redirect($this->generateUrl('latest_export_info', array('pack_id' => $pack_id, 'language_code' => $language_code)));
     }
 
     /**

@@ -28,25 +28,34 @@ class Manager
 		$this->em->persist($task);
 		$this->em->flush();
 
-		$this->processNextJob($later);
+		return $this->processNextJob($later, $task->getId());
 	}
 	
-	public function processNextJob($later=true)
+	public function processNextJob($later=true, $id=null)
 	{
 		//procrastinate
 		if($later)
 		{
-			register_shutdown_function(array($this, 'doProcessNextJob'));
+			//echo "Registered shutdown function at: " . date("d/m/Y H:i:s") . "<BR/>\n";
+			register_shutdown_function(array($this, 'doProcessNextJob'), true);
+			return false;
 		}
 		else //process now, intended for debugging
 		{
-			$this->doProcessNextJob();
+			return $this->doProcessNextJob($id);
 		}
 		
 	}
 	
-	public function doProcessNextJob()
+	public function doProcessNextJob($called_after_shutdown, $id=null)
 	{
+
+		if($called_after_shutdown)
+		{
+			//throw(new \Exception("ho{".ob_get_contents()."}PATATE"));
+		}
+
+		//echo "\nStarted shutdown function at: " . date("d/m/Y H:i:s") . "<BR/>\n";
 		//TODO: warning: table will probably stay locked if something bad happens during the next part!!!
 						
 		//Lock the table until we are certain we have marked our job as started
@@ -57,10 +66,15 @@ class Manager
 		
 		if($tasks_running < $this->max_concurrent_jobs and $tasks_remaining > 0)
 		{
-			$job = $this->em->getRepository('FMSlowShowBundle:Task')->findOneBy(array('started' => false, 'completed' => false, 'failed' => false));
+			$conditions = array('started' => false, 'completed' => false, 'failed' => false);
+			if($id)
+			{
+				$conditions['id'] = $id;
+			}
+			$job = $this->em->getRepository('FMSlowShowBundle:Task')->findOneBy($conditions);
 			
 			$job_id = $job->getId();
-			$job->setStarted(true);			
+			$job->setStarted(true);		
 			$this->em->persist($job);
 			$this->em->flush();
 			//the job is safely marked as started, unlock the table
@@ -71,7 +85,9 @@ class Manager
 
 			try
 			{
+				//echo "Started job at: " . date("d/m/Y H:i:s") . "<BR/>\n";
 				$worker->run(json_decode($job->getArguments(),true));
+				//echo "Finished job at: " . date("d/m/Y H:i:s") . "<BR/>\n";
 			}
 			catch(\Exception $e)
 			{
@@ -95,10 +111,13 @@ class Manager
 			{
 				$this->processNextJob();
 			}
+
+			return true;
 		}
 		else
 		{
 			$this->em->getConnection()->exec('UNLOCK TABLES;');
+			return false;
 		}
 	}
 

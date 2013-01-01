@@ -35,12 +35,27 @@
                     <li><a href="{{ url('translationsimports_new') }}">Import</a></li>
                     <li><a href="{{ url('tasks') }}">(Background jobs)</a></li>
                     {% if is_granted('ROLE_SUPER_ADMIN') %}
-                        <li><a href="{{ url('messagesimports') }}">Pack Messages</a></li>
-                        <li><a href="{{ url('languages') }}">Languages</a></li>
-                        <li><a href="{{ url('countries') }}">Countries</a></li>
-                        <li><a href="{{ url('countrylanguage') }}">Countries & Languages</a></li>
-                        <li><a href="{{ url('userlanguages') }}">Permissions</a></li>
+                    <li>
+                        <div class="btn-group">
+                            <a class="btn dropdown-toggle btn-warning" data-toggle="dropdown" href="#">Admin&nbsp;<span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ url('messagesimports') }}">Pack Messages</a></li>
+                                <li><a href="{{ url('languages') }}">Languages</a></li>
+                                <li><a href="{{ url('countries') }}">Countries</a></li>
+                                <li><a href="{{ url('countrylanguage') }}">Countries & Languages</a></li>
+                                <li><a href="{{ url('userlanguages') }}">Permissions</a></li>
+                            </ul>
+                        </div>
+                    </li>
                     {% endif %}
+                    <li id="notification">
+                        
+                    </li>
+                </ul>
+                <ul class="nav pull-right">
+                    <li>
+                        <span class="navbar-text">Hi, <strong>{{ app.user.username }}</strong>!&nbsp;<a href="{{ url('fos_user_security_logout') }}">[logout]</a></span>
+                    </li>
                 </ul>
             </div>
         </div>

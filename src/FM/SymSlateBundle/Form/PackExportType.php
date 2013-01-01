@@ -10,9 +10,14 @@ class PackExportType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $langs = array();
+        foreach($options['languages'] as $lang)
+        {
+            $langs[$lang->getId()] = $lang;
+        }
         $builder
             ->add('pack_id', 'choice', array('choices' => $options['packs']))
-            ->add('language_id', 'choice', array('choices' => $options['languages']))
+            ->add('language_id', 'choice', array('choices' => $langs))
         ;
     }
 

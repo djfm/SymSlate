@@ -73,6 +73,13 @@ class Task
     private $updated;
 
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="reserved", type="boolean", nullable = false)
+     */
+    private $reserved;
+
 	/**
      * @var boolean
      *
@@ -310,5 +317,28 @@ class Task
     public function getFailed()
     {
         return $this->failed;
+    }
+
+    /**
+     * Set service
+     *
+     * @param string $service
+     * @return Task
+     */
+    public function setService($service)
+    {
+        $this->service = $service;
+    
+        return $this;
+    }
+
+    /**
+     * Get service
+     *
+     * @return string 
+     */
+    public function getService()
+    {
+        return $this->service;
     }
 }

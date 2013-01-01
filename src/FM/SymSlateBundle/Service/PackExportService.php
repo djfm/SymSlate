@@ -13,13 +13,14 @@ class PackExportService
 
 	public function run($args)
 	{
+		$this->logger->info("RUNNING EXPORT PACK");
 		$pack_export_id = $args['pack_export_id'];
 
 		$export   = $this->em->getRepository('FMSymSlateBundle:PackExport')->find($pack_export_id);
 		
 		$language = $this->em->getRepository('FMSymSlateBundle:Language')->find($export->getLanguageId());
-		$storages = $this->em->getRepository('FMSymSlateBundle:Pack')->getStoragesWithTranslations($export->getPackId(),$export->getLanguageId());
-		
+		$storages = $this->em->getRepository('FMSymSlateBundle:Pack')->getStoragesWithTranslations($export->getPack()->getId(),$export->getLanguageId());
+
 		$file_contents = array();
 		$footers       = array();
 		
@@ -88,14 +89,17 @@ NOW;
 			$file_contents[$path] .= $data;
 		}
 		
-		$export->setFilepath($export->getId() . "_" . $language->getAName() . "_" . $export->getPack()->getFullName() . ".gzip");
-		$archive = new \Archive_Tar($export->getAbsolutePath(), 'gz');
-		
-		foreach($file_contents as $path => $data)
+		if(count($file_contents) > 0)
 		{
-			$archive->addString($path, $data);
+			$export->setFilepath($export->getId() . "_" . $language->getAName() . "_" . $export->getPack()->getFullName() . ".gzip");
+			$archive = new \Archive_Tar($export->getAbsolutePath(), 'gz');
+			
+			foreach($file_contents as $path => $data)
+			{
+				$archive->addString($path, $data);
+			}
 		}
-		
+
 		return $export->getAbsolutePath();
 		
 	}

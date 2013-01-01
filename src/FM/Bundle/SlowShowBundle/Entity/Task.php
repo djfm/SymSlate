@@ -72,7 +72,6 @@ class Task
      */
     private $updated;
 
-
 	/**
      * @var boolean
      *

@@ -5,35 +5,53 @@
 
 		function generate(url)
 		{
+			$('#generate_link').html('<span class="label label-success">Thinking...</span>');
 			$.post(url,{},function(data){
 				console.log(data);
+				if(data['got_file'])
+				{
+					$('#generate_link').html('<span class="label label-success">Done building pack!</span>');
+					$('#download_link').html('<a class="label label-success" href="'+data['web_path']+'">Download fresh GZIP</a>');
+				}
+				else
+				{
+					$('#generate_link').html('<span class="label label-warning">Queued pack building due to server load, please check later.</span>');
+				}
 			},
 			'json');
 		}
 
 		$('#gzip_language').change(function(e){
-			var info_url = "{{ path('latest_export_info', {'pack_id': entity.id, 'language_code': 'xx'}) }}".replace('xx',$(e.target).val());
-			console.log(info_url);
-			$.getJSON(info_url, function(data){
-				console.log(data);
-				if(data['success'] && data['found'])
-				{
-					$('#download_link').html('<a class="label label-info" href="'+data['web_path']+'">Download GZIP, generated on '+data['created']+'</a>')
-				}
-				else
-				{
-					$('#download_link').html('<span class="label label-warning">This pack was never generated, please generate it!</span>');
-				}
+			if($(e.target).val())
+			{
+				var info_url = "{{ path('latest_export_info', {'pack_id': entity.id, 'language_code': 'xx'}) }}".replace('xx',$(e.target).val());
+				console.log(info_url);
+				$.getJSON(info_url, function(data){
+					console.log(data);
+					if(data['success'] && data['found'])
+					{
+						$('#download_link').html('<a class="label label-success" href="'+data['web_path']+'">Download GZIP, generated on '+data['created']+'</a>')
+					}
+					else
+					{
+						$('#download_link').html('<span class="label label-info">This pack was never generated, please generate it!</span>');
+					}
 
-				if(data['success'])
-				{
-					$('#generate_link').html('<a onclick="javascript:generate(\''+data['generate_path']+'\')" class="label label-success">Generate GZIP</a>');
-				}
-				else
-				{
-					$('#generate_link').html('');
-				}
-			});
+					if(data['success'])
+					{
+						$('#generate_link').html('<a onclick="javascript:generate(\''+data['generate_path']+'\')" class="label label-warning">Generate GZIP</a>');
+					}
+					else
+					{
+						$('#generate_link').html('');
+					}
+				});
+			}
+			else
+			{
+				$('#generate_link').html('');
+				$('#download_link').html('');
+			}
 		});
 	</script>
 {% endblock %}
@@ -89,10 +107,9 @@
 
 			<label for="translate_category" class="input-label">Category</label>
 			<select id="translate_category" name="category">
-				<option value="">Any Category</option>
 				{% for category in categories %}
 					<option value="{{ category }}">
-						{{ category }}
+						{{ category | default ('Any Category') }}
 					</option>
 				{% endfor %}
 			</select>
@@ -159,6 +176,7 @@
 		        <form action="{{ path('pack_setcurrent', { 'pack_id': entity.id }) }}" method="post" class="pull-left">
 		            <button type="submit" class="btn btn-success input-large">Set as current pack</button>
 		        </form>
+		        <span class="pull-left">&nbsp;</span>
 		    	<form action="{{ path('pack_autocomplete', { 'pack_id': entity.id }) }}" method="post" class="pull-left">
 		            <button type="submit" class="btn btn-primary input-large" >Autocomplete</button>
 		        </form>
@@ -167,6 +185,7 @@
 		            {{ form_widget(delete_form) }}
 		            <button type="submit" class="btn btn-danger input-large">Delete</button>
 		        </form>
+		        <span class="pull-right">&nbsp;</span>
 		        <form action="{{ path('packs_edit', { 'id': entity.id }) }}" method="get" class="pull-right">
 		            <button type="submit" class="btn btn-warning input-large">Edit</button>
 		        </form>

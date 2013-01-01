@@ -50,6 +50,16 @@ textarea
 	       box-sizing  : border-box;
 }
 
+form
+{
+	margin:0;
+}
+
+.pull-right-i-mean-it
+{
+	float:right !important;
+}
+
 .clickable
 {
 	cursor:pointer;
@@ -130,4 +140,14 @@ span.translation_stat_percent
 {
 	color:#444;
 	font-weight: bold;
+}
+
+div.alert
+{
+	margin:0;
+	padding-top:2px;
+	padding-bottom:2px;
+	margin-top:8px;
+	margin-left:8px;
+	margin-right: 8px;
 }

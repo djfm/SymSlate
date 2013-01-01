@@ -4,7 +4,6 @@ imports:
 
 framework:
     #esi:             ~
-    #translator:      { fallback: "%locale%" }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -17,6 +16,7 @@ framework:
     trust_proxy_headers: false # Whether or not the Request object should trust proxy headers (X_FORWARDED_FOR/HTTP_CLIENT_IP)
     session:
         handler_id:     session.handler.pdo
+    translator: ~
 
 parameters:
     pdo.db_options:

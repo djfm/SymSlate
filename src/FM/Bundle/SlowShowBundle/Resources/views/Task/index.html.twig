@@ -10,6 +10,7 @@
         <tr>
             <th>Task</th>
             <th>Status</th>
+            <th>Added</th>
             <th>Started</th>
             <th>Completed</th>
             <th>Failed</th>
@@ -22,12 +23,13 @@
         <tr>
             <td>{{ entity.service }}</td>
             <td>{{ entity.status }}</td>
+            <td>{{ entity.created | date("d/m/Y H:i:s") }}</td>
             <td>{{ entity.started ? "<span class='label label-success'>YES</span>" : "<span class='label label-info'>NO</span>" }}</td>
             <td>{{ entity.completed ? "<span class='label label-success'>YES</span>" : "<span class='label label-info'>NO</span>" }}</td>
             <td>{{ entity.failed ? "<span class='label label-important'>YES</span>" : "<span class='label label-success'>NO</span>" }}</td>
             <td><span class="label">{{ entity.progress | default("unknown") }}</label></td>
             <td>
-                {% if app.user.getId() == entity.getUserId() %}
+                {% if app.user.getId() == entity.getUserId() or is_granted('ROLE_SUPER_ADMIN') %}
                      <form action="{{ path('tasks_delete', { 'id': entity.id }) }}" method="post">
                         <button type="submit" class="btn btn-danger">Remove</button>
                     </form>

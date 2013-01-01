@@ -82,7 +82,7 @@ class TranslateController extends Controller
 		$pagination = null;
 		if(isset($result['pagination']))
 		{
-			if($result['pagination']['total_count'] > 0 and $request->query->get('page') <= $result['pagination']['page_count'])
+			if($result['pagination']['total_count'] > 0 and $request->query->get('page') <= $result['pagination']['page_count'] and $result['pagination']['page_count'] > 1)
 			{
 
 				$pagination = array();

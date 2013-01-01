@@ -27,7 +27,9 @@ class TaskController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('FMSlowShowBundle:Task')->findAll();
+        $q = $em->createQuery('SELECT t FROM FMSlowShowBundle:Task t ORDER BY t.id DESC');
+        $q->setMaxResults(50);
+        $entities = $q->getResult();
 
         return array(
             'entities' => $entities,
