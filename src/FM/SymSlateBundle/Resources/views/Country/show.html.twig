@@ -1,21 +1,23 @@
+{% extends '::base.html.twig' %}
+
+
+
+{% block body %}
+
 <h1>Country</h1>
 
-<table class="record_properties">
+<table class="table table-small">
     <tbody>
         <tr>
-            <th>Id</th>
-            <td>{{ entity.id }}</td>
-        </tr>
-        <tr>
-            <th>Iso_code</th>
+            <th>ISO code</th>
             <td>{{ entity.isocode }}</td>
         </tr>
         <tr>
-            <th>Ps_code</th>
+            <th>PrestaShop code</th>
             <td>{{ entity.pscode }}</td>
         </tr>
         <tr>
-            <th>Map_code</th>
+            <th>Map code</th>
             <td>{{ entity.mapcode }}</td>
         </tr>
         <tr>
@@ -25,21 +27,19 @@
     </tbody>
 </table>
 
-<ul class="record_actions">
-    <li>
-        <a href="{{ path('countries') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>
-        <a href="{{ path('countries_edit', { 'id': entity.id }) }}">
-            Edit
-        </a>
-    </li>
-    <li>
-        <form action="{{ path('countries_delete', { 'id': entity.id }) }}" method="post">
-            {{ form_widget(delete_form) }}
-            <button type="submit">Delete</button>
-        </form>
-    </li>
-</ul>
+<form class="pull-left" action="{{ path('countries_delete', { 'id': entity.id }) }}" method="post">
+    {{ form_widget(delete_form) }}
+    <button class="btn btn-danger input-medium" type="submit">Delete</button>
+</form>
+<span class="pull-left">&nbsp;</span>
+<form class="pull-left" action="{{ path('countries_edit', { 'id': entity.id }) }}" method="edit">
+    <button class="btn btn-warning input-medium" type="submit">Edit</button>
+</form>
+
+<div class="clearfix"></div><br/>
+
+<a href="{{ path('countries') }}">
+    &lt;&lt; Back to the list
+</a>
+
+{% endblock %}
