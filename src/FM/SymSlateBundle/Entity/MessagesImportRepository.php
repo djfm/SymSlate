@@ -56,6 +56,7 @@ class MessagesImportRepository extends EntityRepository
 			
 			$classification->setCategory($classification_data["category"]);
 			if(isset($classification_data["section"]))$classification->setSection($classification_data["section"]);
+			if(isset($classification_data["subsection"]))$classification->setSubsection($classification_data["subsection"]);
 			$em->persist($classification);
 			
 			//create OR UPDATE the storage
