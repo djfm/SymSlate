@@ -32,7 +32,7 @@ class PackExportService
 				$ct = $cts[0];
 				$translation = $ct->getTranslation();
 				
-				$path = str_replace('/[iso]/', '/' . $language->getCode() . '/', $storage->getPath());
+				$path = str_replace('[iso]', $language->getCode(), $storage->getPath());
 				
 				if($storage->getMethod() == 'ARRAY')
 				{
