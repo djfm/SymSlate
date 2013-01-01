@@ -239,7 +239,7 @@ class PackRepository extends EntityRepository
 		return array("categories" => $cats, "statistics" => $stats);
 	}
 
-	public function computeAllStatistics($pack_id, $force_refresh=false, $refresh_interval=60)
+	public function computeAllStatistics($pack_id, $force_refresh=false, $refresh_interval=1)
 	{
 		$pack = $this->find($pack_id);
 
