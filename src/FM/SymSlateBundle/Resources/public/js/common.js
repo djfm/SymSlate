@@ -54,3 +54,13 @@ goto_page = function(page)
 	$('#page').val(page).parents('form').submit();	
 }
 
+oops = function(message)
+{
+	$('#notification').html("<div class='alert'><button type='button' class='close' data-dismiss='alert'>&times;</button><strong>Oops!</strong>&nbsp;"+message+"</div>");
+}
+
+unOops = function()
+{
+	$('#notification').html('');
+}
+

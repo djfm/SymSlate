@@ -38,6 +38,14 @@ countries:
     resource: "@FMSymSlateBundle/Controller/CountryController.php"
     type: annotation
 
+users:
+    resource: "@FMSymSlateBundle/Controller/UserController.php"
+    type: annotation
+
+api:
+    resource: "@FMSymSlateBundle/Controller/APIController.php"
+    type: annotation
+
 userlanguages:
     resource: "@FMSymSlateBundle/Controller/UserLanguageController.php"
     type: annotation

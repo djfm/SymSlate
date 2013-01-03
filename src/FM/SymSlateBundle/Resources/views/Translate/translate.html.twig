@@ -18,18 +18,23 @@
 		
 		<script type="text/javascript">
 			//this is here and not in translate.js because we need some twig helpers for URLs, so this is more convenient.
-			submit_translation = function(message_id, classification_id, translation_id, language_id)
+			
+			get_translation = function(classification_id)
 			{
-				var text = '';
 				var txtid = 'translation_text_'+classification_id;
 				if($('#'+txtid).hasClass('HTML'))
 				{
-					text = CKEDITOR.instances[txtid].getData();
+					return CKEDITOR.instances[txtid].getData();
 				}
 				else
 				{
-					text = $('#'+txtid).val();
+					return $('#'+txtid).val();
 				}
+			}
+
+			submit_translation = function(message_id, classification_id, translation_id, language_id)
+			{
+				var text = get_translation(classification_id);
 
 				var img = $('#translation_submit_'+classification_id);
 
@@ -49,35 +54,41 @@
 						if(data.success)
 						{
 							img.attr('src','{{ asset('bundles/fmsymslate/images/happy.png') }}');
-
-							$('#submission_feedback_'+classification_id).css('display','none');
-							$('#submission_feedback_'+classification_id).html(data['']);
-							
+							unOops();						
 						}
 						else
 						{
 							img.attr('src','{{ asset('bundles/fmsymslate/images/sad.png') }}');
-							
-							$('#submission_feedback_'+classification_id).html(data['error_message']);
-							$('#submission_feedback_'+classification_id).css('display','inline-block');
+							oops(data['error_message']);
 						}
 					},
 					'json');
 			}
 
+			var last_editor = undefined;
 			CKEDITOR.on('currentInstance',function(e){
 				var editor = CKEDITOR.currentInstance;
-				if(editor){
+				if(last_editor && editor != last_editor)
+				{
+					var tmp = last_editor.name.split("_");
+					lostFocus(tmp[tmp.length - 1]);
+				}
+				if(editor && editor != last_editor){
 					var tmp = editor.name.split("_");
 					var id  = tmp[tmp.length - 1];
 					gotFocus(id);
 				}
+				last_editor = editor;
 			});
 
 			$('textarea.translate').focus(function(e){
 				var tmp = $(e.target).attr('id').split("_");
 				var id  = tmp[tmp.length - 1];
 				gotFocus(id);
+			}).focusout(function(e){
+				var tmp = $(e.target).attr('id').split("_");
+				var id  = tmp[tmp.length - 1];
+				lostFocus(id);	
 			});
 
 			function gotFocus(id)
@@ -85,6 +96,15 @@
 				$('.controls_active').removeClass('controls_active').css('display','none');
 				console.log("I got the focus! " + id);
 				$('#controls_'+id).css('display','table').addClass('controls_active');
+			}
+			function lostFocus(id)
+			{
+				console.log("I lost the focus! " + id);
+				var text = get_translation(id);
+				if(text.length > 0)
+				{
+					$('#translation_submit_'+id).click();
+				}
 			}
 						
 		</script>

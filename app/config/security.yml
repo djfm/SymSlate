@@ -10,6 +10,9 @@ security:
         FOS\UserBundle\Model\UserInterface: sha512
 
     firewalls:
+        webservice:
+            pattern: ^/api/
+            http_basic: ~
         main:
             pattern: ^/
             form_login:

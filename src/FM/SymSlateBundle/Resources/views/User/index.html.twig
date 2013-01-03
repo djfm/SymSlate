@@ -1,0 +1,40 @@
+{% extends '::base.html.twig' %}
+
+
+
+{% block body %}
+
+
+<h1>User list</h1>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Lastlogin</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for entity in entities %}
+        <tr>
+            <td><a href="{{ path('users_show', { 'id': entity.id }) }}">{{ entity.username }}</a></td>
+            
+            <td>{{ entity.email }}</td>
+           
+            <td>{% if entity.lastLogin %}{{ entity.lastLogin|date('d/m/Y H:i:s') }}{% endif %}</td>
+            <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('users_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                </ul>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
+

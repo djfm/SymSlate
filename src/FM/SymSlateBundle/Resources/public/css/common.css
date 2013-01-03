@@ -30,6 +30,11 @@ div#contents
 	padding:5px;
 }
 
+#notification
+{
+	margin-left: 15px;
+}
+
 table.table-small
 {
 	width:33%;
