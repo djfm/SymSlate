@@ -87,14 +87,14 @@ class Pack
     /**
      * @var string
      *
-     * @ORM\Column(name="statistics", type="text")
+     * @ORM\Column(name="statistics", type="text", nullable=true)
      */
     private $statistics;
 
     /**
      * @var datetime $statistics_updated
      *
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="datetime", nullable=true)
      */
     private $statistics_updated;
 	
@@ -415,5 +415,51 @@ class Pack
     public function getIsCurrent()
     {
         return $this->is_current;
+    }
+
+    /**
+     * Set statistics
+     *
+     * @param string $statistics
+     * @return Pack
+     */
+    public function setStatistics($statistics)
+    {
+        $this->statistics = $statistics;
+    
+        return $this;
+    }
+
+    /**
+     * Get statistics
+     *
+     * @return string 
+     */
+    public function getStatistics()
+    {
+        return $this->statistics;
+    }
+
+    /**
+     * Set statistics_updated
+     *
+     * @param \DateTime $statisticsUpdated
+     * @return Pack
+     */
+    public function setStatisticsUpdated($statisticsUpdated)
+    {
+        $this->statistics_updated = $statisticsUpdated;
+    
+        return $this;
+    }
+
+    /**
+     * Get statistics_updated
+     *
+     * @return \DateTime 
+     */
+    public function getStatisticsUpdated()
+    {
+        return $this->statistics_updated;
     }
 }

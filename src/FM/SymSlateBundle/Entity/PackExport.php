@@ -264,7 +264,7 @@ class PackExport
      */
     public function removeFile()
     {
-        if ($file = $this->getAbsolutePath()) {
+        if ($file = $this->getAbsolutePath() and file_exists($file)) {
             unlink($file);
         }
     }

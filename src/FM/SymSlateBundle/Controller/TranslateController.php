@@ -47,6 +47,14 @@ class TranslateController extends Controller
 			{
 				$query_options['category'] = $c;
 			}
+			if($ml = $request->query->get('message_like'))
+			{
+				$query_options['message_like'] = $ml;
+			}
+			if($tl = $request->query->get('translation_like'))
+			{
+				$query_options['translation_like'] = $tl;
+			}
 			if($e = $request->query->get('empty'))
 			{
 				$query_options['empty'] = $e;

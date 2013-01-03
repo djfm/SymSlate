@@ -21,7 +21,9 @@ class PackRepository extends EntityRepository
 			"category" => null,				// all categories
 			"section" => null,				// all sections
 			"subsection" => null,			// all subsections
-			"source_language_id" => null	// language from which to translate
+			"source_language_id" => null,	// language from which to translate
+			"message_like" => null,
+			"translation_like" => null
 		);
 		
 		$default_pagination_options = array(
@@ -48,11 +50,11 @@ class PackRepository extends EntityRepository
 		
 		if(!$query_options['source_language_id'])
 		{	
-			$qb->select(array('c','m','ct','t'));
+			$qb->select(array('DISTINCT c','m','ct','t'));
 		}
 		else
 		{
-			$qb->select(array('c','m','ct','t', 'sct', 'st'));
+			$qb->select(array('DISTINCT c','m','ct','t', 'sct', 'st'));
 		}
 		
 		$qb->from('FMSymSlateBundle:Classification','c')
@@ -62,8 +64,8 @@ class PackRepository extends EntityRepository
 			
 		if($query_options['source_language_id'])
 		{
-			$qb->leftJoin ('m.current_translations','sct','WITH','sct.language_id = :source_language_id')
-		       ->leftJoin ('sct.translation','st');
+			$qb->leftJoin ('m.current_translations','sct','WITH','sct.language_id = :source_language_id');
+			$qb->leftJoin ('sct.translation','st');		       
 		}	
 			
 		$qb->where('c.pack_id = :pack_id');
@@ -89,6 +91,23 @@ class PackRepository extends EntityRepository
 		{
 			$qb->andWhere("c.subsection = :subsection");
 		}
+		if(null !== $query_options["message_like"])
+		{
+			if(null === $query_options['source_language_id'])
+			{
+				$qb->andWhere("m.text LIKE :message_like");
+			}
+			else
+			{
+				$qb->andWhere("st.text LIKE :message_like");
+			}
+		}
+		if($query_options["translation_like"] !== null)
+		{
+			$qb->andWhere("t.text LIKE :translation_like");
+		}
+
+		$qb->orderBy('c.position', 'ASC');
 		
 		$query = $qb->getQuery();
 								   
@@ -111,12 +130,68 @@ class PackRepository extends EntityRepository
 		{
 			$query->setParameter('source_language_id', $query_options["source_language_id"]);
 		}
+		if(null !== $query_options["message_like"])
+		{
+			$query->setParameter('message_like', $query_options["message_like"]);
+		}
+		if($query_options["translation_like"] !== null)
+		{
+			$query->setParameter('translation_like', $query_options["translation_like"]);
+		}
 		
-		$query->setMaxResults((int)$pagination_options["page_size"]);
-		$query->setFirstResult(((int)$pagination_options["page"]-1)*((int)$pagination_options["page_size"]));
-		
+		$paginate = true;
+		if(isset($pagination_options["disable_pagination"]) and $pagination_options["disable_pagination"] == true)
+		{
+			$paginate = false;
+		}
+		if($paginate)
+		{
+			$query->setMaxResults((int)$pagination_options["page_size"]);
+			$query->setFirstResult(((int)$pagination_options["page"]-1)*((int)$pagination_options["page_size"]));
+		}
 		
 		$paginator = new Paginator($query, true);
+
+
+		//get context if there was a LIKE clause
+		if((null !== $query_options["message_like"]) or (null !== $query_options["translation_like"]))
+		{
+			//get the positions around the selected messages
+			$positions = array();
+			$already_got = array();
+			$context   = 2;
+			foreach($paginator as $classification)
+			{
+				for($p = $classification->getPosition() - $context; $p <= $classification->getPosition() + $context; $p += 1)
+				{
+					if($p != $classification->getPosition())
+					{
+						$positions[] = $p;
+					}
+					else
+					{
+						$already_got[] = $p;
+					}
+				}
+			}
+			$positions = array_diff(array_unique($positions), $already_got);
+
+			$qo = array(
+				"section" => $query_options["section"],
+				"subsection" => $query_options["subsection"],
+				"source_language_id" => $query_options['source_language_id'],
+				"empty" => null, //empty or not
+				"positions" => $positions,
+				"disable_pagination" => true,
+				"message_like" => null,
+				"translation_like" => null
+			);
+
+			$context_messages = $this->getMessagesWithTranslations($pack_id, $language_id, $qo);
+
+			//TODO: add positions option to query
+			//TODO: merge context with actual results
+		}
 		
 		$messages = array();
 			
@@ -234,7 +309,7 @@ class PackRepository extends EntityRepository
 			$stats[null]['translated'] += (int)$row['translated'];
 		}
 		
-		$stats[null]['percent'] = 100 * $stats[null]['translated'] / $stats[null]['total'];
+		$stats[null]['percent'] = $stats[null]['total'] > 0 ? 100 * $stats[null]['translated'] / $stats[null]['total'] : 0;
 		
 		return array("categories" => $cats, "statistics" => $stats);
 	}

@@ -69,6 +69,13 @@ class Classification
     private $message_id;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="position", type="integer")
+     */
+    private $position;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="category", type="string", length=64)

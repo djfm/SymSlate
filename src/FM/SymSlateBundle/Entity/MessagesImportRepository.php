@@ -22,9 +22,15 @@ class MessagesImportRepository extends EntityRepository
 		$cr = $em->getRepository('FMSymSlateBundle:Classification');
 		$sr = $em->getRepository('FMSymSlateBundle:Storage');
 		
+		$messages_import = $this->findOneById($messages_import_id);
+
+		$q = $em->createQuery('SELECT COUNT(c.id) FROM FMSymSlateBundle:Classification c WHERE c.pack_id=:pack_id');
+		$q->setParameter("pack_id", $messages_import->getPackId());
+		$position = $q->getSingleScalarResult();
+
 		foreach($messages as $message)
 		{
-			$messages_import = $this->findOneById($messages_import_id);
+			
 			
 			$classification_data = $message->classification_data;
 			$storage_data = $message->storage_data;
@@ -52,6 +58,8 @@ class MessagesImportRepository extends EntityRepository
 				$classification->setMessagesImport($messages_import);
 				$classification->setPack($messages_import->getPack());
 				$classification->setMessage($message);
+				$position += 1;
+				$classification->setPosition($position);
 			}
 			
 			$classification->setCategory($classification_data["category"]);
@@ -86,6 +94,7 @@ class MessagesImportRepository extends EntityRepository
 			$em->flush();
 			
 			$em->clear();
+			$messages_import = $this->findOneById($messages_import_id);
 			
 		}
 	}

@@ -69,6 +69,13 @@ class Classification
     private $message_id;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="position", type="integer")
+     */
+    private $position;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="category", type="string", length=64)
@@ -434,5 +441,28 @@ class Classification
     public function getTranslationSubmissions()
     {
         return $this->translation_submissions;
+    }
+
+    /**
+     * Set position
+     *
+     * @param integer $position
+     * @return Classification
+     */
+    public function setPosition($position)
+    {
+        $this->position = $position;
+    
+        return $this;
+    }
+
+    /**
+     * Get position
+     *
+     * @return integer 
+     */
+    public function getPosition()
+    {
+        return $this->position;
     }
 }
