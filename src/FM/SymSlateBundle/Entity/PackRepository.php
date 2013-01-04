@@ -107,6 +107,12 @@ class PackRepository extends EntityRepository
 			$qb->andWhere("t.text LIKE :translation_like");
 		}
 
+		if(isset($query_options['positions']) and (null !== $query_options['positions']) and (0 <  count($query_options['positions'])))
+		{
+
+			$qb->andWhere("c.position IN (" . implode(", ",array_map('intval', $query_options['positions'])) . ")");
+		}
+
 		$qb->orderBy('c.position', 'ASC');
 		
 		$query = $qb->getQuery();
@@ -153,6 +159,7 @@ class PackRepository extends EntityRepository
 		$paginator = new Paginator($query, true);
 
 
+		$context_messages = null;
 		//get context if there was a LIKE clause
 		if((null !== $query_options["message_like"]) or (null !== $query_options["translation_like"]))
 		{
@@ -184,16 +191,15 @@ class PackRepository extends EntityRepository
 				"positions" => $positions,
 				"disable_pagination" => true,
 				"message_like" => null,
-				"translation_like" => null
+				"translation_like" => null,
+				"is_context" => true
 			);
 
 			$context_messages = $this->getMessagesWithTranslations($pack_id, $language_id, $qo);
-
-			//TODO: add positions option to query
-			//TODO: merge context with actual results
+			$messages = $context_messages['messages'];
 		}
 		
-		$messages = array();
+		
 			
 		if($sid = $query_options['source_language_id'])
 		{
@@ -242,12 +248,31 @@ class PackRepository extends EntityRepository
 				"translation_id" => $translation_id,
 				"type" => $message->getType(),
 				"classification_id" => $classification->getId(),
-				"message_id" => $message->getId()
+				"message_id" => $message->getId(),
+				"is_context" => isset($query_options['is_context']) and $query_options['is_context'] ,
+				"position" => $classification->getPosition()
 			);
 				
 				//echo "<p>".$message->getText()."</p>";
 		}
 		
+
+		ksort($messages);
+		foreach($messages as $category => &$ss)
+		{
+			ksort($ss);
+			foreach ($ss as $section => &$ssms) 
+			{
+				ksort($ssms);
+				foreach($ssms as $subsection => &$ms)
+				{
+					usort($ms, function($a, $b){
+						return $a['position'] - $b['position'];
+					});
+				}
+			}
+		}
+
 		$pagination = array(
 			'total_count' => count($paginator),
 			'page' => $pagination_options['page'],

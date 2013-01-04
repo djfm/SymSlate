@@ -55,6 +55,11 @@ div.translate_row
 	border:1px solid #ccc;
 }
 
+div.context
+{
+	color:gray;
+}
+
 div.translate_row.even
 {
 	background-color: rgba(170,170,170,0.2);

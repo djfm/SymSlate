@@ -211,7 +211,7 @@
 
 									{%  for m in ms %}
 
-										<div class="translate_row {{ cycle(['odd', 'even'], loop.index) }}">
+										<div class="{{ m['is_context'] ? 'context ' : '' }}translate_row {{ cycle(['odd', 'even'], loop.index) }}">
 
 
 											<div class="translate_row_right">
