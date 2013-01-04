@@ -28,7 +28,8 @@ class PackRepository extends EntityRepository
 		
 		$default_pagination_options = array(
 			"page_size" => 25,
-			"page" => 1
+			"page" => 1,
+			"disable_pagination" => false
 		);
 		
 		$query_options = array_merge($default_query_options, $query_options);
@@ -107,10 +108,17 @@ class PackRepository extends EntityRepository
 			$qb->andWhere("t.text LIKE :translation_like");
 		}
 
-		if(isset($query_options['positions']) and (null !== $query_options['positions']) and (0 <  count($query_options['positions'])))
+		if(isset($query_options['positions']))
 		{
-
-			$qb->andWhere("c.position IN (" . implode(", ",array_map('intval', $query_options['positions'])) . ")");
+			if((null === $query_options['positions']) or (0 ===  count($query_options['positions'])))
+			{
+				$qb->andWhere("c.position IS NULL");
+			}
+			else
+			{
+				$qb->andWhere("c.position IN (" . implode(", ",array_map('intval', $query_options['positions'])) . ")");
+			}
+			
 		}
 
 		$qb->orderBy('c.position', 'ASC');
@@ -145,12 +153,8 @@ class PackRepository extends EntityRepository
 			$query->setParameter('translation_like', $query_options["translation_like"]);
 		}
 		
-		$paginate = true;
-		if(isset($pagination_options["disable_pagination"]) and $pagination_options["disable_pagination"] == true)
-		{
-			$paginate = false;
-		}
-		if($paginate)
+		
+		if(!$pagination_options["disable_pagination"])
 		{
 			$query->setMaxResults((int)$pagination_options["page_size"]);
 			$query->setFirstResult(((int)$pagination_options["page"]-1)*((int)$pagination_options["page_size"]));
@@ -158,7 +162,7 @@ class PackRepository extends EntityRepository
 		
 		$paginator = new Paginator($query, true);
 
-
+		$messages = array();
 		$context_messages = null;
 		//get context if there was a LIKE clause
 		if((null !== $query_options["message_like"]) or (null !== $query_options["translation_like"]))
@@ -181,6 +185,7 @@ class PackRepository extends EntityRepository
 					}
 				}
 			}
+			//print_r($positions);
 			$positions = array_diff(array_unique($positions), $already_got);
 
 			$qo = array(
@@ -189,13 +194,14 @@ class PackRepository extends EntityRepository
 				"source_language_id" => $query_options['source_language_id'],
 				"empty" => null, //empty or not
 				"positions" => $positions,
-				"disable_pagination" => true,
 				"message_like" => null,
 				"translation_like" => null,
 				"is_context" => true
 			);
 
-			$context_messages = $this->getMessagesWithTranslations($pack_id, $language_id, $qo);
+			$po = array("disable_pagination" => true);
+
+			$context_messages = $this->getMessagesWithTranslations($pack_id, $language_id, $qo, $po);
 			$messages = $context_messages['messages'];
 		}
 		
@@ -249,14 +255,13 @@ class PackRepository extends EntityRepository
 				"type" => $message->getType(),
 				"classification_id" => $classification->getId(),
 				"message_id" => $message->getId(),
-				"is_context" => isset($query_options['is_context']) and $query_options['is_context'] ,
+				"is_context" => isset($query_options['is_context']) and $query_options['is_context'],
 				"position" => $classification->getPosition()
 			);
 				
 				//echo "<p>".$message->getText()."</p>";
 		}
 		
-
 		ksort($messages);
 		foreach($messages as $category => &$ss)
 		{

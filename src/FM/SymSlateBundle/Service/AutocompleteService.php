@@ -96,6 +96,8 @@ class AutocompleteService
 					$this->em->persist($ct);
 				}
 			}
+
+			$this->em->flush();
 			
 		}
 	}
