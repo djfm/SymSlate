@@ -39,7 +39,7 @@ class User extends BaseUser
 	private $pack_exports;
 
     /**
-     * @ORM\OneToMany(targetEntity="UserLanguage", mappedBy="user")
+     * @ORM\OneToMany(targetEntity="UserLanguage", mappedBy="user", cascade="persist")
      */
     private $user_languages;
 	
@@ -68,7 +68,7 @@ class User extends BaseUser
         {
             foreach($this->getUserLanguages() as $ul)
             {
-                if($ul->getLanguageId() == $language->getId())return true;
+                if($ul->getLanguage()->getId() == $language->getId())return true;
             }
         }
         

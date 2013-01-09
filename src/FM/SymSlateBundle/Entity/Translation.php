@@ -80,6 +80,13 @@ class Translation
     private $translation_submission_id;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="mass_imported", type="boolean", nullable=false)
+     */
+    private $mass_imported = false;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="created_by", type="integer", nullable=true)
@@ -485,5 +492,28 @@ class Translation
     public function getTranslationSubmissionId()
     {
         return $this->translation_submission_id;
+    }
+
+    /**
+     * Set mass_imported
+     *
+     * @param boolean $massImported
+     * @return Translation
+     */
+    public function setMassImported($massImported)
+    {
+        $this->mass_imported = $massImported;
+    
+        return $this;
+    }
+
+    /**
+     * Get mass_imported
+     *
+     * @return boolean 
+     */
+    public function getMassImported()
+    {
+        return $this->mass_imported;
     }
 }
