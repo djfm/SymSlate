@@ -51,7 +51,7 @@ class MassImportController extends Controller
     	$fd   = fopen('uploads/massimports/' . $file->getClientOriginalName(), 'r');
 
     	$headers = fgetcsv($fd);
-    	print_r($headers);
+    	//print_r($headers);
 
     	//bench
     	$new=0;
@@ -73,6 +73,7 @@ class MassImportController extends Controller
     		{
     			$user = $userManager->createUser();
 		    	$user->setUsername(current(explode("@", $row['Email'])));
+			if(!$row['Email'])continue;
 		    	$user->setEmail($row['Email']);
 		    	$user->setPassword(str_shuffle("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"),0,32);
 		    	$userManager->updateUser($user);
