@@ -32,10 +32,12 @@ class AutocompleteService
 		{
 						
 			$query = $this->em->createQuery("
-				SELECT t, MAX(t.id) as maxid FROM FMSymSlateBundle:Translation t WHERE t.language_id = :language_id
-				GROUP BY t.mkey
-				HAVING t.id = maxid
-				ORDER by maxid ASC
+				SELECT t FROM FMSymSlateBundle:Translation t WHERE 
+				t.language_id = :language_id
+				AND
+				t.id = (SELECT max(u.id) FROM FMSymSlateBundle:Translation u
+					WHERE u.language_id = :language_id AND u.mkey=t.mkey)
+				ORDER by t.id ASC
 			");
 			
 			$query->setParameter('language_id', $language_id);
@@ -45,7 +47,7 @@ class AutocompleteService
 			
 			foreach($query->getResult() as $translation)
 			{
-				$exact[$translation[0]->getMkey()] = $translation[0];
+				$exact[$translation->getMkey()] = $translation;
 			}
 			
 			/*build the displaced translations mapping*/
