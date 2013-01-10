@@ -100,6 +100,7 @@ class AutocompleteService
 			}
 
 			$this->em->flush();
+			$this->em->clear();
 			
 		}
 	}
