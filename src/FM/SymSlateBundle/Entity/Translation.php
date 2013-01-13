@@ -44,7 +44,7 @@ class Translation
 
     /**
      * @ORM\OneToOne(targetEntity="TranslationSubmission", inversedBy="translation")
-     * @ORM\JoinColumn(name="translation_submission_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="translation_submission_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $translation_submission;
 	 
