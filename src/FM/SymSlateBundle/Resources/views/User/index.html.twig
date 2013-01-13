@@ -12,6 +12,7 @@
         <tr>
             <th>Username</th>
             <th>Email</th>
+            <th>Translations Performed</th>
             <th>Lastlogin</th>
             <th>Actions</th>
         </tr>
@@ -22,6 +23,8 @@
             <td><a href="{{ path('users_show', { 'id': entity.id }) }}">{{ entity.username }}</a></td>
             
             <td>{{ entity.email }}</td>
+
+            <td>{{ entity.getTranslationsCount }}</td>
            
             <td>{% if entity.lastLogin %}{{ entity.lastLogin|date('d/m/Y H:i:s') }}{% endif %}</td>
             <td>

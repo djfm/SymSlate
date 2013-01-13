@@ -165,7 +165,13 @@ class PackRepository extends EntityRepository
 		$messages = array();
 		$context_messages = null;
 		//get context if there was a LIKE clause
-		if((null !== $query_options["message_like"]) or (null !== $query_options["translation_like"]))
+		if((!(isset($query_options["is_context"]) and $query_options["is_context"]) 
+			and (   (null !== $query_options["message_like"]) 
+				 or (null !== $query_options["translation_like"]) 
+				 or ('ONLY' !== $query_options["empty"]) 
+				 or ('EXCEPT' !== $query_options["empty"]))
+				)
+			)
 		{
 			//get the positions around the selected messages
 			$positions = array();
@@ -175,13 +181,16 @@ class PackRepository extends EntityRepository
 			{
 				for($p = $classification->getPosition() - $context; $p <= $classification->getPosition() + $context; $p += 1)
 				{
-					if($p != $classification->getPosition())
+					if($p >= 0)
 					{
-						$positions[] = $p;
-					}
-					else
-					{
-						$already_got[] = $p;
+						if($p != $classification->getPosition())
+						{
+							$positions[] = $p;
+						}
+						else
+						{
+							$already_got[] = $p;
+						}
 					}
 				}
 			}
