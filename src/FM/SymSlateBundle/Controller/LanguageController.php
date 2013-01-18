@@ -59,6 +59,18 @@ class LanguageController extends Controller
     }
 
     /**
+     * Autocompletes a language
+     *
+     * @Route("/{id}/autocomplete", name="languages_autocomplete")
+     * @Method("POST")
+     */
+    public function autocompleteAction($id)
+    {
+	    $manager = $this->get('queue_manager');
+	    $manager->enqueueJob('autocompleter', array('language_ids' => array($id)));
+	    return $this->redirect($this->generateUrl("languages"));
+    }
+    /**
      * Displays a form to create a new Language entity.
      *
      * @Route("/new", name="languages_new")

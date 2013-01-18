@@ -22,14 +22,10 @@
             <td>{{ entity.locale }}</td>
             <td>{{ entity.name }}</td>
             <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('languages_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('languages_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
+                <a class="btn btn-success" href="{{ path('languages_show', { 'id': entity.id }) }}">show</a>
+                <form method="post" class="pull-left" action="{{ path('languages_autocomplete', { 'id': entity.id }) }}"><button class="btn btn-primary" type="submit">autocomplete</button></form>
+                <span class="pull-left">&nbsp;&nbsp;</span>
+		<a class="btn btn-warning" href="{{ path('languages_edit', { 'id': entity.id }) }}">edit</a>
             </td>
         </tr>
     {% endfor %}
