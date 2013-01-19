@@ -161,6 +161,14 @@
 						<option value="EXCEPT" {{ app.request.query.get('empty')== "EXCEPT" ? "selected='true'" : '' }}>there</option>
 						<option value="MAYBE" {{ app.request.query.get('empty')== "MAYBE" ? "selected='true'" : '' }}>there or not</option>
 					</select>
+					<br/>
+					<label class="input-label medium">Author</label>
+					<select  class="autosubmit" id="translate_author" name="translate_author">
+						<option value="*" {{ app.request.query.get('translate_author','*') == "*"  ? "selected" : "" }}>Anyone</option>
+						{% for author in authors %}
+							<option value="{{ author.getId() }}" {{ app.request.query.get('translate_author','*') ==  author.getId() ? "selected" : "" }}>{{ author.getUsername() }}</option>
+						{% endfor %}
+					</select>
 					
 					
 				</fieldset>

@@ -66,6 +66,10 @@ class TranslateController extends Controller
 					$query_options['source_language_id'] = $source_language->getId();
 				}
 			}
+			if($author_id = $request->query->get('translate_author','*') and $author_id != '*')
+			{
+				$query_options['author_id'] = $author_id;
+			}
 			
 			$pagination_options = array();
 			if($p = $request->query->get('page'))
@@ -81,6 +85,18 @@ class TranslateController extends Controller
 					     ->setParameter('pack_id', $pack_id)
 					     ->getResult();
 		
+
+		$authors = $em->createQuery('SELECT DISTINCT a
+									 FROM FMSymSlateBundle:User a
+									 INNER JOIN a.authored_translations t
+									 INNER JOIN t.current_translations ct
+									 INNER JOIN ct.message m
+									 INNER JOIN m.classifications c
+									 WHERE c.pack_id = :pack_id AND t.language_id = :language_id AND (t.translation_submission_id IS NOT NULL OR t.mass_imported = true)')
+					     ->setParameter('pack_id', $pack_id)
+					     ->setParameter('language_id', $language->getId())
+					     ->getResult();
+
 		/*
 		'total_count' => count($paginator),
 			'page' => $pagination_options['page'],
@@ -126,7 +142,8 @@ class TranslateController extends Controller
         	'messages'   => isset($result)?$result['messages']:null,
         	'pagination' => $pagination,
         	'categories' => $categories,
-        	'languages'  => $lr->findAll()
+        	'languages'  => $lr->findAll(),
+        	'authors'    => $authors
 		);
 	}
 

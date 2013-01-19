@@ -23,7 +23,8 @@ class PackRepository extends EntityRepository
 			"subsection" => null,			// all subsections
 			"source_language_id" => null,	// language from which to translate
 			"message_like" => null,
-			"translation_like" => null
+			"translation_like" => null,
+			"author_id" => null
 		);
 		
 		$default_pagination_options = array(
@@ -92,6 +93,10 @@ class PackRepository extends EntityRepository
 		{
 			$qb->andWhere("c.subsection = :subsection");
 		}
+		if($query_options["author_id"] !== null)
+		{
+			$qb->andWhere("t.created_by = :created_by");
+		}
 		if(null !== $query_options["message_like"])
 		{
 			if(null === $query_options['source_language_id'])
@@ -151,6 +156,10 @@ class PackRepository extends EntityRepository
 		if($query_options["translation_like"] !== null)
 		{
 			$query->setParameter('translation_like', $query_options["translation_like"]);
+		}
+		if($query_options["author_id"] !== null)
+		{
+			$query->setParameter('created_by', $query_options["author_id"]);
 		}
 		
 		
