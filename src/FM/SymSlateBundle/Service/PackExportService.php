@@ -2,17 +2,13 @@
 
 namespace FM\SymSlateBundle\Service;
 
-class PackExportService
+class PackExportService extends \FM\Bundle\SlowShowBundle\Worker\Worker
 {
-	public function __construct($em, $security_context, $logger)
-	{
-		$this->em = $em;
-		$this->security_context = $security_context;
-		$this->logger = $logger;
-	}
 
 	public function run($args)
 	{
+		$this->setStatus("Started...");
+
 		$this->logger->info("RUNNING EXPORT PACK");
 		$pack_export_id = $args['pack_export_id'];
 
@@ -20,6 +16,8 @@ class PackExportService
 		
 		$language = $this->em->getRepository('FMSymSlateBundle:Language')->find($export->getLanguageId());
 		$storages = $this->em->getRepository('FMSymSlateBundle:Pack')->getStoragesWithTranslations($export->getPack()->getId(),$export->getLanguageId());
+
+		$this->setExpectedSteps(count($storages));
 
 		$file_contents = array();
 		$footers       = array();
@@ -83,6 +81,8 @@ NOW;
 			{
 				throw new Exception("Classification ". $cl->getId() . " doesn't have exactly one current translation in this language! (got " . $cts->count() . ")");	
 			}
+
+			$this->step();
 		}
 
 		foreach($footers as $path => $data)
@@ -100,6 +100,8 @@ NOW;
 				$archive->addString($path, $data);
 			}
 		}
+
+		$this->setStatus("Completed!");
 
 		return $export->getAbsolutePath();
 		

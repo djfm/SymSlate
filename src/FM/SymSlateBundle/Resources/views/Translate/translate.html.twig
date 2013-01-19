@@ -148,6 +148,12 @@
 							</option>
 						{% endfor %}
 					</select>
+					<BR/>
+					<label for="translate_context" class="input-label medium">Show context</label>
+					<select class="autosubmit" id="translate_context" name="context">
+						<option value="YES" {{ app.request.query.get('context','YES') == 'YES' ? 'selected' : '' }}>Yes</option>
+						<option value="NO"  {{ app.request.query.get('context','YES') == 'NO'  ? 'selected' : '' }}>No</option>
+					</select>
 				</fieldset>
 
 				<fieldset class="pull-left bordered">

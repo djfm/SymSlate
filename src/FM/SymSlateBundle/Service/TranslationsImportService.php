@@ -2,15 +2,8 @@
 
 namespace FM\SymSlateBundle\Service;
 
-class TranslationsImportService
+class TranslationsImportService extends \FM\Bundle\SlowShowBundle\Worker\Worker
 {
-	public function __construct($em, $security_context, $logger)
-	{
-		$this->em = $em;
-		$this->security_context = $security_context;
-		$this->logger = $logger;
-	}
-
 
 	public function getOrCreateLanguage($user, $language_code)
 	{	
@@ -39,6 +32,8 @@ class TranslationsImportService
 		$user                = $translations_import->getCreator();
 		$translations        = $translations_import->buildTranslations();
 		
+		$this->setExpectedSteps(count($translations));
+
 		foreach($translations as $translation)
 		{	
 			if(($language = $this->getOrCreateLanguage($user, $translation->language_code)) and $user->canTranslateInto($language))
@@ -66,6 +61,9 @@ class TranslationsImportService
 				$translations_import = $this->em->getRepository('FMSymSlateBundle:TranslationsImport')->findOneById($translations_import_id);
 				$user                = $translations_import->getCreator();
 			}
+
+			$this->step();
+
 		}
 	}
 

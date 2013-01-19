@@ -122,7 +122,7 @@ class PackController extends Controller
     public function autocompleteAction($pack_id)
     {
     	$manager = $this->get('queue_manager');
-        $manager->enqueueJob('autocompleter', array('language_ids' => array()));
+        $manager->enqueueJob('FM\SymSlateBundle\Service\AutocompleteService', array('language_ids' => array()));
     	return $this->showAction($pack_id);
 	}
 	

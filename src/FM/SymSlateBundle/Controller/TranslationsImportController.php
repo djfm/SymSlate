@@ -109,7 +109,7 @@ class TranslationsImportController extends Controller
 			else
 			{
 				$manager = $this->get("queue_manager");
-                $manager->enqueueJob('translations_importer', array('translations_import_id' => $entity->getId()));
+                $manager->enqueueJob('FM\SymSlateBundle\Service\TranslationsImportService', array('translations_import_id' => $entity->getId()));
 				$manager->processNextJob();
 			}
             	

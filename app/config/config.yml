@@ -97,7 +97,7 @@ services:
     queue_manager:
         class: FM\Bundle\SlowShowBundle\Manager\Manager
         arguments:
-          service_container: "@service_container"
           em: "@doctrine.orm.entity_manager"
           security_context: "@security.context"
+          logger: "@monolog.logger"
           max_concurrent_jobs: 1

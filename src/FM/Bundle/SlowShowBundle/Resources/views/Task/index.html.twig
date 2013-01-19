@@ -27,7 +27,7 @@
             <td>{{ entity.started ? "<span class='label label-success'>YES</span>" : "<span class='label label-info'>NO</span>" }}</td>
             <td>{{ entity.completed ? "<span class='label label-success'>YES</span>" : "<span class='label label-info'>NO</span>" }}</td>
             <td>{{ entity.failed ? "<span class='label label-important'>YES</span>" : "<span class='label label-success'>NO</span>" }}</td>
-            <td><span class="label">{{ entity.progress | default("unknown") }}</label></td>
+            <td><span class="label">{{ entity.progress ? [ entity.progress | number_format(0), "%"] | join : "unknown" }}</label></td>
             <td>
                 {% if app.user.getId() == entity.getUserId() or is_granted('ROLE_SUPER_ADMIN') %}
                      <form action="{{ path('tasks_delete', { 'id': entity.id }) }}" method="post">

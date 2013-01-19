@@ -70,6 +70,7 @@ class TranslateController extends Controller
 			{
 				$query_options['author_id'] = $author_id;
 			}
+			$query_options['show_context'] = ($request->query->get('context','YES') == 'YES');
 			
 			$pagination_options = array();
 			if($p = $request->query->get('page'))

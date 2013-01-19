@@ -2,14 +2,8 @@
 
 namespace FM\SymSlateBundle\Service;
 
-class AutocompleteService
+class AutocompleteService extends \FM\Bundle\SlowShowBundle\Worker\Worker
 {
-	public function __construct($em, $security_context, $logger)
-	{
-		$this->em = $em;
-		$this->security_context = $security_context;
-		$this->logger = $logger;
-	}
 
 	public function normalize($str)
 	{
@@ -21,13 +15,27 @@ class AutocompleteService
 
 	public function run($args)
 	{
+		$this->setStatus("Started!");
+
 		$language_ids = isset($args['language_ids']) ? $args['language_ids'] : null;
+
+
 
 		if( null === $language_ids or count($language_ids) == 0)$language_ids = array_map(function($language){
 			return $language->getId();
 		},
 		$this->em->getRepository('FMSymSlateBundle:Language')->findAll());
+		else $language_ids = array_map('intval', $language_ids);
 		
+		$expected_steps = $this->em->createQuery("SELECT count(m.id) 
+												  FROM FMSymSlateBundle:Message m
+												  LEFT JOIN m.current_translations ct
+												  WITH ct.language_id IN (" . implode(", ", $language_ids) . ")
+												  WHERE ct.id IS NULL
+												")
+						   ->getSingleScalarResult();
+		$this->setExpectedSteps($expected_steps);
+
 		foreach($language_ids as $language_id)
 		{
 						
@@ -97,10 +105,15 @@ class AutocompleteService
 					$ct->setMessage($message);
 					$this->em->persist($ct);
 				}
+
+				$this->step();
+
 			}
 
 			$this->em->flush();
 			$this->em->clear();
+
+			$this->setStatus("Completed!");
 			
 		}
 	}

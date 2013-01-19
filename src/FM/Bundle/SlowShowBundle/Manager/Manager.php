@@ -8,11 +8,11 @@ class Manager
 	private $security_context;
 	private $max_concurrent_jobs;
 	
-	public function __construct($service_container, $em, $security_context, $max_concurrent_jobs = 1)
+	public function __construct($em, $security_context, $logger, $max_concurrent_jobs = 1)
 	{
-		$this->service_container = $service_container;
 		$this->em = $em;
 		$this->security_context = $security_context;
+		$this->logger = $logger;
 		$this->max_concurrent_jobs = $max_concurrent_jobs;
 	}
 	
@@ -81,10 +81,12 @@ class Manager
 			$this->em->getConnection()->exec('UNLOCK TABLES;');
 			
 			
-			$worker = $this->service_container->get($job->getService());
+			
 
 			try
 			{
+				$class  = $job->getService();
+				$worker = new $class($this->em, $this->security_context, $this->logger, $job_id);
 				//echo "Started job at: " . date("d/m/Y H:i:s") . "<BR/>\n";
 				$worker->run(json_decode($job->getArguments(),true));
 				//echo "Finished job at: " . date("d/m/Y H:i:s") . "<BR/>\n";
@@ -100,7 +102,7 @@ class Manager
 			
 			$job = $this->em->getRepository('FMSlowShowBundle:Task')->find($job_id);
 			$job->setCompleted(true);
-			
+			$job->setProgress(100);
 			$this->em->persist($job);
 			$this->em->flush();
 			

@@ -108,7 +108,7 @@ class PackExportController extends Controller
             $em->flush();
 			
 			//$this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:PackExport')->performExport($entity->getId());
-			$this->get('queue_manager')->enqueueJob('pack_exporter', array('pack_export_id' => $entity->getId()));
+			$this->get('queue_manager')->enqueueJob('FM\SymSlateBundle\Service\PackExportService', array('pack_export_id' => $entity->getId()));
 
             return $this->redirect($this->generateUrl('export_show', array('id' => $entity->getId())));
         }
@@ -209,7 +209,7 @@ class PackExportController extends Controller
                 $em->persist($export);
                 $em->flush();
                 
-                $ran = $this->get('queue_manager')->enqueueJob('pack_exporter', array('pack_export_id' => $export->getId()), false);
+                $ran = $this->get('queue_manager')->enqueueJob('FM\SymSlateBundle\Service\PackExportService', array('pack_export_id' => $export->getId()), false);
                 
                 if($ran)
                 {

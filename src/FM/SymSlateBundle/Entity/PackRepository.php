@@ -24,7 +24,8 @@ class PackRepository extends EntityRepository
 			"source_language_id" => null,	// language from which to translate
 			"message_like" => null,
 			"translation_like" => null,
-			"author_id" => null
+			"author_id" => null,
+			"show_context" => true
 		);
 		
 		$default_pagination_options = array(
@@ -173,13 +174,15 @@ class PackRepository extends EntityRepository
 
 		$messages = array();
 		$context_messages = null;
-		//get context if there was a LIKE clause
-		if((!(isset($query_options["is_context"]) and $query_options["is_context"]) 
+		//get context if we are not already in a context query and it is needed and not explicitely refused
+		if(!(isset($query_options["is_context"]) and $query_options["is_context"]) 
 			and (   (null !== $query_options["message_like"]) 
 				 or (null !== $query_options["translation_like"]) 
-				 or ('ONLY' !== $query_options["empty"]) 
-				 or ('EXCEPT' !== $query_options["empty"]))
+				 or ('ONLY'   === $query_options["empty"]) 
+				 or ('EXCEPT' === $query_options["empty"])
+				 or (null !== $query_options["author_id"])
 				)
+			and $query_options['show_context']
 			)
 		{
 			//get the positions around the selected messages
