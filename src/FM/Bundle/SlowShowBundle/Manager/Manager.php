@@ -80,9 +80,6 @@ class Manager
 			//the job is safely marked as started, unlock the table
 			$this->em->getConnection()->exec('UNLOCK TABLES;');
 			
-			
-			
-
 			try
 			{
 				$class  = $job->getService();

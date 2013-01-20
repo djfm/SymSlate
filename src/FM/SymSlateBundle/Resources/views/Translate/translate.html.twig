@@ -130,6 +130,9 @@
 							<option value="{{ language.code }}" {{ app.request.query.get('language_code')==language.code ? "selected='true'" : '' }}>{{ language }}</option>
 						{% endfor %}
 					</select>
+
+					<div class="filler language-filler">&nbsp;</div>
+					<div class="filler language-filler">&nbsp;</div>
 					
 				</fieldset>
 			  
@@ -185,7 +188,7 @@
 							<option value="{{ author.getId() }}" {{ app.request.query.get('translate_author','*') ==  author.getId() ? "selected" : "" }}>{{ author.getUsername() }}</option>
 						{% endfor %}
 					</select>
-					
+					<div class="filler language-filler">&nbsp;</div>
 					
 				</fieldset>
 			</div>
