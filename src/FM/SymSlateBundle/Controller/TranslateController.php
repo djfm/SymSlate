@@ -47,6 +47,10 @@ class TranslateController extends Controller
 			{
 				$query_options['category'] = $c;
 			}
+			if($s = $request->query->get('section'))
+			{
+				$query_options['section'] = $s;
+			}
 			if($ml = $request->query->get('message_like'))
 			{
 				$query_options['message_like'] = $ml;
@@ -85,6 +89,27 @@ class TranslateController extends Controller
 		$categories = $em->createQuery('SELECT DISTINCT c.category FROM FMSymSlateBundle:Classification c WHERE c.pack_id = :pack_id')
 					     ->setParameter('pack_id', $pack_id)
 					     ->getResult();
+
+		$sections_qb = $em->createQueryBuilder();
+		$sections_qb->select('DISTINCT c.section')
+					 ->from ('FMSymSlateBundle:Classification','c')
+					 ->where('c.pack_id = :pack_id')
+					 ->andWhere('c.section != \'\'');
+
+		if($request->query->get('category'))
+		{
+			$sections_qb->andWhere('c.category = :category');
+		}
+
+		$sections_q = $sections_qb->getQuery();
+		$sections_q->setParameter('pack_id', $pack_id);
+
+		if($c = $request->query->get('category'))
+		{
+			$sections_q->setParameter(':category', $c);
+		}
+
+		$sections   = array_map('current',$sections_q->getResult());
 		
 
 		$authors = $em->createQuery('SELECT DISTINCT a
@@ -143,6 +168,7 @@ class TranslateController extends Controller
         	'messages'   => isset($result)?$result['messages']:null,
         	'pagination' => $pagination,
         	'categories' => $categories,
+        	'sections'   => $sections,
         	'languages'  => $lr->findAll(),
         	'authors'    => $authors
 		);

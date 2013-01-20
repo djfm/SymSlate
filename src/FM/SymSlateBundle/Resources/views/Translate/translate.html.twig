@@ -148,7 +148,17 @@
 							</option>
 						{% endfor %}
 					</select>
-					<BR/>
+					<br/>
+					<label for="translate_section" class="input-label medium">Section</label>
+					<select style="" class="autosubmit" id="translate_section" name="section">
+						<option value="">Any Section</option>
+						{% for section in sections %}
+							<option value="{{ section }}" {{ app.request.query.get('section')==section ? "selected='true'" : '' }}>
+								{{ section }}
+							</option>
+						{% endfor %}
+					</select>
+					<br/>
 					<label for="translate_context" class="input-label medium">Show context</label>
 					<select class="autosubmit" id="translate_context" name="context">
 						<option value="YES" {{ app.request.query.get('context','YES') == 'YES' ? 'selected' : '' }}>Yes</option>
@@ -168,7 +178,7 @@
 						<option value="MAYBE" {{ app.request.query.get('empty')== "MAYBE" ? "selected='true'" : '' }}>there or not</option>
 					</select>
 					<br/>
-					<label class="input-label medium">Author</label>
+					<label for="translate_author" class="input-label medium">Author</label>
 					<select  class="autosubmit" id="translate_author" name="translate_author">
 						<option value="*" {{ app.request.query.get('translate_author','*') == "*"  ? "selected" : "" }}>Anyone</option>
 						{% for author in authors %}
