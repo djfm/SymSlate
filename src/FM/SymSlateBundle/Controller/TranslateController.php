@@ -94,7 +94,8 @@ class TranslateController extends Controller
 		$sections_qb->select('DISTINCT c.section')
 					 ->from ('FMSymSlateBundle:Classification','c')
 					 ->where('c.pack_id = :pack_id')
-					 ->andWhere('c.section != \'\'');
+					 ->andWhere('c.section != \'\'')
+					 ->orderBy("c.section","ASC");
 
 		if($request->query->get('category'))
 		{
