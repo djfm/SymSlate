@@ -210,8 +210,8 @@ class PackRepository extends EntityRepository
 			$positions = array_diff(array_unique($positions), $already_got);
 
 			$qo = array(
+				"category" => $query_options["category"],
 				"section" => $query_options["section"],
-				"subsection" => $query_options["subsection"],
 				"source_language_id" => $query_options['source_language_id'],
 				"empty" => null, //empty or not
 				"positions" => $positions,
