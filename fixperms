@@ -1,4 +1,4 @@
 #!/bin/bash
-chgrp -Rvf www-data ./app/cache ./app/logs ./web
-chmod -Rvf g+rwxs ./app/cache ./app/logs ./web
+chgrp -Rf www-data ./app/cache ./app/logs ./web
+chmod -Rf g+rwxs ./app/cache ./app/logs ./web
 
