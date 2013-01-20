@@ -262,7 +262,8 @@ class Translation
      */
     public function setText($text)
     {
-        $this->text = $text;
+        //Remove the backslashes, we don't need no escape we have Doctrine
+        $this->text = preg_replace("/\\\\+('|\")/",'$1',$text);
     
         return $this;
     }

@@ -17,6 +17,18 @@ class FMExtension extends \Twig_Extension
 		);
 	}
 
+	public function getFilters()
+	{
+		return array(
+			'dbkslsh' => new \Twig_Filter_Method($this, 'dbkslsh')
+		);
+	}
+
+	public function dbkslsh($str)
+	{
+		return preg_replace("/\\\\+('|\")/",'$1',$str);
+	}
+
 	//THX: http://www.anyexample.com/programming/php/php_convert_rgb_from_to_html_hex_color.xml
 	public function html2rgb($color)
 	{

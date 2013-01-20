@@ -262,7 +262,7 @@
 													{% elseif m['type'] == "TXT" %}
 														<pre class="translate">{{ m['text'] }}</pre>
 													{% else %}
-														{{ m['text'] }}
+														{{ m['text'] | dbkslsh }}
 													{% endif %}
 												
 												
