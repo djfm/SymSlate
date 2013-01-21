@@ -49,10 +49,10 @@ class Manager
 	
 	public function doProcessNextJob($called_after_shutdown, $id=null)
 	{
-
+		$this->logger->info("Trying to process a job...");
 		if($called_after_shutdown)
 		{
-			//throw(new \Exception("ho{".ob_get_contents()."}PATATE"));
+			
 		}
 
 		//echo "\nStarted shutdown function at: " . date("d/m/Y H:i:s") . "<BR/>\n";
@@ -83,9 +83,11 @@ class Manager
 			try
 			{
 				$class  = $job->getService();
+				$this->logger->info("Started job $class!");
 				$worker = new $class($this->em, $this->security_context, $this->logger, $job_id);
 				//echo "Started job at: " . date("d/m/Y H:i:s") . "<BR/>\n";
 				$worker->run(json_decode($job->getArguments(),true));
+				$this->logger->info("Finished job $class!");
 				//echo "Finished job at: " . date("d/m/Y H:i:s") . "<BR/>\n";
 			}
 			catch(\Exception $e)
@@ -115,6 +117,7 @@ class Manager
 		}
 		else
 		{
+			$this->logger->info("No slot available.");
 			$this->em->getConnection()->exec('UNLOCK TABLES;');
 			return false;
 		}

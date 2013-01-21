@@ -307,24 +307,17 @@ class TranslationsImport
         return $this->translations;
     }
 	
-	public function buildTranslations()
+	public function buildTranslations($logger=null)
 	{
 		
-		$translations = array();
+		$translations = new \SplDoublyLinkedList();
 		
+
 $exp = <<<'NOW'
 /\w+\s*\[\s*'(.*?[^\\])'\s*]\s*=\s*'(.*?[^\\])'\s*;\s*(?:$|\n)/
 NOW;
-		$arch  = new \Archive_Tar($this->getAbsolutePath());
-		$files = $arch->listContent();
-		$total = 0;
-		foreach($files as $f)
-		{
-			$data    = $arch->extractInString($f['filename']);
-			
-			$lang    = array();
 
-//non mail non front office		
+//non mail non front office     
 $nf_exp = <<<'NOW'
 /translations\/([a-z]{2})\/(?:admin\.php|errors\.php|fields\.php|pdf\.php|tabs\.php)$/
 NOW;
@@ -339,6 +332,7 @@ $m_exp = <<<'NOW'
 /modules\/\w+(?:\/translations)?\/([a-z]{2})\.php$/
 NOW;
 
+//mail objects
 $o_exp = <<<'NOW'
 /mails\/([a-z]{2})\/lang.php$/
 NOW;
@@ -346,42 +340,74 @@ NOW;
 $ma_exp = <<<'NOW'
 /mails\/([a-z]{2})\/([^\.]+)\.(txt|html)$/
 NOW;
-			
-			$match = array();
-			if(preg_match($ma_exp, $f['filename'],$match))
-			{
-				$total += 1;
-				$translation = new Translation();
-				$translation->setText($data);
-				$translation->language_code = $match[1];
-				$translation->setMkey('mail_/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename']));
-				
-				$translations[] = $translation;
-			}
-			else if(   preg_match($nf_exp,$f['filename'],$match) 
-			        or preg_match($f_exp ,$f['filename'],$match) 
-			        or preg_match($m_exp ,$f['filename'],$match) 
-			        or preg_match($o_exp ,$f['filename'],$match))
-			{
-				$matches = array();
-				$count   = preg_match_all($exp, $data, $matches);
-				$total  += $count;
-				for($i = 0; $i < $count; $i++)
-				{
-					$translation = new Translation();
-					$translation->setText($matches[2][$i]);
-					$translation->language_code = $match[1];
-					$translation->setMkey($matches[1][$i]);
-					
-					$translations[] = $translation;
-				}
-			}
-			else
-			{
-				echo "Not matched: {$f['filename']}<br/>";
-			}
+
+		$arch  = new \Archive_Tar($this->getAbsolutePath());
+		$files = $arch->listContent();
+		$total = 0;
+
+        $dir=tempnam(sys_get_temp_dir(),'symslate_timport');
+        if(file_exists($dir)) { unlink($dir); }
+        mkdir($dir);
+
+        if($logger)$logger->info("Temp dir: " . $dir);
+
+        $arch->extract($dir);
+
+		foreach($files as $f)
+		{
+            $path = "$dir/".$f['filename'];
+            if(!is_dir($path))
+            {
+                if($logger)$logger->info("Parsing file: " . $f['filename']);
+    			$data    = file_get_contents($path);
+    						
+    			$match = array();
+    			if(preg_match($ma_exp, $f['filename'],$match))
+    			{
+    				$total += 1;
+    				$translation = new Translation();
+    				$translation->setText($data);
+    				$translation->language_code = $match[1];
+    				$translation->setMkey('mail_/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename']));
+    				
+    				$translations->push($translation);
+    			}
+    			else if(   preg_match($nf_exp,$f['filename'],$match) 
+    			        or preg_match($f_exp ,$f['filename'],$match) 
+    			        or preg_match($m_exp ,$f['filename'],$match) 
+    			        or preg_match($o_exp ,$f['filename'],$match))
+    			{
+    				$matches = array();
+    				$count   = preg_match_all($exp, $data, $matches);
+    				$total  += $count;
+    				for($i = 0; $i < $count; $i++)
+    				{
+    					$translation = new Translation();
+    					$translation->setText($matches[2][$i]);
+    					$translation->language_code = $match[1];
+    					$translation->setMkey($matches[1][$i]);
+    					
+    					$translations->push($translation);
+    				}
+    			}
+    			else
+    			{
+    				
+    			}
+            }
 		}
-		echo "<b>Found: $total</b>";
+        
+
+        $files = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($dir, \RecursiveDirectoryIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::CHILD_FIRST
+        );
+
+        foreach ($files as $fileinfo) {
+            $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+            $todo($fileinfo->getRealPath());
+        }
+
 		return $translations;
 	}
 	

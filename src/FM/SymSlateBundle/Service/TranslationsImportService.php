@@ -24,13 +24,14 @@ class TranslationsImportService extends \FM\Bundle\SlowShowBundle\Worker\Worker
 
 	public function run($args)
 	{
+		$this->setStatus("Initializing...");
 		$translations_import_id = $args['translations_import_id'];
 
 		$this->em->getConnection()->getConfiguration()->setSQLLogger(null);
 		
 		$translations_import = $this->em->getRepository('FMSymSlateBundle:TranslationsImport')->findOneById($translations_import_id);
 		$user                = $translations_import->getCreator();
-		$translations        = $translations_import->buildTranslations();
+		$translations        = $translations_import->buildTranslations($this->logger);
 		
 		$this->setExpectedSteps(count($translations));
 

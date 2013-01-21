@@ -19,12 +19,16 @@ class CountryRepository extends EntityRepository
 			if($pack = $this->getEntityManager()->getRepository('FMSymSlateBundle:Pack')->findOneBy(array('is_current' => true)))
 			{
 				$coverage = 0;
+				$denominator = 0;
 				foreach($country->getCountryLanguages() as $country_language)
 				{
+					$pct   = (double)$country_language->getPercent();
+					$denominator += $pct;
 					$stats = $this->getEntityManager()->getRepository('FMSymSlateBundle:Pack')->computeStatistics($pack->getId(), $country_language->getLanguageId());
 					$total = $stats['statistics'][null]['percent'];
-					$coverage += (double)$total * (double)$country_language->getPercent() / 100;
+					$coverage += (double)$total * $pct;
 				}
+				$coverage = $coverage / $denominator;
 				return $coverage;
 			}
 			else return 0;
