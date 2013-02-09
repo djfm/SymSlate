@@ -38,6 +38,7 @@ $(function(){
 			height: '500px',
 			removePlugins: 'elementspath',
 			resize_enabled: false,
+			fullPage: true,
 			on:{
 				instanceReady: function(e){
 					var a;

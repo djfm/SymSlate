@@ -310,7 +310,7 @@ class TranslationsImport
 	public function buildTranslations($logger=null)
 	{
 		
-		$translations = new \SplDoublyLinkedList();
+		$translations = array();
 		
 
 $exp = <<<'NOW'
@@ -358,7 +358,7 @@ NOW;
             $path = "$dir/".$f['filename'];
             if(!is_dir($path))
             {
-                if($logger)$logger->info("Parsing file: " . $f['filename']);
+                //if($logger)$logger->info("Parsing file: " . $f['filename']);
     			$data    = file_get_contents($path);
     						
     			$match = array();
@@ -368,9 +368,9 @@ NOW;
     				$translation = new Translation();
     				$translation->setText($data);
     				$translation->language_code = $match[1];
-    				$translation->setMkey('mail_/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename']));
+    				$translation->setMkey('mail_/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename']).'_'.md5($data));
     				
-    				$translations->push($translation);
+    				$translations[]  = $translation;
     			}
     			else if(   preg_match($nf_exp,$f['filename'],$match) 
     			        or preg_match($f_exp ,$f['filename'],$match) 
@@ -387,7 +387,7 @@ NOW;
     					$translation->language_code = $match[1];
     					$translation->setMkey($matches[1][$i]);
     					
-    					$translations->push($translation);
+    					$translations[] = $translation;
     				}
     			}
     			else

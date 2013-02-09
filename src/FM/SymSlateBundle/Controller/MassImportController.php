@@ -73,7 +73,7 @@ class MassImportController extends Controller
     		{
     			$user = $userManager->createUser();
 		    	$user->setUsername(current(explode("@", $row['Email'])));
-			if(!$row['Email'])continue;
+			    if(!$row['Email'])continue;
 		    	$user->setEmail($row['Email']);
 		    	$user->setPassword(str_shuffle("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"),0,32);
 		    	$userManager->updateUser($user);

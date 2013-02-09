@@ -24,6 +24,9 @@ class TranslationsImportService extends \FM\Bundle\SlowShowBundle\Worker\Worker
 
 	public function run($args)
 	{
+		$start_mem = round(memory_get_usage() / 1024/1024);
+		$this->logger->info("Memory usage before import: " . $start_mem . "MB");
+
 		$this->setStatus("Initializing...");
 		$translations_import_id = $args['translations_import_id'];
 
@@ -32,10 +35,14 @@ class TranslationsImportService extends \FM\Bundle\SlowShowBundle\Worker\Worker
 		$translations_import = $this->em->getRepository('FMSymSlateBundle:TranslationsImport')->findOneById($translations_import_id);
 		$user                = $translations_import->getCreator();
 		$translations        = $translations_import->buildTranslations($this->logger);
-		
-		$this->setExpectedSteps(count($translations));
 
-		foreach($translations as $translation)
+		$this->logger->info("Memory usage after translations generation: " . round(memory_get_usage() / 1024/1024) . "MB (started at: $start_mem)");
+		$num_translations = count($translations);
+		$this->logger->info("There are $num_translations to import!");
+		$this->setExpectedSteps($num_translations);
+		$this->setStatus("Running...");
+
+		foreach($translations as $key => $translation)
 		{	
 			if(($language = $this->getOrCreateLanguage($user, $translation->language_code)) and $user->canTranslateInto($language))
 			{
@@ -45,27 +52,45 @@ class TranslationsImportService extends \FM\Bundle\SlowShowBundle\Worker\Worker
 					"text" => $translation->getText()
 				)))
 				{
+					//don't update already existing translations
+
 					$translation = $tmp;
 				}
 				else
 				{
+					//only actualize for new translations
+
 					$translation->setTranslationsImport($translations_import);
 					$translation->setAuthor($user);
 					$translation->setLanguage($language);
 					$this->em->persist($translation);
-					//only actualize for new translations
+					
 					$this->em->getRepository('FMSymSlateBundle:CurrentTranslation')->actualizeWith($translation, $this->logger);
+					$this->em->flush();
 				}
-				
-				$this->em->flush();
-				$this->em->clear();
-				$translations_import = $this->em->getRepository('FMSymSlateBundle:TranslationsImport')->findOneById($translations_import_id);
-				$user                = $translations_import->getCreator();
 			}
 
 			$this->step();
 
+			unset($translations[$key]);
+
+			if($this->em->getUnitOfWork()->size() > 250)
+			{
+				$this->logger->info("[UOW size before clear: " . $this->em->getUnitOfWork()->size() . "]");
+				$this->logger->info("Memory usage before clear: " . round(memory_get_usage() / 1024/1024) . "MB");
+				//free some memory, without this we explode!!
+				$this->em->clear();
+
+				//reload entities because of the "clear" just before
+				$translations_import = $this->em->getRepository('FMSymSlateBundle:TranslationsImport')->findOneById($translations_import_id);
+				$user                = $translations_import->getCreator();
+
+				$this->logger->info("[UOW size after clear: " . $this->em->getUnitOfWork()->size() . "]");
+				$this->logger->info("Memory usage after clear: " . round(memory_get_usage() / 1024/1024) . "MB\n");
+			}
+
 		}
+		$this->setStatus("Done!");
 	}
 
 }

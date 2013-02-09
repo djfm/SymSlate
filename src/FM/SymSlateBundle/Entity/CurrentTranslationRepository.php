@@ -14,9 +14,6 @@ class CurrentTranslationRepository extends EntityRepository
 {
 	public function actualizeWith($translation, $logger=null)
 	{
-		if($logger)$logger->info("Actualizing translation with translation with key: ".$translation->getMkey());
-
-
 		//see if there is a message corresponding to this translation
 		if($message = $this->getEntityManager()->getRepository('FMSymSlateBundle:Message')->findOneByMkey($translation->getMkey()))
 		{
@@ -32,6 +29,8 @@ class CurrentTranslationRepository extends EntityRepository
 
 			$ct->setTranslation($translation);
 			$this->getEntityManager()->persist($ct);
+
+			if($logger)$logger->info("Changed translation to: \n".$translation->getText());
 		}
 	}
 }
