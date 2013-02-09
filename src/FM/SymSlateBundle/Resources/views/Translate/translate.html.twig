@@ -19,6 +19,16 @@
 		<script type="text/javascript">
 			//this is here and not in translate.js because we need some twig helpers for URLs, so this is more convenient.
 			
+			$(document).ready(function(){
+				$('#translate_filters_hide').click(function(){
+					$('#translate_filters').toggle();
+					$('#translate_fields').css('margin-left',0);
+					$('#translate_filters_reveal').toggle();
+					fixHeights();
+					//fixHeights();
+				});
+			});
+
 			get_translation = function(classification_id)
 			{
 				var txtid = 'translation_text_'+classification_id;
@@ -71,12 +81,15 @@
 				if(last_editor && editor != last_editor)
 				{
 					var tmp = last_editor.name.split("_");
-					lostFocus(tmp[tmp.length - 1]);
+					var id  = tmp[tmp.length - 1];
+					lostFocus(id);
+					$('#' + last_editor.id + '_top').hide();
 				}
 				if(editor && editor != last_editor){
 					var tmp = editor.name.split("_");
 					var id  = tmp[tmp.length - 1];
 					gotFocus(id);
+					$('#' + editor.id + '_top').show();
 				}
 				last_editor = editor;
 			});
@@ -111,195 +124,201 @@
 		
 {% endblock %}
 {% block body %}
-			<form class="form-inline translate">
-		  		
-				<input type="hidden" name="page" id="page" value="{{ app.request.query.get('page') | default(1) }}"/>
+	
+	
 
-		  		<fieldset class="pull-left bordered">
-		  			<legend>Language</legend>
-		  			<label for="translate_source_language_code" class="input-label small">From</label>
-			  		<select class="autosubmit" id="translate_source_language_code" name="source_language_code">
-						{% for language in languages %}
-							<option value="{{ language.code }}" {{ app.request.query.get('source_language_code','en')==language.code ? "selected='true'" : '' }}>{{ language }}</option>
-						{% endfor %}
-					</select>
-					<br/>
-					<label for="translate_language_code" class="input-label small">Into</label>
-					<select class="autosubmit" id="translate_language_code" name="language_code">
-						{% for language in languages %}
-							<option value="{{ language.code }}" {{ app.request.query.get('language_code')==language.code ? "selected='true'" : '' }}>{{ language }}</option>
-						{% endfor %}
-					</select>
+    <div id="translate_container">
 
-					<div class="filler language-filler">&nbsp;</div>
-					<div class="filler language-filler">&nbsp;</div>
-					
-				</fieldset>
-			  
-			<div class="pull-left">
-				<fieldset class="pull-left bordered">
-					<legend>Message</legend>
-					<label for = "message_like" class="input-label medium">Filter</label>
-					<input id="message_like" name="message_like" type='text' value='{{ app.request.query.get('message_like')}}' placeholder="Filter messages..."/>
-					<br/>
-					<label for="translate_category" class="input-label medium">Category</label>
-					<select style="" class="autosubmit" id="translate_category" name="category">
-						<option value="">Any Category</option>
-						{% for category in categories %}
-							<option value="{{ category["category"] }}" {{ app.request.query.get('category')==category['category'] ? "selected='true'" : '' }}>
-								{{ category["category"] }}
-							</option>
-						{% endfor %}
-					</select>
-					<br/>
-					<label for="translate_section" class="input-label medium">Section</label>
-					<select style="" class="autosubmit" id="translate_section" name="section">
-						<option value="">Any Section</option>
-						{% for section in sections %}
-							<option value="{{ section }}" {{ app.request.query.get('section')==section ? "selected='true'" : '' }}>
-								{{ section }}
-							</option>
-						{% endfor %}
-					</select>
-					<br/>
-					<label for="translate_context" class="input-label medium">Show context</label>
-					<select class="autosubmit" id="translate_context" name="context">
-						<option value="YES" {{ app.request.query.get('context','YES') == 'YES' ? 'selected' : '' }}>Yes</option>
-						<option value="NO"  {{ app.request.query.get('context','YES') == 'NO'  ? 'selected' : '' }}>No</option>
-					</select>
-				</fieldset>
+		<div id="translate_filters_reveal">
+			<a href="javascript:$('#translate_filters').toggle();$('#translate_fields').css('margin-left',385);$('#translate_filters_reveal').toggle();">Restore navigation panel!</a>
+		</div>
+		
+		<div id="translate_filters">
+			<div class="translate_filters_contents">
+				<form class="form-inline translate">
+				  		
+						<input type="hidden" name="page" id="page" value="{{ app.request.query.get('page') | default(1) }}"/>
 
-				<fieldset class="pull-left bordered">
-					<legend>Translation</legend>
-					<label for="translation_like" class="input-label medium">Filter</label>
-					<input type='text' id="translation_like" name="translation_like" value='{{ app.request.query.get('translation_like')}}' placeholder="Filter translations..."/>
-					<br/>
-					<label for="translate_empty" class="input-label medium">Status</label>
-					<select  class="autosubmit" id="translate_empty" name="empty">
-						<option value="ONLY" {{ app.request.query.get('empty')== "ONLY" ? "selected='true'" : '' }}>missing</option>
-						<option value="EXCEPT" {{ app.request.query.get('empty')== "EXCEPT" ? "selected='true'" : '' }}>there</option>
-						<option value="MAYBE" {{ app.request.query.get('empty')== "MAYBE" ? "selected='true'" : '' }}>there or not</option>
-					</select>
-					<br/>
-					<label for="translate_author" class="input-label medium">Author</label>
-					<select  class="autosubmit" id="translate_author" name="translate_author">
-						<option value="*" {{ app.request.query.get('translate_author','*') == "*"  ? "selected" : "" }}>Anyone</option>
-						{% for author in authors %}
-							<option value="{{ author.getId() }}" {{ app.request.query.get('translate_author','*') ==  author.getId() ? "selected" : "" }}>{{ author.getUsername() }}</option>
-						{% endfor %}
-					</select>
-					<div class="filler language-filler">&nbsp;</div>
-					
-				</fieldset>
+				  		<fieldset class="bordered">
+				  			<legend>Language</legend>
+				  			<label for="translate_source_language_code" class="input-label medium">From</label>
+					  		<select class="autosubmit" id="translate_source_language_code" name="source_language_code">
+								{% for language in languages %}
+									<option value="{{ language.code }}" {{ app.request.query.get('source_language_code','en')==language.code ? "selected='true'" : '' }}>{{ language }}</option>
+								{% endfor %}
+							</select>
+							<br/>
+							<label for="translate_language_code" class="input-label medium">Into</label>
+							<select class="autosubmit" id="translate_language_code" name="language_code">
+								{% for language in languages %}
+									<option value="{{ language.code }}" {{ app.request.query.get('language_code')==language.code ? "selected='true'" : '' }}>{{ language }}</option>
+								{% endfor %}
+							</select>
+						</fieldset>
+
+						<fieldset class="bordered">
+							<legend>Message</legend>
+							<label for = "message_like" class="input-label medium">Filter</label>
+							<input id="message_like" name="message_like" type='text' value='{{ app.request.query.get('message_like')}}' placeholder="Filter messages..."/>
+							<br/>
+							<label for="translate_category" class="input-label medium">Category</label>
+							<select style="" class="autosubmit" id="translate_category" name="category">
+								<option value="">Any Category</option>
+								{% for category in categories %}
+									<option value="{{ category["category"] }}" {{ app.request.query.get('category')==category['category'] ? "selected='true'" : '' }}>
+										{{ category["category"] }}
+									</option>
+								{% endfor %}
+							</select>
+							<br/>
+							<label for="translate_section" class="input-label medium">Section</label>
+							<select style="" class="autosubmit" id="translate_section" name="section">
+								<option value="">Any Section</option>
+								{% for section in sections %}
+									<option value="{{ section }}" {{ app.request.query.get('section')==section ? "selected='true'" : '' }}>
+										{{ section }}
+									</option>
+								{% endfor %}
+							</select>
+							<br/>
+							<label for="translate_context" class="input-label medium">Show context</label>
+							<select class="autosubmit" id="translate_context" name="context">
+								<option value="YES" {{ app.request.query.get('context','YES') == 'YES' ? 'selected' : '' }}>Yes</option>
+								<option value="NO"  {{ app.request.query.get('context','YES') == 'NO'  ? 'selected' : '' }}>No</option>
+							</select>
+						</fieldset>
+
+						<fieldset class="bordered">
+							<legend>Translation</legend>
+							<label for="translation_like" class="input-label medium">Filter</label>
+							<input type='text' id="translation_like" name="translation_like" value='{{ app.request.query.get('translation_like')}}' placeholder="Filter translations..."/>
+							<br/>
+							<label for="translate_empty" class="input-label medium">Status</label>
+							<select  class="autosubmit" id="translate_empty" name="empty">
+								<option value="ONLY" {{ app.request.query.get('empty')== "ONLY" ? "selected='true'" : '' }}>missing</option>
+								<option value="EXCEPT" {{ app.request.query.get('empty')== "EXCEPT" ? "selected='true'" : '' }}>there</option>
+								<option value="MAYBE" {{ app.request.query.get('empty')== "MAYBE" ? "selected='true'" : '' }}>there or not</option>
+							</select>
+							<br/>
+							<label for="translate_author" class="input-label medium">Author</label>
+							<select  class="autosubmit" id="translate_author" name="translate_author">
+								<option value="*" {{ app.request.query.get('translate_author','*') == "*"  ? "selected" : "" }}>Anyone</option>
+								{% for author in authors %}
+									<option value="{{ author.getId() }}" {{ app.request.query.get('translate_author','*') ==  author.getId() ? "selected" : "" }}>{{ author.getUsername() }}</option>
+								{% endfor %}
+							</select>
+						</fieldset>
+
+						<button type="submit" id="submit_translation_filter" class="btn btn-primary">Go!</button>
+
+				</form>
+
+				{% if pagination is not empty %}
+					<div class='pagination'>
+						<ul>
+							{% for page, text in pagination %}<li><a href="javascript:goto_page({{ page }})">{{ text }}</a></li>{% endfor %}
+						</ul>
+					</div>
+				{% endif %}
+
 			</div>
-			<button type="submit" id="submit_translation_filter" class="btn btn-primary">Go!</button>
-			
-				<div class="clearfix"></div>
-			  	
-
-			</form>
-
-			<br/>
-
-			{% if pagination is not empty %}
-				<div class='pagination'>
-					<ul>
-						{% for page, text in pagination %}<li><a href="javascript:goto_page({{ page }})">{{ text }}</a></li>{% endfor %}
-					</ul>
-				</div>
+			<div id="translate_filters_hide">
+				X
+			</div>
+		</div>
+		
+		<div id="translate_fields">
+			{% if pack == null %}
+				<p><span class="error">The pack you are trying to translate does not exist!</span></p>	
 			{% endif %}
 			
-		</form>
-	</fieldset>
-	
-	{% if pack == null %}
-		<p><span class="error">The pack you are trying to translate does not exist!</span></p>	
-	{% endif %}
-	
-	{% if language == null %}
-		<p><span class="error">The language you are trying to translate into does not exist!</span></p>	
-	{% endif %}
-	
-	{% if language and pack %}
-		{% if messages == null %}
-			<p><span class="info">There are no messages to translate here!</span></p>
-		{% else %}
-			{% for category, s_ss in messages %}
-				<fieldset class="translate_category">
-					<legend class="toggleable clickable">{{ category }}</legend>
-					<div class="toggleable">
-					{% for section, ss_m in s_ss %}	
-						{% if section is not empty %}
-							<fieldset class="translate_section">
-								<legend class="toggleable clickable">{{ section }}</legend>
-								<div class="toggleable">
-						{% endif %}				
-							{% for subsection, ms in ss_m %}
+			{% if language == null %}
+				<p><span class="error">The language you are trying to translate into does not exist!</span></p>	
+			{% endif %}
+			
+			{% if language and pack %}
+				{% if messages == null %}
+					<p><span class="info">There are no messages to translate here!</span></p>
+				{% else %}
+					{% for category, s_ss in messages %}
+						<fieldset class="translate_category">
+							<legend class="toggleable clickable">{{ category }}</legend>
+							<div class="toggleable">
+							{% for section, ss_m in s_ss %}	
+								{% if section is not empty %}
+									<fieldset class="translate_section">
+										<legend class="toggleable clickable">{{ section }}</legend>
+										<div class="toggleable">
+								{% endif %}				
+									{% for subsection, ms in ss_m %}
 
-									{%  for m in ms %}
+											{%  for m in ms %}
 
-										<div class="{{ m['is_context'] ? 'context ' : '' }}translate_row {{ cycle(['odd', 'even'], loop.index) }}">
+												<div class="{{ m['is_context'] ? 'context ' : '' }}translate_row {{ cycle(['odd', 'even'], loop.index) }}">
 
 
-											<div class="translate_row_right">
-												<img 
-													 class="clickable small submit_translation" 
-													 onclick="javascript:submit_translation({{ m['message_id'] }}, 
-													 									 	{{ m['classification_id'] }},
-													 									 	{{ m['translation_id'] | default('undefined') }},
-													 									 	{{ language.getId() }})" 
-													 src="{{ asset('bundles/fmsymslate/images/submit.png') }}"
-													 alt="Submit!" 
-													 id="translation_submit_{{ m['classification_id'] }}"
-												 />
-											</div>
+													<div class="translate_row_right">
+														<img 
+															 class="clickable small submit_translation" 
+															 onclick="javascript:submit_translation({{ m['message_id'] }}, 
+															 									 	{{ m['classification_id'] }},
+															 									 	{{ m['translation_id'] | default('undefined') }},
+															 									 	{{ language.getId() }})" 
+															 src="{{ asset('bundles/fmsymslate/images/submit.png') }}"
+															 alt="Submit!" 
+															 id="translation_submit_{{ m['classification_id'] }}"
+														 />
+													</div>
 
-											<div class="translate_row_left">
-												<div class="translate_row_message pull-left " id="translation_message_{{ m['classification_id'] }}">
+													<div class="translate_row_left">
+														<div class="translate_row_message pull-left " id="translation_message_{{ m['classification_id'] }}">
+															
+															{% if m['type'] == "HTML" %}
+																<iframe id="iframe_{{ m['classification_id'] }}" class="message_contents_{{ m['classification_id'] }} translate" srcdoc="{{ m['text'] }}" ckeditor="translation_text_{{ m['classification_id'] }}"></iframe>
+															{% elseif m['type'] == "TXT" %}
+																<pre class="message_contents_{{ m['classification_id'] }} translate">{{ m['text'] }}</pre>
+															{% else %}
+																<span class="message_contents_{{ m['classification_id'] }}">
+																	{{ m['text'] | dbkslsh }}
+																</span>
+															{% endif %}
+														
+														
+														</div>
+														<div class="translate_row_translation pull-right">
+															
+															<textarea {% if m['type'] == "HTML" %} ckadjust="iframe_{{ m['classification_id'] }}" {% else %} same_height="message_contents_{{ m['classification_id'] }}"  {% endif %} id="translation_text_{{ m['classification_id'] }}" class="translate {{ m['type'] }}">{{ m['translation'] }}</textarea>
+															
+															
+														</div>
+													</div>
+
 													
-													{% if m['type'] == "HTML" %}
-														<iframe id="iframe_{{ m['classification_id'] }}" class="translate" srcdoc="{{ m['text'] }}"></iframe>
-													{% elseif m['type'] == "TXT" %}
-														<pre class="translate">{{ m['text'] }}</pre>
-													{% else %}
-														{{ m['text'] | dbkslsh }}
-													{% endif %}
-												
-												
 												</div>
-												<div class="translate_row_translation pull-right">
-													
-													<textarea ckadjust="iframe_{{ m['classification_id'] }}" same_height="translation_message_{{ m['classification_id'] }}" id="translation_text_{{ m['classification_id'] }}" class="translate {{ m['type'] }}">{{ m['translation'] }}</textarea>
-													
-													
-												</div>
-											</div>
-
-											
-										</div>
-										<div class="clearfix"></div>		
+												<div class="clearfix"></div>		
+												
+											{%  endfor %}
 										
-									{%  endfor %}
-								
+									{% endfor %}
+								{% if section is not empty %}
+									</div>
+									</fieldset>
+								{% endif %}
 							{% endfor %}
-						{% if section is not empty %}
-							</div>
-							</fieldset>
-						{% endif %}
+						</div>
+						</fieldset>
 					{% endfor %}
-				</div>
-				</fieldset>
-			{% endfor %}
 
-			{% if pagination is not empty %}
-				<div class='pagination'>
-					<ul>
-						{% for page, text in pagination %}<li><a href="javascript:goto_page({{ page }})">{{ text }}</a></li>{% endfor %}
-					</ul>
-				</div>
-			{% endif %}
-			
-		{% endif %}	
-	{% endif %}
+					{% if pagination is not empty %}
+						<div class='pagination'>
+							<ul>
+								{% for page, text in pagination %}<li><a href="javascript:goto_page({{ page }})">{{ text }}</a></li>{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
+			{% endif %}	
+		{% endif %}
+		</div>
+	</div>
 
 {% endblock %}

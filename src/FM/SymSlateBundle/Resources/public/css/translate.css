@@ -1,6 +1,7 @@
 textarea.translate
 {
 	width: 100%;
+	height:100%;
 	margin:0;
 	background-color: rgba(255,255,255,0.45);
 	border:1px solid #bbb;
@@ -9,7 +10,6 @@ textarea.translate
 iframe.translate
 {
 	width: 100%;
-	height:400px;
 	background-color: white;
 }
 
@@ -87,12 +87,20 @@ div.translate_row_right
 
 div.translate_row_message
 {
-	width:50%;
+	width:49%;
+	padding-top:2px;
+	padding-bottom:2px;
 }
 
 div.translate_row_translation
 {
-	width:50%;
+	width:49%;
+	padding-top:2px;
+	padding-bottom:2px;
+}
+
+fieldset.translate_category
+{
 }
 
 fieldset.translate_category> legend:first-child
@@ -109,10 +117,8 @@ fieldset.translate_section> legend:first-child
 
 #submit_translation_filter
 {
-	margin-left: 10px;
-	margin-top:100px;
-	height:62px;
-	width:62px;
+	margin-left: 5px;
+	width: 330px;
 }
 
 div.filler
@@ -124,4 +130,51 @@ div.filler
 	margin-bottom:9px;
 	border-radius: 3px;
 	height:23px;
+}
+
+div#translate_filters
+{
+	position:fixed;
+	width:377px;
+	border:1px solid #DDD;
+	border-radius: 5px;
+}
+
+div.translate_filters_contents
+{
+	float:left;
+}
+
+div#translate_filters_hide
+{
+	float:left;
+	padding:5px 10px;
+	border:1px solid black;
+	border-radius: 5px;
+	background-color: orange;
+	cursor:pointer;
+	margin-top:4px;
+	margin-right:2px;
+}
+
+div#translate_fields
+{
+	border:1px solid #DDD;
+	border-radius: 5px;
+	padding-top: 5px;
+	margin-left: 385px;
+}
+
+div#translate_filters_reveal
+{
+	display:none;
+}
+
+div#ckeditor_toolbars
+{
+}
+
+div#translate_container
+{
+	margin-top:25px;
 }

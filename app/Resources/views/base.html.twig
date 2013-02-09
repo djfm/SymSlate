@@ -11,7 +11,7 @@
         
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
         
-        {% javascripts '@FMSymSlateBundle/Resources/public/js/common.js' %}
+        {% javascripts '@FMSymSlateBundle/Resources/public/js/common.js' '@FMSymSlateBundle/Resources/public/js/jquery.autosize.js' %}
 		    <script src="{{ asset_url }}"></script>
 		{% endjavascripts %}
 		
@@ -58,6 +58,10 @@
                     </li>
                 </ul>
             </div>
+
+            <div id="ckeditor_toolbars">
+            </div>
+
         </div>
 
     	<div id="contents">

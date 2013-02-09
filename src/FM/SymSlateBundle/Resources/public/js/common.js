@@ -1,4 +1,43 @@
+function fixHeights()
+{
+	console.log("FIXIN!");
+	$('[same_height]').each(function(i,e){
+
+		var reference = $('.'+$(e).attr('same_height'))
+		var me = $(e);
+
+		var desired_height = me.height() + reference.outerHeight() - me.outerHeight();
+
+		var threshold = 40;
+
+		if(desired_height > threshold)
+		{
+			me.height(desired_height);
+		}
+		
+	});
+}
+
+var fixHeightsRequested = 0;
+function delayedFixHeights()
+{
+	fixHeightsRequested += 1;
+	window.setTimeout(function(){
+		fixHeightsRequested -= 1;
+		if(fixHeightsRequested == 0)
+		{
+			fixHeights();
+		}
+	},500);
+}
+
 $(function(){
+
+	$('iframe').load(function() {
+	    this.style.height =
+	    this.contentWindow.document.body.offsetHeight + 'px';
+	});
+
 	$('select.autosubmit').change(function(){
 		$(this).parents('form').submit();
 	});
@@ -6,31 +45,11 @@ $(function(){
 	$('legend.toggleable').click(function(e){
 		$(e.target).parent().children('div.toggleable').toggle();
 	});
-	
-	$('[same_height]').each(function(i,e){
-		var h = $('#'+$(e).attr('same_height')).css('height');
-		if(parseInt($(e).css('height')) < parseInt(h))$(e).css('height',h);
-		else $('#'+$(e).attr('same_height')).css('height',$(e).css('height'));
-	});
-	
-	$('textarea.HTML').each(function(i,t){
-		var conf   = {
-				height: $(t).css('height'), 
-				toolbar: 'Basic',
-				removePlugins: 'elementspath',
-				resize_enabled: false,
-				on:{
-					instanceReady: function(e){
-						var a;
-						if(a = $(t).attr('ckadjust'))
-						{
-							var h = $('#cke_'+$(t).attr('id')).css('height');
-							$('#'+a).css('height',h);
-						}
-					}
-				}
-		};
-		var editor = CKEDITOR.replace(t,conf); 
+
+	fixHeights();
+
+	$(window).resize(function(){
+		delayedFixHeights();
 	});
 
 	$('form:has("#page")').submit(function(){
