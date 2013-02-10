@@ -28,7 +28,14 @@ class CountryRepository extends EntityRepository
 					$total = $stats['statistics'][null]['percent'];
 					$coverage += (double)$total * $pct;
 				}
-				$coverage = $coverage / $denominator;
+				if($denominator != 0)
+				{
+					$coverage = $coverage / $denominator;
+				}
+				else
+				{
+					$coverage = 0;
+				}
 				return $coverage;
 			}
 			else return 0;

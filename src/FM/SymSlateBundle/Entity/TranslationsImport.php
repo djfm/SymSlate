@@ -368,7 +368,7 @@ NOW;
     				$translation = new Translation();
     				$translation->setText($data);
     				$translation->language_code = $match[1];
-    				$translation->setMkey('mail_/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename']).'_'.md5($data));
+    				$translation->setMkey('mail_/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename']));
     				
     				$translations[]  = $translation;
     			}
