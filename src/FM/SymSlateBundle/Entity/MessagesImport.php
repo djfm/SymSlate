@@ -285,11 +285,14 @@ class MessagesImport
 		$file = fopen($this->getAbsolutePath(),"r");
 		$headers = fgetcsv($file,0,";");
 		//remove the unused Translation column if it is there
-		if($headers[count($headers)-1]=='Translation')array_pop($headers);
+		//if($headers[count($headers)-1]=='Translation')array_pop($headers);
 		while($row = fgetcsv($file,0,";"))
 		{
 			//index row with the headers!
-			$row = array_combine(array_values($headers), array_values($row));
+            $keys = array_values($headers);
+            $values = array_values($row);
+            while(count($values) < count($keys))$values[] = null;
+			$row = array_combine($keys, $values);
 			
 			//build the message
 			$message = new Message();
