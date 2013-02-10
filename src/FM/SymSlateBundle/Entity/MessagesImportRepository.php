@@ -43,12 +43,15 @@ class MessagesImportRepository extends EntityRepository
 				$tmp->setText($message->getText());
 				$message = $tmp;
 			}
+			else
+			{
+				$message->setMessagesImport($messages_import);
+			}
 			
-			$message->setMessagesImport($messages_import);
 			$em->persist($message);
 			
 			//create OR UPDATE the classification
-			if($classification = $cr->findOneBy(array("pack_id" => $messages_import->getPackId(), "message_id" => $message->getId())))
+			if($classification = $cr->findOneBy(array("pack_id" => $messages_import->getPack()->getId(), "message_id" => $message->getId())))
 			{
 				
 			}
@@ -68,7 +71,7 @@ class MessagesImportRepository extends EntityRepository
 			$em->persist($classification);
 			
 			//create OR UPDATE the storage
-			if($storage = $sr->findOneBy(array("pack_id" => $messages_import->getPackId(), "message_id" => $message->getId())))
+			if($storage = $sr->findOneBy(array("pack_id" => $messages_import->getPack()->getId(), "message_id" => $message->getId())))
 			{
 				
 			}
