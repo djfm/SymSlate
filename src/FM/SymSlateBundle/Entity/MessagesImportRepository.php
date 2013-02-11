@@ -45,7 +45,7 @@ class MessagesImportRepository extends EntityRepository
 			}
 			else
 			{
-				$message->setMessagesImport($messages_import);
+				$message->setMessagesImportId($messages_import_id);
 			}
 			
 			$em->persist($message);

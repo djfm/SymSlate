@@ -14,13 +14,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\HasLifecycleCallbacks
  */
 class MessagesImport
-{
-	
-	/**
-	 * @ORM\OneToMany(targetEntity="Message", mappedBy="messages_import")
-	 */
-	 private $messages;
-	 
+{	 
 	 /**
 	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="messages_import")
 	 */
@@ -39,7 +33,7 @@ class MessagesImport
 	 
 	 public function __construct()
 	 {
-		$this->messages = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->classifications = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->storages = new \Doctrine\Common\Collections\ArrayCollection();
 	 }
 	

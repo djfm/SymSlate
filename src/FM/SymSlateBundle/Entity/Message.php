@@ -14,13 +14,6 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  */
 class Message
 {
-	
-	/**
-	 * @ORM\ManyToOne(targetEntity="MessagesImport", inversedBy="messages")
-	 * @ORM\JoinColumn(name="messages_import_id", referencedColumnName="id", onDelete="CASCADE")
-	 */
-	 private $messages_import;
-	
 	/**
 	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="message")
 	 */
@@ -193,16 +186,6 @@ class Message
         $this->messages_import = $messagesImport;
     
         return $this;
-    }
-
-    /**
-     * Get messages_import
-     *
-     * @return \FM\SymSlateBundle\Entity\MessagesImport 
-     */
-    public function getMessagesImport()
-    {
-        return $this->messages_import;
     }
 
     /**
