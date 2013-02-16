@@ -2,7 +2,7 @@
 
 namespace FM\SymSlateBundle\Service;
 
-class TranslationsImportService extends \FM\Bundle\SlowShowBundle\Worker\Worker
+class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 {
 
 	public function getOrCreateLanguage($user, $language_code)

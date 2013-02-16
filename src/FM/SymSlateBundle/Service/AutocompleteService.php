@@ -2,7 +2,7 @@
 
 namespace FM\SymSlateBundle\Service;
 
-class AutocompleteService extends \FM\Bundle\SlowShowBundle\Worker\Worker
+class AutocompleteService extends \FM\SymSlateBundle\Worker\Worker
 {
 
 	public function normalize($str)

@@ -4,9 +4,9 @@ namespace FM\Bundle\SlowShowBundle\Manager;
 
 class Manager
 {
-	private $em;
-	private $security_context;
-	private $max_concurrent_jobs;
+	protected $em;
+	protected $security_context;
+	protected $max_concurrent_jobs;
 	
 	public function __construct($em, $security_context, $logger, $max_concurrent_jobs = 1)
 	{
@@ -47,6 +47,11 @@ class Manager
 		
 	}
 	
+	public function initWorker($class, $job_id)
+	{
+		return new $class($this->em, $this->security_context, $this->logger, $job_id);
+	}
+
 	public function doProcessNextJob($called_after_shutdown, $id=null)
 	{
 		$this->logger->info("Trying to process a job...");
@@ -84,7 +89,7 @@ class Manager
 			{
 				$class  = $job->getService();
 				$this->logger->info("Started job $class!");
-				$worker = new $class($this->em, $this->security_context, $this->logger, $job_id);
+				$worker = $this->initWorker($class, $job_id);
 				//echo "Started job at: " . date("d/m/Y H:i:s") . "<BR/>\n";
 				$worker->run(json_decode($job->getArguments(),true));
 				$this->logger->info("Finished job $class!");

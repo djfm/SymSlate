@@ -95,9 +95,14 @@ services:
         arguments: [@pdo, %pdo.db_options%]
 
     queue_manager:
-        class: FM\Bundle\SlowShowBundle\Manager\Manager
+        class: FM\SymSlateBundle\Manager\Manager
         arguments:
           em: "@doctrine.orm.entity_manager"
           security_context: "@security.context"
           logger: "@monolog.logger"
+          validator: "@translation_validator"
           max_concurrent_jobs: 2
+
+    translation_validator:
+        class: FM\SymSlateBundle\TranslationValidator\TranslationValidator
+        arguments:

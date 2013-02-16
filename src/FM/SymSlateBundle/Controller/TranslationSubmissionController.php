@@ -73,14 +73,34 @@ class TranslationSubmissionController extends Controller
 		
 		$em = $this->getDoctrine()->getManager();
 		
-		$data = $em->getRepository('FMSymSlateBundle:TranslationSubmission')->submitTranslation(
-			$user->getId(),
-			$request->request->get('message_id'),
-			$request->request->get('classification_id'),
-			$request->request->get('classification_id'),
-			$request->request->get('language_id'),
-			$request->request->get('text')
-		);
+        $classification_id = $request->request->get('classification_id');
+        $text = $request->request->get('text');
+        $message_id = $request->request->get('message_id');
+        $language_id = $request->request->get('language_id');
+
+        $message  = $em->getRepository('FMSymSlateBundle:Message')->findOneById($message_id)->getText();
+        $language = $em->getRepository('FMSymSlateBundle:Language')->findOneById($language_id);
+        $category = $em->getRepository('FMSymSlateBundle:Classification')->findOneById($classification_id)->getCategory();
+
+        $validation = $this->get('translation_validator')->validate($message, $text, $language, $category);
+
+        if($validation['success'] == true)
+        {
+            $data = $em->getRepository('FMSymSlateBundle:TranslationSubmission')->submitTranslation(
+                $user->getId(),
+                $message_id,
+                $classification_id,
+                $request->request->get('translation_id'),
+                $language_id,
+                $text
+            );
+        }
+        else
+        {
+            $data = $validation;
+        }
+
+		
 		
 		$em->flush();
 		

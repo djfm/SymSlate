@@ -2,7 +2,7 @@
 
 namespace FM\SymSlateBundle\Service;
 
-class PackExportService extends \FM\Bundle\SlowShowBundle\Worker\Worker
+class PackExportService extends \FM\SymSlateBundle\Worker\Worker
 {
 
 	public function run($args)
