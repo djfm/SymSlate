@@ -58,18 +58,18 @@ class TranslationsImportService extends \FM\Bundle\SlowShowBundle\Worker\Worker
 				}
 				else
 				{
-					//only actualize for new translations
 
 					$translation->setTranslationsImport($translations_import);
 					$translation->setAuthor($user);
 					$translation->setLanguage($language);
 					$this->em->persist($translation);
 					
-					$this->em->getRepository('FMSymSlateBundle:CurrentTranslation')->actualizeWith($translation, $this->logger);
-					$this->em->flush();
 				}
 			}
 
+			$this->em->getRepository('FMSymSlateBundle:CurrentTranslation')->actualizeWith($translation, $this->logger);
+			$this->em->flush();
+			
 			$this->step();
 
 			unset($translations[$key]);

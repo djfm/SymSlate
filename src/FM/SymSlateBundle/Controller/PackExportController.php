@@ -107,10 +107,10 @@ class PackExportController extends Controller
             $em->persist($entity);
             $em->flush();
 			
-			//$this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:PackExport')->performExport($entity->getId());
-			$this->get('queue_manager')->enqueueJob('FM\SymSlateBundle\Service\PackExportService', array('pack_export_id' => $entity->getId()));
+			$this->get('queue_manager')->enqueueJob('FM\SymSlateBundle\Service\PackExportService', array('pack_export_id' => $entity->getId()), false);
+			//$this->get('queue_manager')->enqueueJob('FM\SymSlateBundle\Service\PackExportService', array('pack_export_id' => $entity->getId()));
 
-            return $this->redirect($this->generateUrl('export_show', array('id' => $entity->getId())));
+            //return $this->redirect($this->generateUrl('export_show', array('id' => $entity->getId())));
         }
 
         return array(

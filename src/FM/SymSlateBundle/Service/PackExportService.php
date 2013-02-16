@@ -19,12 +19,16 @@ class PackExportService extends \FM\Bundle\SlowShowBundle\Worker\Worker
 
 		$this->setExpectedSteps(count($storages));
 
+		$this->em->clear();
+
 		$file_contents = array();
 		$footers       = array();
 		
 		foreach($storages as $storage)
 		{
+
 			$cts = $storage->getMessage()->getCurrentTranslations();
+			
 			if($cts->count() == 1)
 			{
 				$ct = $cts[0];
@@ -92,6 +96,7 @@ NOW;
 		
 		if(count($file_contents) > 0)
 		{
+			$export   = $this->em->getRepository('FMSymSlateBundle:PackExport')->find($pack_export_id);
 			$export->setFilepath($export->getId() . "_" . $language->getAName() . "_" . $export->getPack()->getFullName() . ".gzip");
 			$archive = new \Archive_Tar($export->getAbsolutePath(), 'gz');
 			

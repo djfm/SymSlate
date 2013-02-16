@@ -324,6 +324,11 @@ class PackRepository extends EntityRepository
 		   ->andWhere('ct.language_id = :language_id');
 		   
 		$query = $qb->getQuery();
+
+		$query->setFetchMode('FMSymSlateBundle:Storage', 'message', 'EAGER');
+		$query->setFetchMode('FMSymSlateBundle:Message', 'current_translations', 'EAGER');
+		$query->setFetchMode('FMSymSlateBundle:CurrentTranslation', 'translation', 'EAGER');
+
 		$query->setParameter('pack_id', $pack_id);
 		$query->setParameter('language_id', $language_id);
 		
