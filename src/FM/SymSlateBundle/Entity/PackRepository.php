@@ -424,6 +424,13 @@ class PackRepository extends EntityRepository
 			$cats = $st['categories'];
 			$stats[$language->getAName()] = array('code' => $language->getCode(), 'statistics' => $st['statistics']);
 		}
+
+		uasort($stats, function($s, $t){
+			if($s['statistics'][null]['percent'] >= $t['statistics'][null]['percent'])return -1;
+			else if($s['statistics'][null]['percent'] < $t['statistics'][null]['percent'])return 1;
+			else return 0;
+		});
+
 		$result = array('categories' => $cats, 'statistics' => $stats);
 
 		$pack = $this->find($pack_id);
