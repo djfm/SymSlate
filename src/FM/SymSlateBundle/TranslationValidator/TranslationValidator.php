@@ -22,7 +22,7 @@ class TranslationValidator
 	public function validate($message, $translation, $language, $category)
 	{
 
-		if($category == 'Tabs' && strlen($translation) >= 32)
+		if($category == 'Tabs' && strlen($translation) > 32)
 		{
 			return array('success' => false, 'error_message' => 'Tab translation cannot exceed 32 chars!');
 		}

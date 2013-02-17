@@ -25,7 +25,9 @@ class PackRepository extends EntityRepository
 			"message_like" => null,
 			"translation_like" => null,
 			"author_id" => null,
-			"show_context" => true
+			"show_context" => true,
+			"has_error" => null,
+			"has_warning" => null
 		);
 		
 		$default_pagination_options = array(
@@ -98,6 +100,14 @@ class PackRepository extends EntityRepository
 		{
 			$qb->andWhere("t.created_by = :created_by");
 		}
+		if($query_options["has_error"] !== null)
+		{
+			$qb->andWhere('t.has_error = :has_error');
+		}
+		if($query_options["has_warning"] !== null)
+		{
+			$qb->andWhere('t.has_warning = :has_warning');
+		}
 		if(null !== $query_options["message_like"])
 		{
 			if(null === $query_options['source_language_id'])
@@ -162,6 +172,14 @@ class PackRepository extends EntityRepository
 		{
 			$query->setParameter('created_by', $query_options["author_id"]);
 		}
+		if($query_options["has_error"] !== null)
+		{
+			$query->setParameter('has_error', $query_options["has_error"]);
+		}
+		if($query_options["has_warning"] !== null)
+		{
+			$query->setParameter('has_warning', $query_options["has_warning"]);
+		}
 		
 		
 		if(!$pagination_options["disable_pagination"])
@@ -181,6 +199,8 @@ class PackRepository extends EntityRepository
 				 or ('ONLY'   === $query_options["empty"]) 
 				 or ('EXCEPT' === $query_options["empty"])
 				 or (null !== $query_options["author_id"])
+				 or (null !== $query_options["has_error"])
+				 or (null !== $query_options["has_warning"])
 				)
 			and $query_options['show_context']
 			)
@@ -237,6 +257,8 @@ class PackRepository extends EntityRepository
 		{
 			
 			$translation = '';
+			$translation_error_message = '';
+			$translation_warning_message = '';
 			$text        = null;
 			$translation_id = null;
 			
@@ -258,6 +280,8 @@ class PackRepository extends EntityRepository
 				{
 					$translation    = $ct->getTranslation()->getText();
 					$translation_id = $ct->getTranslation()->getId();
+					$translation_error_message   = $ct->getTranslation()->getErrorMessage();
+					$translation_warning_message = $ct->getTranslation()->getWarningMessage();
 				}
 				//get the message translation if required
 				if(isset($query_options['source_language_id']) and $ct->getLanguageId() == $query_options['source_language_id'])
@@ -277,7 +301,9 @@ class PackRepository extends EntityRepository
 				"classification_id" => $classification->getId(),
 				"message_id" => $message->getId(),
 				"is_context" => isset($query_options['is_context']) and $query_options['is_context'],
-				"position" => $classification->getPosition()
+				"position" => $classification->getPosition(),
+				"error_message" => $translation_error_message,
+				"warning_message" => $translation_warning_message
 			);
 				
 				//echo "<p>".$message->getText()."</p>";
@@ -321,7 +347,8 @@ class PackRepository extends EntityRepository
 		   ->innerJoin('m.current_translations', 'ct')
 		   ->innerJoin('ct.translation', 't')
 		   ->where('s.pack_id = :pack_id')
-		   ->andWhere('ct.language_id = :language_id');
+		   ->andWhere('ct.language_id = :language_id')
+		   ->andWhere('t.has_error = 0');
 		   
 		$query = $qb->getQuery();
 

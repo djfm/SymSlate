@@ -74,6 +74,16 @@ class TranslateController extends Controller
 			{
 				$query_options['author_id'] = $author_id;
 			}
+			if($v = $request->query->get('translate_validation'))
+			{
+				if($v == 'has_error')$query_options['has_error'] = true;
+				else if($v == 'has_warning')$query_options['has_warning'] = true;
+				else if($v == 'is_clean')
+				{
+					$query_options['has_error'] = false;
+					$query_options['has_warning'] = false;
+				}
+			}
 			$query_options['show_context'] = ($request->query->get('context','YES') == 'YES');
 			
 			$pagination_options = array();

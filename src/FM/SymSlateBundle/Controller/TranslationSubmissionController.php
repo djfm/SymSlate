@@ -92,7 +92,8 @@ class TranslationSubmissionController extends Controller
                 $classification_id,
                 $request->request->get('translation_id'),
                 $language_id,
-                $text
+                $text,
+                !isset($validation['warning_message'])
             );
 
             if(isset($validation['warning_message']))$data['warning_message'] = $validation['warning_message'];

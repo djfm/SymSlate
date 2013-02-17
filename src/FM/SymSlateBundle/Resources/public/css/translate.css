@@ -115,10 +115,8 @@ fieldset.translate_section> legend:first-child
 	background-color: rgba(255,255,255,0.3);
 }
 
-#submit_translation_filter
+div div#submit_translation_filter
 {
-	margin-left: 5px;
-	width: 330px;
 }
 
 div.filler
@@ -135,10 +133,11 @@ div.filler
 div#translate_filters
 {
 	position:fixed;
-	width:377px;
+	width:370px;
 	border:1px solid #CCC;
 	border-radius: 5px;
 	background-color:white;
+	padding-bottom: 10px;
 }
 
 div.translate_filters_contents
@@ -148,14 +147,14 @@ div.translate_filters_contents
 
 div#translate_filters_hide
 {
-	float:left;
+	float:right;
 	padding:5px 10px;
 	border:1px solid black;
 	border-radius: 5px;
 	background-color: orange;
 	cursor:pointer;
 	margin-top:4px;
-	margin-right:2px;
+	margin-right:5px;
 }
 
 div#translate_fields

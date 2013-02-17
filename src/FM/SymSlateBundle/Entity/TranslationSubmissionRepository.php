@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityRepository;
  * repository methods below.
  */
 class TranslationSubmissionRepository extends EntityRepository {
-	public function submitTranslation($user_id, $message_id, $classification_id, $previous_translation_id, $language_id, $text) {
+	public function submitTranslation($user_id, $message_id, $classification_id, $previous_translation_id, $language_id, $text, $clear_warning) {
 		$data = array('success' => false);
 
 		/*
@@ -63,6 +63,14 @@ class TranslationSubmissionRepository extends EntityRepository {
 		}
 
 		$translation -> setPreviousTranslationId($previous_translation_id);
+
+		$translation -> setHasError(false);
+
+		if($clear_warning)
+		{
+			$translation->setWarningMessage('');
+			$translation->setHasWarning(false);
+		}
 
 		$this -> getEntityManager() -> persist($translation);
 

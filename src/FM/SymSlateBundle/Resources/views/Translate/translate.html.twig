@@ -140,6 +140,7 @@
 		</div>
 		
 		<div id="translate_filters">
+			<div id="translate_filters_hide">X</div>
 			<div class="translate_filters_contents">
 				<form class="form-inline translate">
 				  		
@@ -213,9 +214,18 @@
 									<option value="{{ author.getId() }}" {{ app.request.query.get('translate_author','*') ==  author.getId() ? "selected" : "" }}>{{ author.getUsername() }}</option>
 								{% endfor %}
 							</select>
+							<label for="translate_validation" class="input-label medium">Validation</label>
+							<select class="autosubmit" id="translate_validation" name="translate_validation">
+								<option value="*" {{ app.request.query.get('translate_validation','*') == "*"  ? "selected" : "" }}>OK or not</option>
+								<option value="has_error" {{ app.request.query.get('translate_validation','*') == "has_error"  ? "selected" : "" }}>Has error</option>
+								<option value="has_warning" {{ app.request.query.get('translate_validation','*') == "has_warning"  ? "selected" : "" }}>Has warning</option>
+								<option value="is_clean" {{ app.request.query.get('translate_validation','*') == "is_clean"  ? "selected" : "" }}>Is clean</option>
+							</select>
 						</fieldset>
 
-						<button type="submit" id="submit_translation_filter" class="btn btn-primary">Go!</button>
+						<div style="padding-left:5px;">
+						<button type="submit" id="submit_translation_filter" class="btn btn-primary medium">Go!</button>
+						</div>
 
 				</form>
 
@@ -227,9 +237,6 @@
 					</div>
 				{% endif %}
 
-			</div>
-			<div id="translate_filters_hide">
-				X
 			</div>
 		</div>
 		
@@ -300,7 +307,14 @@
 													</div>
 												</div>
 												<div class="clearfix"></div>		
-												<div class="translation_notification" id="notification_{{ m['classification_id'] }}"></div>
+												<div class="translation_notification" id="notification_{{ m['classification_id'] }}">
+													{% if m['error_message'] != '' %}
+														<div class='error'>{{ m['error_message'] }}<span class='close-parent' onclick='javascript:$(this).parent().remove()'>X</span></div>
+													{% endif %}
+													{% if m['warning_message'] != '' %}
+														<div class='warning'>{{ m['warning'] }}<span class='close-parent' onclick='javascript:$(this).parent().remove()'>X</span></div>
+													{% endif %}
+												</div>
 
 											{%  endfor %}
 										
