@@ -33,18 +33,23 @@ class PackExportService extends \FM\SymSlateBundle\Worker\Worker
 			{
 				$ct = $cts[0];
 				$translation = $ct->getTranslation();
-				
-				$path = str_replace('[iso]', $language->getCode(), $storage->getPath());
-				if($path[0] == '/')$path = substr($path, 1);
-				
-				if($storage->getMethod() == 'ARRAY')
+
+				$validation = $this->validator->validate($storage->getMessage()->getText(), $translation->getText(), $language, $storage->getCategory());
+
+				if($validation['success'])
 				{
-					$array = $storage->getCustom();
-					if(!isset($file_contents[$path]))
+				
+					$path = str_replace('[iso]', $language->getCode(), $storage->getPath());
+					if($path[0] == '/')$path = substr($path, 1);
+					
+					if($storage->getMethod() == 'ARRAY')
 					{
-						if($storage->getCategory() != 'Tabs')
+						$array = $storage->getCustom();
+						if(!isset($file_contents[$path]))
 						{
-							$file_contents[$path] = <<<NOW
+							if($storage->getCategory() != 'Tabs')
+							{
+								$file_contents[$path] = <<<NOW
 <?php
 
 global $array;
@@ -52,10 +57,10 @@ $array = array();
 
 
 NOW;
-						}
-						else
-						{
-							$file_contents[$path] = <<<NOW
+							}
+							else
+							{
+								$file_contents[$path] = <<<NOW
 <?php
 
 $array = array();
@@ -63,21 +68,37 @@ $array = array();
 
 NOW;
 
-							$footers[$path] = "\nreturn $array;";
+								$footers[$path] = "\nreturn $array;";
 
+							}
 						}
-					}
+							
+						$file_contents[$path] .= "{$array}['" . addslashes($storage->getMessage()->getMkey()) . "'] = '" . addslashes($translation->getText()) . "';\n";
 						
-					$file_contents[$path] .= "{$array}['" . addslashes($storage->getMessage()->getMkey()) . "'] = '" . addslashes($translation->getText()) . "';\n";
-					
-				}
-				else if($storage->getMethod() == 'FILE')
-				{
-					$file_contents[$path] = $translation->getText();
+					}
+					else if($storage->getMethod() == 'FILE')
+					{
+						$file_contents[$path] = $translation->getText();
+					}
+					else
+					{
+						throw new Exception("Unknown storage method: " . $storage->getMethod());	
+					}
 				}
 				else
 				{
-					throw new Exception("Unknown storage method: " . $storage->getMethod());	
+					//the Entity Manager was cleared so we need to fetch the translation again before updating it
+					$translation = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneById($translation->getId());
+					$translation->setHasError(true);
+					$translation->setErrorMessage($validation['error_message']);
+					if(isset($validation['warning_message']))
+					{
+						$translation->setHasWarning(true);
+						$translation->setWarningMessage($validation['warning_message']);
+					}
+					$this->em->persist($translation);
+					$this->em->flush();
+					$this->em->clear();
 				}
 				
 			}

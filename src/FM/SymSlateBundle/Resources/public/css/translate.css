@@ -180,3 +180,36 @@ div#translate_container
 {
 	margin-top:25px;
 }
+
+div.translation_notification
+{
+	margin-left:5px;
+	margin-right:5px;
+}
+
+div.translation_notification div
+{
+	padding:5px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+	border:1px solid black;
+}
+
+div.translation_notification div.error
+{
+	background-color:#da4f49;
+}
+
+div.translation_notification div.warning
+{
+	background-color:#faa732;
+}
+
+span.close-parent
+{
+	float:right;
+	cursor: pointer;
+	font-weight: bold;
+	margin:5px;
+	margin-top: 0px;
+}

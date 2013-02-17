@@ -94,6 +94,8 @@ class TranslationSubmissionController extends Controller
                 $language_id,
                 $text
             );
+
+            if(isset($validation['warning_message']))$data['warning_message'] = $validation['warning_message'];
         }
         else
         {

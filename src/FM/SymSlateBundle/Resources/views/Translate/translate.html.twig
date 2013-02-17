@@ -64,12 +64,18 @@
 						if(data.success)
 						{
 							img.attr('src','{{ asset('bundles/fmsymslate/images/happy.png') }}');
-							unOops();						
+							//unOops();
+							if(data.warning_message)
+							{
+								$('#notification_' + classification_id).html("<div class='warning'>"+data['warning_message']+"<span class='close-parent' onclick='javascript:$(this).parent().remove()'>X</span></div>")
+							}
+							else $('#notification_' + classification_id).html('');					
 						}
 						else
 						{
 							img.attr('src','{{ asset('bundles/fmsymslate/images/sad.png') }}');
-							oops(data['error_message']);
+							//oops(data['error_message']);
+							$('#notification_' + classification_id).html("<div class='error'>"+data['error_message']+"<span class='close-parent' onclick='javascript:$(this).parent().remove()'>X</span></div>")
 						}
 					},
 					'json');
@@ -292,11 +298,10 @@
 															
 														</div>
 													</div>
-
-													
 												</div>
 												<div class="clearfix"></div>		
-												
+												<div class="translation_notification" id="notification_{{ m['classification_id'] }}"></div>
+
 											{%  endfor %}
 										
 									{% endfor %}

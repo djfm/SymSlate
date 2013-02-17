@@ -106,3 +106,4 @@ services:
     translation_validator:
         class: FM\SymSlateBundle\TranslationValidator\TranslationValidator
         arguments:
+            em: "@doctrine.orm.entity_manager"

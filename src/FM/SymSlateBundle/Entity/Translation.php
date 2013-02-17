@@ -130,6 +130,36 @@ class Translation
 
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="has_error", type="boolean")
+     */
+    private $has_error = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="has_warning", type="boolean")
+     */
+    private $has_warning = false;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="error_message", type="text")
+     */
+    private $error_message = '';
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="warning_message", type="text")
+     */
+    private $warning_message = '';
+
+
+    /**
      * Get id
      *
      * @return integer 
@@ -516,5 +546,97 @@ class Translation
     public function getMassImported()
     {
         return $this->mass_imported;
+    }
+
+    /**
+     * Set has_error
+     *
+     * @param boolean $hasError
+     * @return Translation
+     */
+    public function setHasError($hasError)
+    {
+        $this->has_error = $hasError;
+    
+        return $this;
+    }
+
+    /**
+     * Get has_error
+     *
+     * @return boolean 
+     */
+    public function getHasError()
+    {
+        return $this->has_error;
+    }
+
+    /**
+     * Set has_warning
+     *
+     * @param boolean $hasWarning
+     * @return Translation
+     */
+    public function setHasWarning($hasWarning)
+    {
+        $this->has_warning = $hasWarning;
+    
+        return $this;
+    }
+
+    /**
+     * Get has_warning
+     *
+     * @return boolean 
+     */
+    public function getHasWarning()
+    {
+        return $this->has_warning;
+    }
+
+    /**
+     * Set error_message
+     *
+     * @param string $errorMessage
+     * @return Translation
+     */
+    public function setErrorMessage($errorMessage)
+    {
+        $this->error_message = $errorMessage;
+    
+        return $this;
+    }
+
+    /**
+     * Get error_message
+     *
+     * @return string 
+     */
+    public function getErrorMessage()
+    {
+        return $this->error_message;
+    }
+
+    /**
+     * Set warning_message
+     *
+     * @param string $warningMessage
+     * @return Translation
+     */
+    public function setWarningMessage($warningMessage)
+    {
+        $this->warning_message = $warningMessage;
+    
+        return $this;
+    }
+
+    /**
+     * Get warning_message
+     *
+     * @return string 
+     */
+    public function getWarningMessage()
+    {
+        return $this->warning_message;
     }
 }

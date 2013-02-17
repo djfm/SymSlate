@@ -44,7 +44,7 @@ class Translation
 
     /**
      * @ORM\OneToOne(targetEntity="TranslationSubmission", inversedBy="translation")
-     * @ORM\JoinColumn(name="translation_submission_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="translation_submission_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $translation_submission;
 	 
@@ -117,7 +117,7 @@ class Translation
 	/**
      * @var string
      *
-     * @ORM\Column(name="mkey", type="text")
+     * @ORM\Column(name="mkey", type="string", length=255)
      */
     private $mkey;
 
@@ -127,6 +127,36 @@ class Translation
      * @ORM\Column(name="text", type="text")
      */
     private $text;
+
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="has_error", type="boolean")
+     */
+    private $has_error = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="has_warning", type="boolean")
+     */
+    private $has_warning = false;
+
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="error_message", type="text")
+     */
+    private $error_message = '';
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="warning_message", type="text")
+     */
+    private $warning_message = '';
 
 
     /**
@@ -262,7 +292,8 @@ class Translation
      */
     public function setText($text)
     {
-        $this->text = $text;
+        //Remove the backslashes, we don't need no escape we have Doctrine
+        $this->text = preg_replace("/\\\\+('|\")/",'$1',$text);
     
         return $this;
     }
@@ -492,5 +523,28 @@ class Translation
     public function getTranslationSubmissionId()
     {
         return $this->translation_submission_id;
+    }
+
+    /**
+     * Set mass_imported
+     *
+     * @param boolean $massImported
+     * @return Translation
+     */
+    public function setMassImported($massImported)
+    {
+        $this->mass_imported = $massImported;
+    
+        return $this;
+    }
+
+    /**
+     * Get mass_imported
+     *
+     * @return boolean 
+     */
+    public function getMassImported()
+    {
+        return $this->mass_imported;
     }
 }

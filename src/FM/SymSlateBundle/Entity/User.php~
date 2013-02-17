@@ -9,22 +9,24 @@ use Doctrine\ORM\Mapping as ORM;
  * User
  *
  * @ORM\Table()
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="FM\SymSlateBundle\Entity\UserRepository")
  */
 class User extends BaseUser
 {
 	/**
-	 * @ORM\OneToMany(targetEntity="Translation", mappedBy="author")
+	 * @ORM\OneToMany(targetEntity="Translation", mappedBy="author", fetch="EXTRA_LAZY")
 	 */
 	private $authored_translations;
 	
+    private $translations_count = 0;
+
 	/**
-	 * @ORM\OneToMany(targetEntity="Translation", mappedBy="reviewer")
+	 * @ORM\OneToMany(targetEntity="Translation", mappedBy="reviewer", fetch="EXTRA_LAZY")
 	 */
 	private $reviewed_translations;
 	
 	/**
-	 * @ORM\OneToMany(targetEntity="TranslationSubmission", mappedBy="user")
+	 * @ORM\OneToMany(targetEntity="TranslationSubmission", mappedBy="user", fetch="EXTRA_LAZY")
 	 */
 	private $translation_submissions;
 	
@@ -74,6 +76,21 @@ class User extends BaseUser
         
 		return false;
 	}
+
+    public function getTranslationsCount()
+    {
+        return $this->translations_count;
+    }
+
+    public function setTranslationsCount($count)
+    {
+        $this->translations_count = $count;
+    }
+
+    public function reviewedTranslationsCount()
+    {
+        return $this->reviewed_translations->count();
+    }
 	
     /**
      * @var integer

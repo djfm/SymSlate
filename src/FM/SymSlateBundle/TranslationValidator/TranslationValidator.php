@@ -4,6 +4,21 @@ namespace FM\SymSlateBundle\TranslationValidator;
 
 class TranslationValidator
 {
+	protected $em;
+
+	public function __construct($em)
+	{
+		$this->em = $em;
+	}
+
+	public function normalize($str)
+	{
+		$nz = strtolower($str);
+		$nz = preg_replace('/[:\.;!-]+/',' ',$str);
+		$nz = preg_replace('/\s+/',' ',$str);
+		return $nz;
+	}
+
 	public function validate($message, $translation, $language, $category)
 	{
 
@@ -27,6 +42,16 @@ class TranslationValidator
 			{
 				return array('success' => false, 'error_message' => "The special string $str needs to be present $n time(s) in the translation!");
 			}
+		}
+
+		if(strpos($translation, "\n") and !strpos($message, "\n"))
+		{
+			return array('success' => false, 'error_message' => "Translation cannot contain line breaks! (because original text has none).");
+		}
+
+		if($this->normalize($message) == $this->normalize($translation) and $language->getCode() != 'en')
+		{
+			return array('success' => true, 'warning_message' => 'Translation looks a lot like the original English!');
 		}
 
 		return array('success' => true);
