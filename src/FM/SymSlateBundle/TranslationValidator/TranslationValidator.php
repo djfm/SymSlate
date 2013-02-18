@@ -62,10 +62,10 @@ class TranslationValidator
 			return array('success' => true, 'warning_message' => 'The punctuation mark at the end of the message is different of that at the end of the translation!');
 		}
 
-		$fm = mb_substr($message,   0 ,  1 , "UTF-8");
-		$ft = mb_substr($translation, 0, 1 , "UTF-8");
+		$fm = mb_substr($message     , 0,  1 , "UTF-8");
+		$ft = mb_substr($translation , 0,  1 , "UTF-8");
 
-		if( (strtolower($fm) == $fm) != (strtolower($ft) == $ft) )
+		if( (strtolower($fm) == $fm) != (strtolower($ft) == $ft) and $language->getCode() != 'zh' and $language->getCode() != 'tw')
 		{
 			return array('success' => true, 'warning_message' => 'The message and the translation start with a letter of different case!');
 		}
