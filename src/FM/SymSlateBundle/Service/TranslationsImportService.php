@@ -63,12 +63,12 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 					$translation->setAuthor($user);
 					$translation->setLanguage($language);
 					$this->em->persist($translation);
-					
+					$this->em->getRepository('FMSymSlateBundle:CurrentTranslation')->actualizeWith($translation, $this->logger);
+					$this->em->flush();
 				}
 			}
 
-			$this->em->getRepository('FMSymSlateBundle:CurrentTranslation')->actualizeWith($translation, $this->logger);
-			$this->em->flush();
+			
 			
 			$this->step();
 
