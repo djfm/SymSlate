@@ -99,6 +99,7 @@ NOW;
 				
 				if(isset($validation['warning_message']))
 				{
+					$translation = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneById($translation->getId());
 					$translation->setHasWarning(true);
 					$translation->setWarningMessage($validation['warning_message']);
 					$this->em->persist($translation);
