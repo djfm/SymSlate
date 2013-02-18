@@ -91,11 +91,16 @@ NOW;
 					$translation = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneById($translation->getId());
 					$translation->setHasError(true);
 					$translation->setErrorMessage($validation['error_message']);
-					if(isset($validation['warning_message']))
-					{
-						$translation->setHasWarning(true);
-						$translation->setWarningMessage($validation['warning_message']);
-					}
+					$this->em->persist($translation);
+					$this->em->flush();
+					$this->em->clear();
+				}
+
+				
+				if(isset($validation['warning_message']))
+				{
+					$translation->setHasWarning(true);
+					$translation->setWarningMessage($validation['warning_message']);
 					$this->em->persist($translation);
 					$this->em->flush();
 					$this->em->clear();
