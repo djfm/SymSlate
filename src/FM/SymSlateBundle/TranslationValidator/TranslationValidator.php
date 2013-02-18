@@ -54,6 +54,22 @@ class TranslationValidator
 			return array('success' => true, 'warning_message' => 'Translation looks a lot like the original English!');
 		}
 
+		$punctuation = ".:!?";
+		$lm = $message[strlen($message) - 1];
+		$lt = $translation[strlen($translation) - 1];
+		if((strpos($punctuation, $lm) !== false or strpos($punctuation, $lt) !== false) and $lm != $lt)
+		{
+			return array('success' => true, 'warning_message' => 'The punctuation mark at the end of the message is different of that at the end of the translation!');
+		}
+
+		$fm = mb_substr($message,   0 ,  1 , "UTF-8");
+		$ft = mb_substr($translation, 0, 1 , "UTF-8");
+
+		if( (strtolower($fm) == $fm) != (strtolower($ft) == $ft) )
+		{
+			return array('success' => true, 'warning_message' => 'The message and the translation start with a letter of different case!');
+		}
+
 		return array('success' => true);
 	}
 };
