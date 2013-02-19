@@ -54,7 +54,7 @@ class TranslationValidator
 			return array('success' => true, 'warning_message' => 'Translation looks a lot like the original English!');
 		}
 
-		if($language->getCode() != 'zh' and $language->getCode() != 'tw')
+		if($language->getCode() != 'zh' and $language->getCode() != 'tw' and $category != 'Mails')
 		{
 			$punctuation = ".:!?";
 			$lm = $message[strlen($message) - 1];

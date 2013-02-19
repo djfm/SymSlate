@@ -31,12 +31,38 @@ function delayedFixHeights()
 	},500);
 }
 
-$(function(){
+function loadiframe()
+{
+	/*
+	$(this).ready(function()
+	{
+		//console.log($(this).contents().find('html'));
+		if(!('srcdoc' in $('<iframe/>')[0]))
+		{
+			console.log(this);
+			if(src = $(this).attr('srcdoc'))
+			{
 
-	$('iframe').load(function() {
-	    this.style.height =
-	    this.contentWindow.document.body.offsetHeight + 'px';
-	});
+			}
+		}
+	});*/
+}
+
+$(document).ready(function(){
+	
+	
+	if(!('srcdocument' in $('<iframe/>')[0]))
+	{
+		$('iframe[srcdoc]').each(function(i, iframe){
+			console.log("Iframe needs js loading");
+
+			iframe.contentWindow.document.open();
+			iframe.contentWindow.document.write($(this).attr('srcdoc'));
+			iframe.contentWindow.document.close();
+
+			//$(this).contents().find('html').replaceWith();
+		});
+	}
 
 	$('select.autosubmit').change(function(){
 		$(this).parents('form').submit();
