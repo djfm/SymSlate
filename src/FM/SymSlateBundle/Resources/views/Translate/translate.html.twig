@@ -188,7 +188,7 @@
 								{% endfor %}
 							</select>
 							<br/>
-							<label for="translate_context" class="input-label medium">Show context</label>
+							<label for="translate_context" class="input-label medium">Context</label>
 							<select class="autosubmit" id="translate_context" name="context">
 								<option value="YES" {{ app.request.query.get('context','YES') == 'YES' ? 'selected' : '' }}>Yes</option>
 								<option value="NO"  {{ app.request.query.get('context','YES') == 'NO'  ? 'selected' : '' }}>No</option>
