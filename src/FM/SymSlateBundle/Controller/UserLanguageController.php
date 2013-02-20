@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\UserLanguage;
 use FM\SymSlateBundle\Form\UserLanguageType;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 
 /**
  * UserLanguage controller.
@@ -22,6 +23,7 @@ class UserLanguageController extends Controller
      *
      * @Route("/", name="userlanguages")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function indexAction()
     {
@@ -39,6 +41,7 @@ class UserLanguageController extends Controller
      *
      * @Route("/{id}/show", name="userlanguages_show")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function showAction($id)
     {
@@ -63,6 +66,7 @@ class UserLanguageController extends Controller
      *
      * @Route("/new", name="userlanguages_new")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function newAction()
     {
@@ -81,6 +85,7 @@ class UserLanguageController extends Controller
      * @Route("/create", name="userlanguages_create")
      * @Method("POST")
      * @Template("FMSymSlateBundle:UserLanguage:new.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function createAction(Request $request)
     {
@@ -107,6 +112,7 @@ class UserLanguageController extends Controller
      *
      * @Route("/{id}/edit", name="userlanguages_edit")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function editAction($id)
     {
@@ -134,6 +140,7 @@ class UserLanguageController extends Controller
      * @Route("/{id}/update", name="userlanguages_update")
      * @Method("POST")
      * @Template("FMSymSlateBundle:UserLanguage:edit.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function updateAction(Request $request, $id)
     {
@@ -168,6 +175,7 @@ class UserLanguageController extends Controller
      *
      * @Route("/{id}/delete", name="userlanguages_delete")
      * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function deleteAction(Request $request, $id)
     {

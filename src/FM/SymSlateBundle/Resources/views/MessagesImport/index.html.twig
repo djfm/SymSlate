@@ -3,14 +3,13 @@
 {% block body %}
 <h1>MessagesImport list</h1>
 
-<table class="records_list">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Id</th>
             <th>Original_filename</th>
             <th>Filepath</th>
             <th>Pack_id</th>
-            <th>Created_by</th>
             <th>Created</th>
             <th>Updated</th>
             <th>Actions</th>
@@ -23,18 +22,15 @@
             <td>{{ entity.originalfilename }}</td>
             <td>{{ entity.filepath }}</td>
             <td>{{ entity.packid }}</td>
-            <td>{{ entity.createdby }}</td>
             <td>{% if entity.created %}{{ entity.created|date('Y-m-d H:i:s') }}{% endif %}</td>
             <td>{% if entity.updated %}{{ entity.updated|date('Y-m-d H:i:s') }}{% endif %}</td>
             <td>
-                <ul>
-                    <li>
-                        <a href="{{ path('messagesimports_show', { 'id': entity.id }) }}">show</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('messagesimports_edit', { 'id': entity.id }) }}">edit</a>
-                    </li>
-                </ul>
+                
+                        <a class="btn btn-success" href="{{ path('messagesimports_show', { 'id': entity.id }) }}">show</a>
+                   
+                        <a class="btn btn-warning" href="{{ path('messagesimports_edit', { 'id': entity.id }) }}">edit</a>
+                    
+                
             </td>
         </tr>
     {% endfor %}

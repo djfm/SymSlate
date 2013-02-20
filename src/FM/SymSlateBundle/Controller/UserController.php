@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\User;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 
 /**
  * User controller.
@@ -21,6 +22,7 @@ class UserController extends Controller
      *
      * @Route("/", name="users")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function indexAction()
     {
@@ -38,6 +40,7 @@ class UserController extends Controller
      *
      * @Route("/{id}/show", name="users_show")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function showAction($id)
     {

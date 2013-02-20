@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\Language;
 use FM\SymSlateBundle\Form\LanguageType;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 
 /**
  * Language controller.
@@ -22,6 +23,7 @@ class LanguageController extends Controller
      *
      * @Route("/", name="languages")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function indexAction()
     {
@@ -39,6 +41,7 @@ class LanguageController extends Controller
      *
      * @Route("/{id}/show", name="languages_show")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function showAction($id)
     {
@@ -63,6 +66,7 @@ class LanguageController extends Controller
      *
      * @Route("/{id}/autocomplete", name="languages_autocomplete")
      * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function autocompleteAction($id)
     {
@@ -75,6 +79,7 @@ class LanguageController extends Controller
      *
      * @Route("/new", name="languages_new")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function newAction()
     {
@@ -93,6 +98,7 @@ class LanguageController extends Controller
      * @Route("/create", name="languages_create")
      * @Method("POST")
      * @Template("FMSymSlateBundle:Language:new.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function createAction(Request $request)
     {
@@ -119,6 +125,7 @@ class LanguageController extends Controller
      *
      * @Route("/{id}/edit", name="languages_edit")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function editAction($id)
     {
@@ -146,6 +153,7 @@ class LanguageController extends Controller
      * @Route("/{id}/update", name="languages_update")
      * @Method("POST")
      * @Template("FMSymSlateBundle:Language:edit.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function updateAction(Request $request, $id)
     {
@@ -180,6 +188,7 @@ class LanguageController extends Controller
      *
      * @Route("/{id}/delete", name="languages_delete")
      * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function deleteAction(Request $request, $id)
     {

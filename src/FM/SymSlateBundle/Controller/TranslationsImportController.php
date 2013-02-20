@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\TranslationsImport;
 use FM\SymSlateBundle\Form\TranslationsImportType;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 
 /**
  * TranslationsImport controller.
@@ -128,6 +129,7 @@ class TranslationsImportController extends Controller
      *
      * @Route("/{id}/edit", name="translationsimports_edit")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function editAction($id)
     {
@@ -155,6 +157,7 @@ class TranslationsImportController extends Controller
      * @Route("/{id}/update", name="translationsimports_update")
      * @Method("POST")
      * @Template("FMSymSlateBundle:TranslationsImport:edit.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function updateAction(Request $request, $id)
     {
@@ -189,6 +192,7 @@ class TranslationsImportController extends Controller
      *
      * @Route("/{id}/delete", name="translationsimports_delete")
      * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function deleteAction(Request $request, $id)
     {

@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\TranslationSubmission;
 use FM\SymSlateBundle\Form\TranslationSubmissionType;
 use Symfony\Component\HttpFoundation\Response;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 
 /**
  * TranslationSubmission controller.
@@ -23,6 +24,7 @@ class TranslationSubmissionController extends Controller
      *
      * @Route("/", name="translationsubmission")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function indexAction()
     {
@@ -40,6 +42,7 @@ class TranslationSubmissionController extends Controller
      *
      * @Route("/{id}/show", name="translationsubmission_show")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function showAction($id)
     {
@@ -118,6 +121,7 @@ class TranslationSubmissionController extends Controller
      *
      * @Route("/{id}/edit", name="translationsubmission_edit")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")s
      */
     public function editAction($id)
     {
@@ -145,6 +149,7 @@ class TranslationSubmissionController extends Controller
      * @Route("/{id}/update", name="translationsubmission_update")
      * @Method("POST")
      * @Template("FMSymSlateBundle:TranslationSubmission:edit.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function updateAction(Request $request, $id)
     {
@@ -179,6 +184,7 @@ class TranslationSubmissionController extends Controller
      *
      * @Route("/{id}/delete", name="translationsubmission_delete")
      * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function deleteAction(Request $request, $id)
     {

@@ -177,6 +177,7 @@ class PackController extends Controller
      * @Route("/{id}/update", name="packs_update")
      * @Method("POST")
      * @Template("FMSymSlateBundle:Pack:edit.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function updateAction(Request $request, $id)
     {
@@ -211,6 +212,7 @@ class PackController extends Controller
      *
      * @Route("/{id}/delete", name="packs_delete")
      * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function deleteAction(Request $request, $id)
     {

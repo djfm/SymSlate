@@ -9,7 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\CountryLanguage;
 use FM\SymSlateBundle\Form\CountryLanguageType;
-
+use JMS\SecurityExtraBundle\Annotation\Secure;
 /**
  * CountryLanguage controller.
  *
@@ -22,6 +22,7 @@ class CountryLanguageController extends Controller
      *
      * @Route("/", name="countrylanguage")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function indexAction()
     {
@@ -39,6 +40,7 @@ class CountryLanguageController extends Controller
      *
      * @Route("/{id}/show", name="countrylanguage_show")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function showAction($id)
     {
@@ -63,6 +65,7 @@ class CountryLanguageController extends Controller
      *
      * @Route("/new", name="countrylanguage_new")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function newAction()
     {
@@ -81,6 +84,7 @@ class CountryLanguageController extends Controller
      * @Route("/create", name="countrylanguage_create")
      * @Method("POST")
      * @Template("FMSymSlateBundle:CountryLanguage:new.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function createAction(Request $request)
     {
@@ -107,6 +111,7 @@ class CountryLanguageController extends Controller
      *
      * @Route("/{id}/edit", name="countrylanguage_edit")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function editAction($id)
     {
@@ -134,6 +139,7 @@ class CountryLanguageController extends Controller
      * @Route("/{id}/update", name="countrylanguage_update")
      * @Method("POST")
      * @Template("FMSymSlateBundle:CountryLanguage:edit.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function updateAction(Request $request, $id)
     {
@@ -168,6 +174,7 @@ class CountryLanguageController extends Controller
      *
      * @Route("/{id}/delete", name="countrylanguage_delete")
      * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function deleteAction(Request $request, $id)
     {

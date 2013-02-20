@@ -23,6 +23,7 @@ class MessagesImportController extends Controller
      *
      * @Route("/", name="messagesimports")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function indexAction()
     {
@@ -40,6 +41,7 @@ class MessagesImportController extends Controller
      *
      * @Route("/{id}/show", name="messagesimports_show")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function showAction($id)
     {
@@ -85,6 +87,7 @@ class MessagesImportController extends Controller
      * @Route("/create", name="messagesimports_create")
      * @Method("POST")
      * @Template("FMSymSlateBundle:MessagesImport:new.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function createAction(Request $request)
     {		
@@ -120,6 +123,7 @@ class MessagesImportController extends Controller
      *
      * @Route("/{id}/edit", name="messagesimports_edit")
      * @Template()
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function editAction($id)
     {
@@ -147,6 +151,7 @@ class MessagesImportController extends Controller
      * @Route("/{id}/update", name="messagesimports_update")
      * @Method("POST")
      * @Template("FMSymSlateBundle:MessagesImport:edit.html.twig")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function updateAction(Request $request, $id)
     {
@@ -181,6 +186,7 @@ class MessagesImportController extends Controller
      *
      * @Route("/{id}/delete", name="messagesimports_delete")
      * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function deleteAction(Request $request, $id)
     {
