@@ -136,6 +136,10 @@ class PackRepository extends EntityRepository
 			}
 			
 		}
+		if(isset($query_options['translation_different_from_source']) and $query_options['translation_different_from_source'] == 1)
+		{
+			$qb->andWhere('m.text != t.text');
+		}
 
 		$qb->orderBy('c.position', 'ASC');
 		

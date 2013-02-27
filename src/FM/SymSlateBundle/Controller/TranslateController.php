@@ -86,6 +86,8 @@ class TranslateController extends Controller
 			}
 			$query_options['show_context'] = ($request->query->get('context','YES') == 'YES');
 			
+			$query_options['translation_different_from_source'] = $request->query->get('tdfs',0);
+						
 			$pagination_options = array();
 			if($p = $request->query->get('page'))
 			{
