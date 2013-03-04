@@ -13,6 +13,7 @@ class PackType extends AbstractType
         $builder
             ->add('project')
             ->add('name')
+            ->add('pack_type')
             ->add('version')
         ;
     }

@@ -278,43 +278,81 @@ class MessagesImport
 		$messages = array();
 		$file = fopen($this->getAbsolutePath(),"r");
 		$headers = fgetcsv($file,0,";");
-		//remove the unused Translation column if it is there
-		//if($headers[count($headers)-1]=='Translation')array_pop($headers);
-		while($row = fgetcsv($file,0,";"))
-		{
-			//index row with the headers!
-            $keys = array_values($headers);
-            $values = array_values($row);
-            while(count($values) < count($keys))$values[] = null;
-			$row = array_combine($keys, $values);
-			
-			//build the message
-			$message = new Message();
-			$message->setMkey($row['Array Key']);
-			$message->setText($row['English String']);
-			$message->setType( $row['Array Name'] ? 'STRING' : (preg_match("/\.html$/", $row['Storage File Path']) ? 'HTML' : 'TXT'));
-			
-			$m = array();
-			preg_match("/^(?:\s*\d+\s*-\s*)?(.*?)\s*$/",$row['Section'],$m);
-			$category = $m[1];
-			
-			//virtual properties
-			$message->classification_data = array(
-				"category" => $category,
-				"section"  => isset($row['Group']) ? $row['Group'] : '',
-				"subsection" => isset($row['SubGroup']) ? $row['SubGroup'] : ''
-			);
-			
-			$message->storage_data = array(
-				'method'   => $row['Array Name'] ? 'ARRAY' : 'FILE',
-				'path'     => str_replace('/en/', '/[iso]/', str_replace('/en.php','/[iso].php', $row['Storage File Path'])),
-				'category' => $category,
-				'custom'   => $row['Array Name']
-			);
-			
-			$messages[] = $message;
-			
-		}
+
+        if($headers == array("Category", "Section", "SubSection","StorageMethod","StoragePath","StorageCustom","Key","Type","Message"))
+        {
+             while($row = fgetcsv($file,0,";"))
+            {
+                //index row with the headers!
+                $keys = array_values($headers);
+                $values = array_values($row);
+                while(count($values) < count($keys))$values[] = null;
+                $row = array_combine($keys, $values);
+                
+                //build the message
+                $message = new Message();
+                $message->setMkey($row['Key']);
+                $message->setText($row['Message']);
+                $message->setType($row['Type']);
+                                                
+                //virtual properties
+                $message->classification_data = array(
+                    "category" => $row['Category'],
+                    "section"  => $row['Section'],
+                    "subsection" => $row['SubSection']
+                );
+                
+                $message->storage_data = array(
+                    'method'   => $row['StorageMethod'],
+                    'path'     => $row['StoragePath'],
+                    'category' => $row['Category'],
+                    'custom'   => $row['StorageCustom']
+                );
+                
+                $messages[] = $message; 
+            }
+        }
+        else
+        {
+            //remove the unused Translation column if it is there
+            //if($headers[count($headers)-1]=='Translation')array_pop($headers);
+            while($row = fgetcsv($file,0,";"))
+            {
+                //index row with the headers!
+                $keys = array_values($headers);
+                $values = array_values($row);
+                while(count($values) < count($keys))$values[] = null;
+                $row = array_combine($keys, $values);
+                
+                //build the message
+                $message = new Message();
+                $message->setMkey($row['Array Key']);
+                $message->setText($row['English String']);
+                $message->setType( $row['Array Name'] ? 'STRING' : (preg_match("/\.html$/", $row['Storage File Path']) ? 'HTML' : 'TXT'));
+                
+                $m = array();
+                preg_match("/^(?:\s*\d+\s*-\s*)?(.*?)\s*$/",$row['Section'],$m);
+                $category = $m[1];
+                
+                //virtual properties
+                $message->classification_data = array(
+                    "category" => $category,
+                    "section"  => isset($row['Group']) ? $row['Group'] : '',
+                    "subsection" => isset($row['SubGroup']) ? $row['SubGroup'] : ''
+                );
+                
+                $message->storage_data = array(
+                    'method'   => $row['Array Name'] ? 'ARRAY' : 'FILE',
+                    'path'     => str_replace('/en/', '/[iso]/', str_replace('/en.php','/[iso].php', $row['Storage File Path'])),
+                    'category' => $category,
+                    'custom'   => $row['Array Name']
+                );
+                
+                $messages[] = $message;
+                
+            }
+        }
+		
 		fclose($file);
 		return $messages;
 	}

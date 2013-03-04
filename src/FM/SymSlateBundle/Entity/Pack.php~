@@ -73,6 +73,13 @@ class Pack
     /**
      * @var string
      *
+     * @ORM\Column(name="pack_type", type="string", length=255)
+     */
+    private $pack_type;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;

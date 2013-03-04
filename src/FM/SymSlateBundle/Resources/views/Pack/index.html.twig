@@ -13,6 +13,7 @@
         <tr>
             <th>Project</th>
             <th>Name</th>
+            <th>Type</th>
             <th>Version</th>
             {% if is_granted('ROLE_SUPER_ADMIN') %}<th>Actions</th>{% endif %}
         </tr>
@@ -22,6 +23,7 @@
         <tr class="clickable" onclick="javascript:window.location='{{ path('packs_show', { 'id': entity.id }) }}'">
             <td>{{ entity.project }}</td>
             <td>{{ entity.name }}</td>
+            <td>{{ entity.packType }}</td>
             <td>{{ entity.version }}</td>
             {% if is_granted('ROLE_SUPER_ADMIN') %}
                 <td>

@@ -19,37 +19,41 @@ class PackExportService extends \FM\SymSlateBundle\Worker\Worker
 
 		$this->setExpectedSteps(count($storages));
 
+		$pack = $export->getPack();
+
 		$this->em->clear();
 
-		$file_contents = array();
-		$footers       = array();
-		
-		foreach($storages as $storage)
+		if($pack->getPackType() == 'standard')
 		{
+			$file_contents = array();
+			$footers       = array();
 
-			$cts = $storage->getMessage()->getCurrentTranslations();
-			
-			if($cts->count() == 1)
+			foreach($storages as $storage)
 			{
-				$ct = $cts[0];
-				$translation = $ct->getTranslation();
 
-				$validation = $this->validator->validate($storage->getMessage()->getText(), $translation->getText(), $language, $storage->getCategory());
-
-				if($validation['success'])
-				{
+				$cts = $storage->getMessage()->getCurrentTranslations();
 				
-					$path = str_replace('[iso]', $language->getCode(), $storage->getPath());
-					if($path[0] == '/')$path = substr($path, 1);
-					
-					if($storage->getMethod() == 'ARRAY')
+				if($cts->count() == 1)
+				{
+					$ct = $cts[0];
+					$translation = $ct->getTranslation();
+
+					$validation = $this->validator->validate($storage->getMessage()->getText(), $translation->getText(), $language, $storage->getCategory());
+
+					if($validation['success'])
 					{
-						$array = $storage->getCustom();
-						if(!isset($file_contents[$path]))
+					
+						$path = str_replace('[iso]', $language->getCode(), $storage->getPath());
+						if($path[0] == '/')$path = substr($path, 1);
+						
+						if($storage->getMethod() == 'ARRAY')
 						{
-							if($storage->getCategory() != 'Tabs')
+							$array = $storage->getCustom();
+							if(!isset($file_contents[$path]))
 							{
-								$file_contents[$path] = <<<NOW
+								if($storage->getCategory() != 'Tabs')
+								{
+									$file_contents[$path] = <<<NOW
 <?php
 
 global $array;
@@ -57,10 +61,10 @@ $array = array();
 
 
 NOW;
-							}
-							else
-							{
-								$file_contents[$path] = <<<NOW
+								}
+								else
+								{
+									$file_contents[$path] = <<<NOW
 <?php
 
 $array = array();
@@ -68,69 +72,168 @@ $array = array();
 
 NOW;
 
-								$footers[$path] = "\nreturn $array;";
+									$footers[$path] = "\nreturn $array;";
 
+								}
 							}
-						}
+								
+							$file_contents[$path] .= "{$array}['" . addslashes($storage->getMessage()->getMkey()) . "'] = '" . addslashes($translation->getText()) . "';\n";
 							
-						$file_contents[$path] .= "{$array}['" . addslashes($storage->getMessage()->getMkey()) . "'] = '" . addslashes($translation->getText()) . "';\n";
-						
-					}
-					else if($storage->getMethod() == 'FILE')
-					{
-						$file_contents[$path] = $translation->getText();
+						}
+						else if($storage->getMethod() == 'FILE')
+						{
+							$file_contents[$path] = $translation->getText();
+						}
+						else
+						{
+							throw new Exception("Unknown storage method: " . $storage->getMethod());	
+						}
 					}
 					else
 					{
-						throw new Exception("Unknown storage method: " . $storage->getMethod());	
+						//the Entity Manager was cleared so we need to fetch the translation again before updating it
+						$translation = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneById($translation->getId());
+						$translation->setHasError(true);
+						$translation->setErrorMessage($validation['error_message']);
+						$this->em->persist($translation);
+						$this->em->flush();
+						$this->em->clear();
+					}
+
+					
+					if(isset($validation['warning_message']))
+					{
+						$translation = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneById($translation->getId());
+						$translation->setHasWarning(true);
+						$translation->setWarningMessage($validation['warning_message']);
+						$this->em->persist($translation);
+						$this->em->flush();
+						$this->em->clear();
+					}
+					
+				}
+				else
+				{
+					throw new Exception("Classification ". $cl->getId() . " doesn't have exactly one current translation in this language! (got " . $cts->count() . ")");	
+				}
+
+				$this->step();
+				
+			}
+
+			foreach($footers as $path => $data)
+			{
+				$file_contents[$path] .= $data;
+			}
+			
+			if(count($file_contents) > 0)
+			{
+				$export   = $this->em->getRepository('FMSymSlateBundle:PackExport')->find($pack_export_id);
+				$export->setFilepath($export->getId() . "_" . $language->getAName() . "_" . $export->getPack()->getFullName() . ".gzip");
+				$archive = new \Archive_Tar($export->getAbsolutePath(), 'gz');
+				
+				foreach($file_contents as $path => $data)
+				{
+					$archive->addString($path, $data);
+				}
+			}
+		}
+		else if($pack->getPackType() == 'installer')
+		{
+
+			$general_messages = array();
+			$xml = array();
+
+			foreach($storages as $storage)
+			{
+
+				$cts = $storage->getMessage()->getCurrentTranslations();
+				
+				if($cts->count() == 1)
+				{
+					$ct = $cts[0];
+					$translation = $ct->getTranslation();
+
+					$validation = $this->validator->validate($storage->getMessage()->getText(), $translation->getText(), $language, $storage->getCategory());
+
+					if($validation['success'])
+					{
+						if($storage->getCategory() == "General Messages")
+						{
+							$general_messages[$storage->getMessage()->getMkey()] = $translation->getText();
+						}
+						else if($storage->getCategory() == "XML")
+						{
+							$path = str_replace('[iso]', $language->getCode(), $storage->getPath());
+							$m    = array();
+							preg_match('/\/([^\/\.]+?)\.xml$/', $path, $m);
+							$entity = $m[1];
+							
+							if(!isset($xml[$path]))$xml[$path] = array('entity_name' => $entity, 'entities' => array());
+
+							if($storage->getMethod() == 'FILE_RAW_XML')
+							{
+								$xml[$path]["entities"][] = $translation->getText();
+							}
+							else if($storage->getMethod() == 'FILE_XML')
+							{
+								$xml[$path]["entities"][] = str_replace('[translation]', $translation->getText(), $storage->getCustom());
+							}
+							/*
+							if($entity == "profile"){
+								print_r(end($xml[$path]["entities"]));
+								echo "\n";
+								print_r($storage->getCustom());
+							}*/
+						}
 					}
 				}
 				else
 				{
-					//the Entity Manager was cleared so we need to fetch the translation again before updating it
-					$translation = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneById($translation->getId());
-					$translation->setHasError(true);
-					$translation->setErrorMessage($validation['error_message']);
-					$this->em->persist($translation);
-					$this->em->flush();
-					$this->em->clear();
+					throw new Exception("Classification ". $cl->getId() . " doesn't have exactly one current translation in this language! (got " . $cts->count() . ")");	
 				}
 
-				
-				if(isset($validation['warning_message']))
-				{
-					$translation = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneById($translation->getId());
-					$translation->setHasWarning(true);
-					$translation->setWarningMessage($validation['warning_message']);
-					$this->em->persist($translation);
-					$this->em->flush();
-					$this->em->clear();
-				}
-				
-			}
-			else
-			{
-				throw new Exception("Classification ". $cl->getId() . " doesn't have exactly one current translation in this language! (got " . $cts->count() . ")");	
+				$this->step();
 			}
 
-			$this->step();
 		}
 
-		foreach($footers as $path => $data)
+		//die();
+
+		$files = array();
+
+		$first = true;
+		$general_messages_file_text = "<?php\nreturn array(\n'translations' => array(\n";
+		foreach($general_messages as $key => $value)
 		{
-			$file_contents[$path] .= $data;
+			if($first)$first=false;
+			else $general_messages_file_text .= ",\n";
+			$general_messages_file_text .= "'" . addslashes($key) . "'" . " => " . "'" . addslashes($value) . "'";
 		}
+		$general_messages_file_text .= '));';
+
+		$files['langs/' . $language->getCode() . '/install.php'] = $general_messages_file_text;
 		
-		if(count($file_contents) > 0)
+		foreach($xml as $path => $arr)
 		{
-			$export   = $this->em->getRepository('FMSymSlateBundle:PackExport')->find($pack_export_id);
-			$export->setFilepath($export->getId() . "_" . $language->getAName() . "_" . $export->getPack()->getFullName() . ".gzip");
-			$archive = new \Archive_Tar($export->getAbsolutePath(), 'gz');
-			
-			foreach($file_contents as $path => $data)
+			$entity_name = $arr['entity_name'];
+
+			$files[$path] = '<?xml version="1.0"?>' . "\n<entity_".$entity_name.">";
+			foreach($arr['entities'] as $entity)
 			{
-				$archive->addString($path, $data);
+				$files[$path] .= "\n\n$entity";
 			}
+			$files[$path] .= "\n</entity_".$entity_name.">";
+			
+		}
+
+		$export   = $this->em->getRepository('FMSymSlateBundle:PackExport')->find($pack_export_id);
+		$export->setFilepath($export->getId() . "_" . $language->getAName() . "_" . $export->getPack()->getFullName() . ".gzip");
+		$archive = new \Archive_Tar($export->getAbsolutePath(), 'gz');
+		
+		foreach($files as $path => $data)
+		{
+			$archive->addString($path, $data);
 		}
 
 		$this->setStatus("Completed!");

@@ -73,6 +73,13 @@ class Pack
     /**
      * @var string
      *
+     * @ORM\Column(name="pack_type", type="string", length=255)
+     */
+    private $pack_type;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="name", type="string", length=255)
      */
     private $name;
@@ -461,5 +468,28 @@ class Pack
     public function getStatisticsUpdated()
     {
         return $this->statistics_updated;
+    }
+
+    /**
+     * Set pack_type
+     *
+     * @param string $packType
+     * @return Pack
+     */
+    public function setPackType($packType)
+    {
+        $this->pack_type = $packType;
+    
+        return $this;
+    }
+
+    /**
+     * Get pack_type
+     *
+     * @return string 
+     */
+    public function getPackType()
+    {
+        return $this->pack_type;
     }
 }
