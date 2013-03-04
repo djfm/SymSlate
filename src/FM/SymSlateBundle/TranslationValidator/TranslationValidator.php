@@ -67,9 +67,12 @@ class TranslationValidator
 			$fm = mb_substr($message     , 0,  1 , "UTF-8");
 			$ft = mb_substr($translation , 0,  1 , "UTF-8");
 
-			if( (strtolower($fm) == $fm) != (strtolower($ft) == $ft))
+			if($language->getCode() != 'ru')
 			{
-				return array('success' => true, 'warning_message' => 'The message and the translation start with a letter of different case!');
+				if( (strtolower($fm) == $fm) != (strtolower($ft) == $ft))
+				{
+					return array('success' => true, 'warning_message' => 'The message and the translation start with a letter of different case!');
+				}
 			}
 		}
 
