@@ -6,6 +6,14 @@
 	<legend>Import a translation pack</legend>
 	<fieldset>
 	    {{ form_widget(form) }}
+
+	    {% if is_granted('ROLE_SUPER_ADMIN') %}
+	    	<select name="force_overwrite">
+	    		<option value="0">minimize overwriting</option>
+	    		<option value="1">this pack is right</option>
+	    	</select>
+	    	<BR/>
+	    {% endif %}
 	    
 	    <button type="submit" class="btn">Create</button>
 	   

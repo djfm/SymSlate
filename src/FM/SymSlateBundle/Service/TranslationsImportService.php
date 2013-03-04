@@ -24,8 +24,8 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 
 	public function run($args)
 	{
-		$start_mem = round(memory_get_usage() / 1024/1024);
-		$this->logger->info("Memory usage before import: " . $start_mem . "MB");
+		//$start_mem = round(memory_get_usage() / 1024/1024);
+		//$this->logger->info("Memory usage before import: " . $start_mem . "MB");
 
 		$this->setStatus("Initializing...");
 		$translations_import_id = $args['translations_import_id'];
@@ -36,9 +36,9 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 		$user                = $translations_import->getCreator();
 		$translations        = $translations_import->buildTranslations($this->logger);
 
-		$this->logger->info("Memory usage after translations generation: " . round(memory_get_usage() / 1024/1024) . "MB (started at: $start_mem)");
+		//$this->logger->info("Memory usage after translations generation: " . round(memory_get_usage() / 1024/1024) . "MB (started at: $start_mem)");
 		$num_translations = count($translations);
-		$this->logger->info("There are $num_translations to import!");
+		//$this->logger->info("There are $num_translations to import!");
 		$this->setExpectedSteps($num_translations);
 		$this->setStatus("Running...");
 
@@ -76,8 +76,8 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 
 			if($this->em->getUnitOfWork()->size() > 250)
 			{
-				$this->logger->info("[UOW size before clear: " . $this->em->getUnitOfWork()->size() . "]");
-				$this->logger->info("Memory usage before clear: " . round(memory_get_usage() / 1024/1024) . "MB");
+				//$this->logger->info("[UOW size before clear: " . $this->em->getUnitOfWork()->size() . "]");
+				//$this->logger->info("Memory usage before clear: " . round(memory_get_usage() / 1024/1024) . "MB");
 				//free some memory, without this we explode!!
 				$this->em->clear();
 
@@ -85,8 +85,8 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 				$translations_import = $this->em->getRepository('FMSymSlateBundle:TranslationsImport')->findOneById($translations_import_id);
 				$user                = $translations_import->getCreator();
 
-				$this->logger->info("[UOW size after clear: " . $this->em->getUnitOfWork()->size() . "]");
-				$this->logger->info("Memory usage after clear: " . round(memory_get_usage() / 1024/1024) . "MB\n");
+				//$this->logger->info("[UOW size after clear: " . $this->em->getUnitOfWork()->size() . "]");
+				//$this->logger->info("Memory usage after clear: " . round(memory_get_usage() / 1024/1024) . "MB\n");
 			}
 
 		}
