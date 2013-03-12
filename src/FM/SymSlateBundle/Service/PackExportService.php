@@ -101,7 +101,7 @@ NOW;
 					}
 
 					
-					if(isset($validation['warning_message']) or $translation->hasWarning())
+					if(isset($validation['warning_message']) or $translation->getHasWarning())
 					{
 						$translation = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneById($translation->getId());
 						if(isset($validation['warning_message']))
