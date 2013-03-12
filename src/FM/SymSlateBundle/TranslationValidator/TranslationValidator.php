@@ -49,12 +49,23 @@ class TranslationValidator
 			return array('success' => false, 'error_message' => "Translation cannot contain line breaks! (because original text has none).");
 		}
 
-		if($this->normalize($message) == $this->normalize($translation) and $language->getCode() != 'en')
+		if($language->getCode() == 'en')
+		{
+			if($message == $translation)
+			{
+				return array('success' => true, 'warning_message' => 'Reviewed string is exactly like the English!');
+			}
+			else if($this->normalize($message) != $this->normalize($translation))
+			{
+				return array('success' => true, 'warning_message' => 'Reviewed string is very different from the source!');
+			}
+		}
+		else if($this->normalize($message) == $this->normalize($translation))
 		{
 			return array('success' => true, 'warning_message' => 'Translation looks a lot like the original English!');
 		}
 
-		if($language->getCode() != 'zh' and $language->getCode() != 'tw' and $category != 'Mails')
+		if($language->getCode() != 'en' and $language->getCode() != 'zh' and $language->getCode() != 'tw' and $category != 'Mails')
 		{
 			$punctuation = ".:!?";
 			$lm = $message[strlen($message) - 1];
