@@ -46,6 +46,7 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 		{	
 			if(($language = $this->getOrCreateLanguage($user, $translation->language_code)) and $user->canTranslateInto($language))
 			{
+				$brand_new_translation = true;
 				if($tmp = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneBy(array(
 					"mkey" => $translation->getMkey(),
 					"language_id" => $language->getId(),
@@ -55,8 +56,10 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 					//don't update already existing translations
 
 					$translation = $tmp;
+					$brand_new_translation = false;
 				}
-				else
+
+				if($brand_new_translation or $args['force_actualize'])
 				{
 
 					$translation->setTranslationsImport($translations_import);

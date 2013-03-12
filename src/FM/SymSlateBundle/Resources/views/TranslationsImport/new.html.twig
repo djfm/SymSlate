@@ -8,9 +8,9 @@
 	    {{ form_widget(form) }}
 
 	    {% if is_granted('ROLE_SUPER_ADMIN') %}
-	    	<select name="force_overwrite">
-	    		<option value="0">minimize overwriting</option>
-	    		<option value="1">this pack is right</option>
+	    	<select name="force_actualize">
+	    		<option value="0">Regular import</option>
+	    		<option value="1">This pack takes precedence</option>
 	    	</select>
 	    	<BR/>
 	    {% endif %}

@@ -221,6 +221,10 @@
 								<option value="has_warning" {{ app.request.query.get('translate_validation','*') == "has_warning"  ? "selected" : "" }}>Has warning</option>
 								<option value="is_clean" {{ app.request.query.get('translate_validation','*') == "is_clean"  ? "selected" : "" }}>Is clean</option>
 							</select>
+							{% if app.request.query.get('language_code') == 'en' %}
+								<label for="translate_tdfs" class="input-label medium">TDFS</label>
+								<input type="checkbox" id="translate_tdfs" name="tdfs" value=1 {% if app.request.query.get('tdfs',0) == 1 %} checked {% endif %}>&nbsp;translation is != from source</input>
+							{% endif %}
 						</fieldset>
 
 						<div style="padding-left:5px;">

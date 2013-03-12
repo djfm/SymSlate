@@ -97,7 +97,8 @@ class TranslationsImportController extends Controller
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
 			
-			$entity->setCreator($this->get("security.context")->getToken()->getUser());
+            $user = $this->get("security.context")->getToken()->getUser();
+			$entity->setCreator($user);
 			$entity->upload();
 			
             $em->persist($entity);
@@ -110,8 +111,7 @@ class TranslationsImportController extends Controller
 			else
 			{
 				$manager = $this->get("queue_manager");
-                //force_overwrite?
-                //$args = array('translations_import_id' => $entity->getId());
+                $args = array('translations_import_id' => $entity->getId(), 'force_actualize' => (($request->get('force_actualize', '0') == 1) and $user->isSuperAdmin()));
                 $manager->enqueueJob('FM\SymSlateBundle\Service\TranslationsImportService', $args);
 				$manager->processNextJob();
 			}
