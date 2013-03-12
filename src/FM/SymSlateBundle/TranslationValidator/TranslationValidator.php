@@ -51,9 +51,9 @@ class TranslationValidator
 
 		if($language->getCode() == 'en')
 		{
-			if($this->normalize($message) != $this->normalize($translation))
+			if($message == $translation)
 			{
-				return array('success' => true, 'warning_message' => 'Reviewed string is very different from the source!');
+				return array('success' => true, 'warning_message' => 'Reviewed string is identical to source!');
 			}
 		}
 		else if($this->normalize($message) == $this->normalize($translation))
