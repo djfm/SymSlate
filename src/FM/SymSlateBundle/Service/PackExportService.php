@@ -101,11 +101,19 @@ NOW;
 					}
 
 					
-					if(isset($validation['warning_message']))
+					if(isset($validation['warning_message']) or $translation->hasWarning())
 					{
 						$translation = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneById($translation->getId());
-						$translation->setHasWarning(true);
-						$translation->setWarningMessage($validation['warning_message']);
+						if(isset($validation['warning_message']))
+						{
+							$translation->setHasWarning(true);
+							$translation->setWarningMessage($validation['warning_message']);
+						}
+						else
+						{
+							$translation->setHasWarning(false);
+							$translation->setWarningMessage('');
+						}
 						$this->em->persist($translation);
 						$this->em->flush();
 						$this->em->clear();
