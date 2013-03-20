@@ -23,6 +23,8 @@ class PackExportService extends \FM\SymSlateBundle\Worker\Worker
 
 		$this->em->clear();
 
+		$files = array();
+		
 		if($pack->getPackType() == 'standard')
 		{
 			$file_contents = array();
@@ -204,36 +206,35 @@ NOW;
 				$this->step();
 			}
 
+		
+			$first = true;
+			$general_messages_file_text = "<?php\nreturn array(\n'translations' => array(\n";
+			foreach($general_messages as $key => $value)
+			{
+				if($first)$first=false;
+				else $general_messages_file_text .= ",\n";
+				$general_messages_file_text .= "'" . addslashes($key) . "'" . " => " . "'" . addslashes($value) . "'";
+			}
+			$general_messages_file_text .= '));';
+
+			$files['langs/' . $language->getCode() . '/install.php'] = $general_messages_file_text;
+			
+			foreach($xml as $path => $arr)
+			{
+				$entity_name = $arr['entity_name'];
+
+				$files[$path] = '<?xml version="1.0"?>' . "\n<entity_".$entity_name.">";
+				foreach($arr['entities'] as $entity)
+				{
+					$files[$path] .= "\n\n$entity";
+				}
+				$files[$path] .= "\n</entity_".$entity_name.">";
+				
+			}
 		}
 
 		//die();
 
-		$files = array();
-
-		$first = true;
-		$general_messages_file_text = "<?php\nreturn array(\n'translations' => array(\n";
-		foreach($general_messages as $key => $value)
-		{
-			if($first)$first=false;
-			else $general_messages_file_text .= ",\n";
-			$general_messages_file_text .= "'" . addslashes($key) . "'" . " => " . "'" . addslashes($value) . "'";
-		}
-		$general_messages_file_text .= '));';
-
-		$files['langs/' . $language->getCode() . '/install.php'] = $general_messages_file_text;
-		
-		foreach($xml as $path => $arr)
-		{
-			$entity_name = $arr['entity_name'];
-
-			$files[$path] = '<?xml version="1.0"?>' . "\n<entity_".$entity_name.">";
-			foreach($arr['entities'] as $entity)
-			{
-				$files[$path] .= "\n\n$entity";
-			}
-			$files[$path] .= "\n</entity_".$entity_name.">";
-			
-		}
 
 		$export   = $this->em->getRepository('FMSymSlateBundle:PackExport')->find($pack_export_id);
 		$export->setFilepath($export->getId() . "_" . $language->getAName() . "_" . $export->getPack()->getFullName() . ".gzip");
