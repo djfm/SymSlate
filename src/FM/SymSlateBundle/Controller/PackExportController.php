@@ -12,6 +12,7 @@ use FM\SymSlateBundle\Form\PackExportType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 
 /**
  * PackExport controller.
@@ -219,6 +220,38 @@ class PackExportController extends Controller
         }
         
        return $this->redirect($this->generateUrl('latest_export_info', array('pack_id' => $pack_id, 'language_code' => $language_code)));
+    }
+
+    /**
+     * Export all packs
+     *
+     * @Route("/{pack_id}/generate_all", name="generate_all_gzips", requirements={"pack_id" = "\d+"})
+     * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
+     */
+    public function generateAllAction($pack_id)
+    {
+
+        foreach($this->getDoctrine()->getEntityManager()->getRepository('FMSymSlateBundle:Language')->findAll() as $language)
+        {
+            if($pack = $this->getDoctrine()->getEntityManager()->getRepository('FMSymSlateBundle:Pack')->find($pack_id))
+            {
+                $export = new PackExport();
+
+                $export->setCreator($this->get('security.context')->getToken()->getUser());
+                $export->setLanguageId($language->getId());
+                $export->setPack($pack);
+
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($export);
+                $em->flush();
+                
+                $this->get('queue_manager')->enqueueJob('FM\SymSlateBundle\Service\PackExportService', array('pack_export_id' => $export->getId()));
+                break;
+            }
+        }
+        
+       return $this->redirect($this->generateUrl('packs_show', array('id' => $pack_id)));
     }
 
     /**

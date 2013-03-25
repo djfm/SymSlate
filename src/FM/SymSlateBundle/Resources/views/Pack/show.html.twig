@@ -131,6 +131,16 @@
 		<span id="download_link"></span>
 	</span>
 
+	{% if is_granted('ROLE_SUPER_ADMIN') %}
+
+	<br/>
+	
+	<form method="post" action="{{ url('generate_all_gzips', {'pack_id': entity.id}) }}">
+		<button class="btn btn-warning">Build all GZIps</button>
+	</form>
+
+	{% endif %}
+
 	<h2>Detailed statistics</h2>
 
 	<form action=""><input type="hidden" name="refresh_stats" value="true"/>
