@@ -247,7 +247,6 @@ class PackExportController extends Controller
                 $em->flush();
                 
                 $this->get('queue_manager')->enqueueJob('FM\SymSlateBundle\Service\PackExportService', array('pack_export_id' => $export->getId()));
-                break;
             }
         }
         
