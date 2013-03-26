@@ -88,11 +88,11 @@ class AutocompleteService extends \FM\SymSlateBundle\Worker\Worker
 				{
 					$translation = $exact[$message->getMkey()];
 				}
-				else if(isset($displaced[$message->getText()]) and !$displaced[$message->getMkey()]->getHasError())
+				else if(isset($displaced[$message->getText()]) and !$displaced[$message->getText()]->getHasError())
 				{
 					$translation = $displaced[$message->getText()];
 				}
-				else if(isset($approx[$this->normalize($message->getText())]) and !$approx[$message->getMkey()]->getHasError())
+				else if(isset($approx[$this->normalize($message->getText())]) and !$approx[$message->getText()]->getHasError())
 				{
 					$translation = $approx[$this->normalize($message->getText())];
 				}
