@@ -38,7 +38,7 @@ class AutocompleteService extends \FM\SymSlateBundle\Worker\Worker
 
 		foreach($language_ids as $language_id)
 		{
-						
+			//todo : take current translations in priority			
 			$query = $this->em->createQuery("
 				SELECT t FROM FMSymSlateBundle:Translation t WHERE 
 				t.language_id = :language_id
@@ -84,15 +84,15 @@ class AutocompleteService extends \FM\SymSlateBundle\Worker\Worker
 			{
 				$translation = null;
 				
-				if(isset($exact[$message->getMkey()]))
+				if(isset($exact[$message->getMkey()]) and !$exact[$message->getMkey()]->getHasError())
 				{
 					$translation = $exact[$message->getMkey()];
 				}
-				else if(isset($displaced[$message->getText()]))
+				else if(isset($displaced[$message->getText()]) and !$displaced[$message->getMkey()]->getHasError())
 				{
 					$translation = $displaced[$message->getText()];
 				}
-				else if(isset($approx[$this->normalize($message->getText())]))
+				else if(isset($approx[$this->normalize($message->getText())]) and !$approx[$message->getMkey()]->getHasError())
 				{
 					$translation = $approx[$this->normalize($message->getText())];
 				}

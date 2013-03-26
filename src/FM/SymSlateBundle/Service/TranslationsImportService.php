@@ -46,6 +46,10 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 		{	
 			if(($language = $this->getOrCreateLanguage($user, $translation->language_code)) and $user->canTranslateInto($language))
 			{
+				$validation = $this->validator->validate(null, $translation->getText(), $language, null);
+
+				if(!$validation['success'])continue;
+
 				$brand_new_translation = true;
 				if($tmp = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneBy(array(
 					"mkey" => $translation->getMkey(),
