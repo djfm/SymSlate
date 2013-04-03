@@ -401,6 +401,59 @@ class PackRepository extends EntityRepository
 		return array("categories" => $cats, "statistics" => $stats);
 	}
 
+	public function computeDetailedStatistics($pack_id, $language_id)
+	{	
+		$query = $this->getEntityManager()->createQuery(
+		"SELECT c.category, c.section, count(c.id) as total, count(ct.id) as translated 
+		 FROM FMSymSlateBundle:Classification c 
+		 LEFT JOIN c.message m
+		 LEFT JOIN m.current_translations ct
+		 WITH ct.language_id = :language_id
+		 WHERE c.pack_id = :pack_id
+		 GROUP BY c.category, c.section
+		"		
+		);
+		$query->setParameter(':language_id',$language_id);
+		$query->setParameter(':pack_id',$pack_id);
+		$results = $query->getResult();
+		
+		
+		
+		$stats = array(null => array(null => array('total' => 0, 'translated' => 0, 'percent' => 0)));
+		$cats  = array();
+
+		foreach($results as $row)
+		{
+			$cats[$row['category']] = true;
+
+			if(!isset($stats[$row['category']]))
+			{
+				$stats[$row['category']] = array();
+			}
+
+			$stats[$row['category']][$row['section']] = array(
+				'total' => (int)$row['total'], 
+				'translated' => (int)$row['translated'], 
+				'percent' => 100 * (int)$row['translated'] / (int)$row['total'] 
+			);
+
+			$stats[null][null]['total'] += (int)$row['total'];
+			$stats[null][null]['translated'] += (int)$row['translated'];
+
+		}
+
+		foreach($stats as $cat => &$sections)
+		{
+			uasort($sections, function($s, $t){
+				return $s['percent'] < $t['percent'] ? 1 : ($s['percent'] == $t['percent'] ? 0 : -1);
+			});
+		}
+		
+		$stats[null][null]['percent'] = $stats[null][null]['total'] > 0 ? 100 * $stats[null][null]['translated'] / $stats[null][null]['total'] : 0;
+
+		return array("categories" => $cats, "statistics" => $stats);
+	}
+
 	public function computeAllStatistics($pack_id, $force_refresh=false, $refresh_interval=1)
 	{
 		$pack = $this->find($pack_id);

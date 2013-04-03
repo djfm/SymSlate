@@ -161,7 +161,7 @@
 		</tr>
 		{% for language, statistics in stats['statistics'] %}
 			<tr class="translation_stat">
-				<th>{{ language }}</th>
+				<th><a href="{{ path('packs_show_language_stats', {'id': entity.id, 'language_code': statistics['code']}) }}">{{ language }}</a></th>
 				{%  for cat in stats['categories'] %}
 					<td
 						class="clickable translation_stat"

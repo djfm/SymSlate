@@ -65,6 +65,24 @@ class PackController extends Controller
     }
 
     /**
+     * Finds and displays stats for pack and language.
+     *
+     * @Route("/{id}/{language_code}/show", name="packs_show_language_stats")
+     * @Template()
+     */
+    public function showLanguageStatsAction($id, $language_code)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity   = $em->getRepository('FMSymSlateBundle:Pack')->find($id);
+        $language = $em->getRepository('FMSymSlateBundle:Language')->findOneByCode($language_code);
+
+        $stats = $em->getRepository('FMSymSlateBundle:Pack')->computeDetailedStatistics($entity->getId(), $language->getId());
+
+        return array('stats' => $stats, 'entity' => $entity, 'language_code' => $language_code, 'language' => $language);
+    }
+
+    /**
      * Displays a form to create a new Pack entity.
      *
      * @Route("/new", name="packs_new")
