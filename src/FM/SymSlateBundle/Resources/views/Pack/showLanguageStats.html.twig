@@ -1,0 +1,39 @@
+{% extends '::base.html.twig' %}
+
+{% block javascripts %}
+	<script type="text/javascript">
+	</script>
+{% endblock %}
+
+{%  block body %}
+	<style type="text/css">
+		td.goto
+		{
+			cursor:pointer;
+		}
+	</style>
+
+	<h2>Detailed statistics for {{language}}</h2>
+
+	<table class="table">
+		<tr>
+			{% for category, unused in stats['categories'] %}
+				<th>{{ category }}</th>
+			{% endfor %}
+		</tr>
+		<tr>
+			{% for category, unused in stats['categories'] %}
+				<td>
+					<table class="table table-striped">
+					{% for section, details in stats['statistics'][category] %}
+						<tr onclick="javascript:window.location='{{ path('translate', {'pack_id': entity.id, 'language_code': language_code, 'category': category, 'section': section}) }}'">
+							{% if section %}<td class="goto">{{ section }}</td>{% endif %}
+							<td class="goto" style="background-color:{{ color_shade("#800","#080",details['percent']/100, 0.7) }}; border: 1px solid {{ last_color_shade() }};">{{ '%.1f' | format(details['percent']) }}%<BR/>({{details['translated']}}/{{details['total']}})</td>
+						</tr>
+					{% endfor %}
+				</table>
+				</td>
+			{% endfor %}
+		</tr>
+	</table>
+{% endblock %}
