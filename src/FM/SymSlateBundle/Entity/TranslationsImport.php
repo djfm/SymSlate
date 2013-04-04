@@ -250,7 +250,12 @@ class TranslationsImport
 	
 	public function upload()
 	{
-		if($this->file === null)return;
+		if($this->file === null)return false;
+
+        if(!preg_match('/(?:\.gzip|\.tar\.gz|\.zip)$/',$this->file->getClientOriginalName()))
+        {
+            return false;
+        }
 			
 		$this->setOriginalFilename($this->file->getClientOriginalName());
 		
@@ -271,6 +276,8 @@ class TranslationsImport
 	
 	    // clean up the file property as you won't need it anymore
 	    $this->file = null;
+
+        return true;
 	}
 	
 

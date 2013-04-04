@@ -85,11 +85,6 @@ class TranslationsImportController extends Controller
      */
     public function createAction(Request $request)
     {
-    	/*
-    	$session = $this->get('session');
-    	$session->save();
-    	session_write_close();*/
-	
         $entity  = new TranslationsImport();
         $form = $this->createForm(new TranslationsImportType(), $entity);
         $form->bind($request);
@@ -99,22 +94,21 @@ class TranslationsImportController extends Controller
 			
             $user = $this->get("security.context")->getToken()->getUser();
 			$entity->setCreator($user);
-			$entity->upload();
-			
+			$uploaded = $entity->upload();
+
+            if($uploaded === false)
+            {
+                return $this->redirect($this->generateUrl('translationsimports_new', array('error' => "Forbidden file type.")));
+            }
+
             $em->persist($entity);
             $em->flush();
-            
-			if(!$entity->getCreator())
-			{
-				echo "<p><b>Creator Not Set!!!</b></p>";
-			}
-			else
-			{
-				$manager = $this->get("queue_manager");
-                $args = array('translations_import_id' => $entity->getId(), 'force_actualize' => (($request->get('force_actualize', '0') == 1) and $user->isSuperAdmin()));
-                $manager->enqueueJob('FM\SymSlateBundle\Service\TranslationsImportService', $args);
-				$manager->processNextJob();
-			}
+           
+			$manager = $this->get("queue_manager");
+            $args = array('translations_import_id' => $entity->getId(), 'force_actualize' => (($request->get('force_actualize', '0') == 1) and $user->isSuperAdmin()));
+            $manager->enqueueJob('FM\SymSlateBundle\Service\TranslationsImportService', $args);
+			$manager->processNextJob();
+			
             	
 			
             return $this->redirect($this->generateUrl('translationsimports_show', array('id' => $entity->getId())));
