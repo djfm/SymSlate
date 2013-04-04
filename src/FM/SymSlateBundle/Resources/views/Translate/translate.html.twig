@@ -193,6 +193,18 @@
 								<option value="YES" {{ app.request.query.get('context','YES') == 'YES' ? 'selected' : '' }}>Yes</option>
 								<option value="NO"  {{ app.request.query.get('context','YES') == 'NO'  ? 'selected' : '' }}>No</option>
 							</select>
+							<br/>
+							<label for="translate_not_in" class="input-label medium">Not in</label>
+							<select style="" class="autosubmit" id="translate_not_in" name="not_in">
+								<option value=""></option>
+								{% for apack in packs %}
+									{% if apack.id != pack.id %}
+										<option value="{{ apack.id }}" {{ app.request.query.get('not_in')==apack.id ? "selected='true'" : '' }}>
+											{{ apack.name }} ({{ apack.version }})
+										</option>
+									{% endif %}
+								{% endfor %}
+							</select>
 						</fieldset>
 
 						<fieldset class="bordered">

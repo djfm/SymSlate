@@ -17,17 +17,18 @@ class PackRepository extends EntityRepository
 	public function getMessagesWithTranslations($pack_id, $language_id, $query_options = array(), $pagination_options = array())
 	{
 		$default_query_options = array(
-			"empty" => "ONLY", 				// possible values are: ONLY, EXCEPT, anything else is treated as "take empty or non-empty"
-			"category" => null,				// all categories
-			"section" => null,				// all sections
-			"subsection" => null,			// all subsections
-			"source_language_id" => null,	// language from which to translate
-			"message_like" => null,
-			"translation_like" => null,
-			"author_id" => null,
-			"show_context" => true,
-			"has_error" => null,
-			"has_warning" => null
+			"empty" 				=> "ONLY", 				// possible values are: ONLY, EXCEPT, anything else is treated as "take empty or non-empty"
+			"category" 				=> null,				// all categories
+			"section" 				=> null,				// all sections
+			"subsection" 			=> null,			// all subsections
+			"source_language_id" 	=> null,	// language from which to translate
+			"message_like" 			=> null,
+			"translation_like" 		=> null,
+			"author_id" 			=> null,
+			"show_context" 			=> true,
+			"has_error" 			=> null,
+			"has_warning" 			=> null,
+			"not_in"      			=> null
 		);
 		
 		$default_pagination_options = array(
@@ -39,7 +40,7 @@ class PackRepository extends EntityRepository
 		$query_options = array_merge($default_query_options, $query_options);
 		$pagination_options = array_merge($default_pagination_options, $pagination_options);
 		
-		if(isset($query_options['source_language_id']))
+		if(null !== $query_options['source_language_id'])
 		{
 			if($lang = $this->getEntityManager()->getRepository('FMSymSlateBundle:Language')->findOneById($query_options['source_language_id']))
 			{
@@ -72,7 +73,12 @@ class PackRepository extends EntityRepository
 			$qb->leftJoin ('m.current_translations','sct','WITH','sct.language_id = :source_language_id');
 			$qb->leftJoin ('sct.translation','st');		       
 		}	
-			
+		
+		if(null !== $query_options['not_in'])
+		{
+			$qb->leftJoin('m.classifications','mc','WITH','mc.pack_id = :not_in');
+		}
+
 		$qb->where('c.pack_id = :pack_id');
 			
 		if($query_options["empty"] == "ONLY")
@@ -141,6 +147,13 @@ class PackRepository extends EntityRepository
 			$qb->andWhere('m.text != t.text');
 		}
 
+		if(null !== $query_options['not_in'])
+		{
+			$qb->andWhere('mc.id IS NULL');
+		}
+		
+
+
 		$qb->orderBy('c.position', 'ASC');
 		
 		$query = $qb->getQuery();
@@ -183,6 +196,10 @@ class PackRepository extends EntityRepository
 		if($query_options["has_warning"] !== null)
 		{
 			$query->setParameter('has_warning', $query_options["has_warning"]);
+		}
+		if(null !== $query_options['not_in'])
+		{
+			$query->setParameter('not_in', $query_options["not_in"]);
 		}
 		
 		
@@ -445,7 +462,7 @@ class PackRepository extends EntityRepository
 		foreach($stats as $cat => &$sections)
 		{
 			uasort($sections, function($s, $t){
-				return $s['percent'] < $t['percent'] ? 1 : ($s['percent'] == $t['percent'] ? 0 : -1);
+				return $s['percent'] < $t['percent'] ? -1 : ($s['percent'] == $t['percent'] ? 0 : 1);
 			});
 		}
 		

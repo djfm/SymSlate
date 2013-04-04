@@ -84,6 +84,11 @@ class TranslateController extends Controller
 					$query_options['has_warning'] = false;
 				}
 			}
+			if($not_in = $request->query->get('not_in'))
+			{
+				$query_options['not_in'] = $not_in;
+			}
+
 			$query_options['show_context'] = ($request->query->get('context','YES') == 'YES');
 			
 			$query_options['translation_different_from_source'] = $request->query->get('tdfs',0);
@@ -178,6 +183,7 @@ class TranslateController extends Controller
 		}
 
         return array(
+        	'packs'		 => $em->getRepository("FMSymSlateBundle:Pack")->findAll(),
         	'pack'       => $pack,
         	'language'   => $language,
         	'messages'   => isset($result)?$result['messages']:null,
