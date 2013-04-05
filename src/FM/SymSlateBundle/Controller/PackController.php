@@ -238,7 +238,7 @@ class PackController extends Controller
         $query = $this->getDoctrine()->getManager()->createQuery(
             "SELECT p FROM FMSymSlateBundle:PackExport p
              WHERE p.pack_id = :pack_id
-             AND p.id IN (SELECT MAX(q.id) FROM FMSymSlateBundle:PackExport q WHERE q.pack_id = :pack_id)
+             AND p.id IN (SELECT MAX(q.id) FROM FMSymSlateBundle:PackExport q WHERE q.pack_id = :pack_id and q.language_id = p.language_id)
             ");
 
         $query->setParameter('pack_id', $pack_id);
@@ -248,9 +248,12 @@ class PackController extends Controller
 
         foreach($query->getResult() as $export)
         {
-            $language =  $this->getDoctrine()->getManager()->getRepository("FMSymSlateBundle:Language")->findOneById($export->getLanguageId());
+            $language = $this->getDoctrine()->getManager()->getRepository("FMSymSlateBundle:Language")->findOneById($export->getLanguageId());
             $path     = $export->getAbsolutePath();
-            $archive->addString($language->getCode().".gzip", file_get_contents($path));
+            if(file_exists($path))
+            {
+                $archive->addString($language->getCode().".gzip", file_get_contents($path));
+            }
         }
 
         $headers = array(
