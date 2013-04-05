@@ -392,7 +392,7 @@ class PackRepository extends EntityRepository
 		$language = $this->getEntityManager()->getRepository('FMSymSlateBundle:Language')->find($language_id);
 		
 		//English is at 100% by definition for now
-		if($language->getCode() == 'en' or $language->getCode() == 'gb')
+		if($language->getCode() == 'en')
 		{
 			$query = $this->getEntityManager()->createQuery(
 				"SELECT c.category, count(c.id) as n FROM FMSymSlateBundle:Classification c
