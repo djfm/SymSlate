@@ -132,12 +132,14 @@
 	</span>
 
 	{% if is_granted('ROLE_SUPER_ADMIN') %}
-
-	<br/>
 	
-	<form method="post" action="{{ url('generate_all_gzips', {'pack_id': entity.id}) }}">
-		<button class="btn btn-warning">Build all GZIps</button>
+	<form class="pull-left" method="post" action="{{ url('generate_all_gzips', {'pack_id': entity.id}) }}">
+		<button class="input-medium btn btn-warning">Build all GZIps</button>
 	</form>
+	<form style="margin-left:15px; margin-right:15px" class="pull-left" method="get" action="{{ url('download_all_gzips', {'pack_id': entity.id}) }}">
+		<button class="input-medium btn btn-primary">Download all GZIps</button>
+	</form>
+	<div class="clearfix"></div>
 
 	{% endif %}
 

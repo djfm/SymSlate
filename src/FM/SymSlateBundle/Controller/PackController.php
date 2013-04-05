@@ -3,6 +3,7 @@
 namespace FM\SymSlateBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -223,6 +224,42 @@ class PackController extends Controller
             'edit_form'   => $editForm->createView(),
             'delete_form' => $deleteForm->createView(),
         );
+    }
+
+     /**
+     * Download all latest gzips for this pack
+     *
+     * @Route("/{pack_id}/download_all", name="download_all_gzips")
+     * @Method("GET")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
+     */
+    public function downloadAllAction($pack_id)
+    {
+        $query = $this->getDoctrine()->getManager()->createQuery(
+            "SELECT p FROM FMSymSlateBundle:PackExport p
+             WHERE p.pack_id = :pack_id
+             AND p.id IN (SELECT MAX(q.id) FROM FMSymSlateBundle:PackExport q WHERE q.pack_id = :pack_id)
+            ");
+
+        $query->setParameter('pack_id', $pack_id);
+
+        $file = tempnam(null, null);
+        $archive  = new \Archive_Tar($file, 'gz');
+
+        foreach($query->getResult() as $export)
+        {
+            $language =  $this->getDoctrine()->getManager()->getRepository("FMSymSlateBundle:Language")->findOneById($export->getLanguageId());
+            $path     = $export->getAbsolutePath();
+            $archive->addString($language->getCode().".gzip", file_get_contents($path));
+        }
+
+        $headers = array(
+            'Content-Type' => 'application/x-gzip',
+            'Content-Disposition' => 'attachment; filename="all_'.$this->getDoctrine()->getManager()->getRepository("FMSymSlateBundle:Pack")->findOneById($pack_id)->getVersion().'.tar.gz"'
+        );  
+
+         return new Response(file_get_contents($file), 200, $headers);
+
     }
 
     /**
