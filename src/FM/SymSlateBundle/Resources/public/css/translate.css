@@ -107,12 +107,14 @@ fieldset.translate_category> legend:first-child
 {
 	color:#33A;
 	background-color: white;
+	padding:5px;
 }
 
 fieldset.translate_section> legend:first-child
 {
 	color:#666;
 	background-color: rgba(255,255,255,0.3);
+	padding:5px;
 }
 
 div div#submit_translation_filter
@@ -211,4 +213,19 @@ span.close-parent
 	font-weight: bold;
 	margin:5px;
 	margin-top: 0px;
+}
+
+div.tip
+{
+	border:1px solid orange;
+	font-size: 0.8em;
+	background-color: beige;
+	padding:3px;
+	border-radius: 2px;
+	margin-bottom:8px;
+}
+
+div.smalltip
+{
+	width:321px;
 }

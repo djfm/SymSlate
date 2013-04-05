@@ -139,6 +139,15 @@
 			<a href="javascript:$('#translate_filters').toggle();$('#translate_fields').css('margin-left',385);$('#translate_filters_reveal').toggle();">Restore navigation panel!</a>
 		</div>
 		
+		{% set search_tip %}
+			<div class="tip smalltip">
+				<span class='close-parent' onclick='javascript:$(this).parent().remove()'>X</span>
+				Tip: type in "%product%" to look for anything containing "product"
+				<BR/>
+				Search is case sensitive.
+			</div>
+		{% endset %}
+
 		<div id="translate_filters">
 			<div id="translate_filters_hide">X</div>
 			<div class="translate_filters_contents">
@@ -168,6 +177,7 @@
 							<label for = "message_like" class="input-label medium">Filter</label>
 							<input id="message_like" name="message_like" type='text' value='{{ app.request.query.get('message_like')}}' placeholder="Filter messages..."/>
 							<br/>
+							{{ search_tip }}
 							<label for="translate_category" class="input-label medium">Category</label>
 							<select style="" class="autosubmit" id="translate_category" name="category">
 								<option value="">Any Category</option>
@@ -212,6 +222,7 @@
 							<label for="translation_like" class="input-label medium">Filter</label>
 							<input type='text' id="translation_like" name="translation_like" value='{{ app.request.query.get('translation_like')}}' placeholder="Filter translations..."/>
 							<br/>
+							{{ search_tip }}
 							<label for="translate_empty" class="input-label medium">Status</label>
 							<select  class="autosubmit" id="translate_empty" name="empty">
 								<option value="ONLY" {{ app.request.query.get('empty')== "ONLY" ? "selected='true'" : '' }}>missing</option>

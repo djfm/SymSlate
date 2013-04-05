@@ -65,10 +65,13 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 
 				if($brand_new_translation or $args['force_actualize'])
 				{
-
-					$translation->setTranslationsImport($translations_import);
-					$translation->setAuthor($user);
-					$translation->setLanguage($language);
+					if($brand_new_translation)
+					{
+						$translation->setTranslationsImport($translations_import);
+						$translation->setAuthor($user);
+						$translation->setLanguage($language);
+					}
+					
 					$this->em->persist($translation);
 					$this->em->getRepository('FMSymSlateBundle:CurrentTranslation')->actualizeWith($translation, $this->logger);
 					$this->em->flush();
