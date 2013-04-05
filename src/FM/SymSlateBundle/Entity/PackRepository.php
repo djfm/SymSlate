@@ -386,35 +386,59 @@ class PackRepository extends EntityRepository
 
 	public function computeStatistics($pack_id, $language_id)
 	{	
-		$query = $this->getEntityManager()->createQuery(
-		"SELECT c.category, count(c.id) as total, count(ct.id) as translated 
-		 FROM FMSymSlateBundle:Classification c 
-		 LEFT JOIN c.message m
-		 LEFT JOIN m.current_translations ct
-		 WITH ct.language_id = :language_id
-		 WHERE c.pack_id = :pack_id
-		 GROUP BY c.category
-		"		
-		);
-		$query->setParameter(':language_id',$language_id);
-		$query->setParameter(':pack_id',$pack_id);
-		$results = $query->getResult();
-		
-		//print_r($results);
-		
 		$stats = array(null => array('total' => 0, 'translated' => 0, 'percent' => 0));
 		$cats  = array(null);
 		
-		foreach($results as $row)
+		$language = $this->getEntityManager()->getRepository('FMSymSlateBundle:Language')->find($language_id);
+		
+		//English is at 100% by definition for now
+		if($language->getCode() == 'en' or $language->getCode() == 'gb')
 		{
-			$cats[] = $row['category'];
-			$stats[$row['category']] = array('total' => (int)$row['total'], 'translated' => (int)$row['translated'], 'percent' => 100 * (int)$row['translated'] / (int)$row['total'] );
-			$stats[null]['total'] += (int)$row['total'];
-			$stats[null]['translated'] += (int)$row['translated'];
+			$query = $this->getEntityManager()->createQuery(
+				"SELECT c.category, count(c.id) as n FROM FMSymSlateBundle:Classification c
+				 WHERE c.pack_id = :pack_id
+				 GROUP BY c.category
+				"		
+			);
+			$query->setParameter(':pack_id',$pack_id);
+			$results = $query->getResult();
+			foreach($results as $row)
+			{
+				$cats[] = $row['category'];
+				$stats[$row['category']] = array('total' => (int)$row['n'], 'translated' => (int)$row['n'], 'percent' => 100);
+				$stats[null]['total'] += (int)$row['n'];
+				$stats[null]['translated'] += (int)$row['n'];
+			}
+
+			$stats[null]['percent'] = 100;
 		}
+		else
+		{
+			$query = $this->getEntityManager()->createQuery(
+			"SELECT c.category, count(c.id) as total, count(ct.id) as translated 
+			 FROM FMSymSlateBundle:Classification c 
+			 LEFT JOIN c.message m
+			 LEFT JOIN m.current_translations ct
+			 WITH ct.language_id = :language_id
+			 WHERE c.pack_id = :pack_id
+			 GROUP BY c.category
+			"		
+			);
+			$query->setParameter(':language_id',$language_id);
+			$query->setParameter(':pack_id',$pack_id);
+			$results = $query->getResult();
+			
+			foreach($results as $row)
+			{
+				$cats[] = $row['category'];
+				$stats[$row['category']] = array('total' => (int)$row['total'], 'translated' => (int)$row['translated'], 'percent' => 100 * (int)$row['translated'] / (int)$row['total'] );
+				$stats[null]['total'] += (int)$row['total'];
+				$stats[null]['translated'] += (int)$row['translated'];
+			}
 		
-		$stats[null]['percent'] = $stats[null]['total'] > 0 ? 100 * $stats[null]['translated'] / $stats[null]['total'] : 0;
-		
+			$stats[null]['percent'] = $stats[null]['total'] > 0 ? 100 * $stats[null]['translated'] / $stats[null]['total'] : 0;
+		}
+
 		return array("categories" => $cats, "statistics" => $stats);
 	}
 
