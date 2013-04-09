@@ -24,7 +24,9 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return array();
+    	$users = $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:User')->findAll(15);
+
+        return array('topusers' => $users);
     }
 	
 	/**

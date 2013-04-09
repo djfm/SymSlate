@@ -8,15 +8,17 @@ use Doctrine\ORM\Query\ResultSetMapping;
 
 class UserRepository extends EntityRepository
 {
-	public function findAll()
+	public function findAll($limit = null)
 	{
 		$query = $this->getEntityManager()->createQuery("SELECT u, count(t.id) as num
 														 FROM FMSymSlateBundle:User u 
 														 LEFT JOIN u.authored_translations t 
 														 WITH t.translations_import_id IS NULL
+														 WHERE u.email != 'pub@prestashop.com'
 														 GROUP BY u.id
 														 ORDER BY num DESC");
 		
+		if($limit != 0)$query->setMaxResults($limit);
 		$result  = $query->getResult();
 		
 		$users   = array();
