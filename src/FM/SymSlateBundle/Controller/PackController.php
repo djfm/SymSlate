@@ -83,6 +83,58 @@ class PackController extends Controller
         return array('stats' => $stats, 'entity' => $entity, 'language_code' => $language_code, 'language' => $language);
     }
 
+      /**
+     * Edits an existing Pack entity.
+     *
+     * @Route("/{id}/{language_code}/po", name="pack_export_po")
+     * @Method("GET")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
+     */
+    public function exportPoAction($id, $language_code)
+    {
+        $em         = $this->getDoctrine()->getManager();
+        $pack       = $em->getRepository('FMSymSlateBundle:Pack')->find($id);
+        $language   = $em->getRepository('FMSymSlateBundle:Language')->findOneByCode($language_code);
+
+        $path = tempnam(null, null);
+        $file = fopen($path, 'w');
+
+$header = <<<'NOW'
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+
+
+NOW;
+        fputs($file, $header);
+
+        $storages   = $em->getRepository('FMSymSlateBundle:Pack')->getStoragesWithTranslations($id, $language->getId());
+        foreach($storages as $storage)
+        {
+            $msgid   = str_replace('"', "\\\"", $storage->getMessage()->getText());
+            $cts     = $storage->getMessage()->getCurrentTranslations();
+            $msgstr  = str_replace('"', "\\\"", count($cts) == 1 ? $cts[0]->getTranslation()->getText() : '');
+            $msgctxt = $storage->getMessage()->getMkey();
+            fputs($file, "msgctxt \"$msgctxt\"\n");
+            fputs($file, "msgid \"$msgid\"\n");
+            fputs($file, "msgstr \"$msgstr\"\n");
+            fputs($file, "\n");
+        }
+
+        fclose($file);
+
+        return new Response(
+                file_get_contents($path),
+                200,
+                array(
+                     'Content-Type' => 'text/x-gettext-translation',
+                     'Content-Disposition' => 'attachment; filename="'.$language_code.'.po"'
+                )
+        );
+
+    }
+
+
     /**
      * Displays a form to create a new Pack entity.
      *

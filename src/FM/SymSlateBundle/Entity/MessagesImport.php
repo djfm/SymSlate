@@ -372,8 +372,8 @@ class MessagesImport
             foreach($ms->message as $m)
             {
                 $message = new Message();
-                $message->setMkey(html_entity_decode((string)$m->mkey));
-                $message->setText(html_entity_decode((string)$m->text));
+                $message->setMkey(htmlspecialchars_decode((string)$m->mkey));
+                $message->setText(htmlspecialchars_decode((string)$m->text));
                 $message->setType((string)$m->type);
                 //$message->setType( $row['Array Name'] ? 'STRING' : (preg_match("/\.html$/", $row['Storage File Path']) ? 'HTML' : 'TXT'));
 

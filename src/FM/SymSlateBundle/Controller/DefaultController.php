@@ -25,7 +25,6 @@ class DefaultController extends Controller
     public function indexAction()
     {
     	$users = $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:User')->findAll(15);
-
         return array('topusers' => $users);
     }
 	
@@ -53,6 +52,8 @@ class DefaultController extends Controller
 		
     	$response = new Response(json_encode($data));
 		$response->headers->set('Content-Type', 'application/json');
+
+
 		return $response;
         
     }

@@ -9,7 +9,7 @@
     <thead>
         <tr>
             <th>Task</th>
-            <th>Arguments</th>
+            <!--th>Arguments</th-->
             <th>Status</th>
             <th>Added</th>
             <th>Started</th>
@@ -23,7 +23,7 @@
     {% for entity in entities %}
         <tr>
             <td>{{ entity.service }}</td>
-            <td>{{ entity.arguments }}</td>
+            <!--td>{{ entity.arguments }}</td-->
             <td>{{ entity.status }}</td>
             <td>{{ entity.created | date("d/m/Y H:i:s") }}</td>
             <td>{{ entity.started ? "<span class='label label-success'>YES</span>" : "<span class='label label-info'>NO</span>" }}</td>
