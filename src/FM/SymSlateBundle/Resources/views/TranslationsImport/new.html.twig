@@ -7,6 +7,10 @@
 	<fieldset>
 	    {{ form_widget(form) }}
 
+	    <label for="version">Version</label><input id="version" type="text" name="version"></input>
+	    <div>(needed if you want to import emails)</div>
+	    <BR/>
+
 	    {% if is_granted('ROLE_SUPER_ADMIN') %}
 	    	<select name="force_actualize">
 	    		<option value="0">Regular import</option>
@@ -15,17 +19,9 @@
 	    	<BR/>
 	    {% endif %}
 	    
-	    <button type="submit" class="btn">Create</button>
+	    <button type="submit" class="btn btn-success">Create</button>
 	   
     </fieldset>
 </form>
-
-<ul class="record_actions">
-    <li>
-        <a href="{{ path('translationsimports') }}">
-            Back to the list
-        </a>
-    </li>
-</ul>
 
 {% endblock %}

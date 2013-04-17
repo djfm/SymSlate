@@ -34,7 +34,7 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 		
 		$translations_import = $this->em->getRepository('FMSymSlateBundle:TranslationsImport')->findOneById($translations_import_id);
 		$user                = $translations_import->getCreator();
-		$translations        = $translations_import->buildTranslations($this->logger);
+		$translations        = $translations_import->buildTranslations($args['version'], $this->logger);
 
 		//$this->logger->info("Memory usage after translations generation: " . round(memory_get_usage() / 1024/1024) . "MB (started at: $start_mem)");
 		$num_translations = count($translations);

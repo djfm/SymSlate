@@ -105,7 +105,10 @@ class TranslationsImportController extends Controller
             $em->flush();
            
 			$manager = $this->get("queue_manager");
-            $args = array('translations_import_id' => $entity->getId(), 'force_actualize' => (($request->get('force_actualize', '0') == 1) and $user->isSuperAdmin()));
+            $args = array(  'translations_import_id' => $entity->getId(),
+                            'force_actualize' => (($request->get('force_actualize', '0') == 1) and $user->isSuperAdmin()),
+                            'version' => $request->get('version', '')
+                        );
             $manager->enqueueJob('FM\SymSlateBundle\Service\TranslationsImportService', $args);
 			$manager->processNextJob();
 			

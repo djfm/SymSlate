@@ -314,7 +314,7 @@ class TranslationsImport
         return $this->translations;
     }
 	
-	public function buildTranslations($logger=null)
+	public function buildTranslations($version=null, $logger=null)
 	{
 		
 		$translations = array();
@@ -369,13 +369,13 @@ NOW;
     			$data    = file_get_contents($path);
     						
     			$match = array();
-    			if(preg_match($ma_exp, $f['filename'],$match))
+    			if(null !== $version and preg_match($ma_exp, $f['filename'],$match))
     			{
     				$total += 1;
     				$translation = new Translation();
     				$translation->setText($data);
     				$translation->language_code = $match[1];
-    				$translation->setMkey('mail_/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename']));
+    				$translation->setMkey('mail:'.$version.':/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename']));
     				
     				$translations[]  = $translation;
     			}
