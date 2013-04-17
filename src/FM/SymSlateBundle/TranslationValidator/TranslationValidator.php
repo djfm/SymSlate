@@ -25,7 +25,7 @@ class TranslationValidator
 
 		if(preg_match('/PrestaBox/i', $translation))
 		{
-			return array('success' => false, 'error_message' => 'What is PrestaBox?');
+			return array('success' => true, 'warning_message' => 'Are you sure you meant "PrestaBox"?');
 		}
 		if(preg_match('/\[iso\]/', $translation))
 		{

@@ -79,7 +79,7 @@ NOW;
 								}
 							}
 								
-							$file_contents[$path] .= "{$array}['" . addslashes($storage->getMessage()->getMkey()) . "'] = '" . addslashes($translation->getText()) . "';\n";
+							$file_contents[$path] .= "{$array}['" . addslashes(trim($storage->getMessage()->getMkey())) . "'] = '" . addslashes(trim($translation->getText())) . "';\n";
 							
 						}
 						else if($storage->getMethod() == 'FILE')
