@@ -20,7 +20,8 @@
     </thead>
     <tbody>
     {% for entity in entities %}
-        <tr class="clickable" onclick="javascript:window.location='{{ path('packs_show', { 'id': entity.id }) }}'">
+        {% if entity.isCurrent %} <tr><td colspan="5"></td></tr> {% endif %}
+        <tr class="clickable {% if entity.isCurrent %} current_pack {% endif %}" onclick="javascript:window.location='{{ path('packs_show', { 'id': entity.id }) }}'">
             <td>{{ entity.project }}</td>
             <td>{{ entity.name }}</td>
             <td>{{ entity.packType }}</td>
@@ -31,6 +32,7 @@
                 </td>
             {% endif %}
         </tr>
+        {% if entity.isCurrent %} <tr><td colspan="5"></td></tr> {% endif %}
     {% endfor %}
     </tbody>
 </table>

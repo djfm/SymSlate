@@ -75,6 +75,11 @@ tr.clickable:hover
 	background-color:rgba(100,220,100,0.5);
 }
 
+tr.current_pack
+{
+	background-color: #EEEEFF;
+}
+
 img.small
 {
 	width:24px;

@@ -29,7 +29,7 @@ class PackController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('FMSymSlateBundle:Pack')->findAll();
+        $entities = $em->getRepository('FMSymSlateBundle:Pack')->findBy(array(), array('is_current' => 'desc'));
 
         return array(
             'entities' => $entities,
