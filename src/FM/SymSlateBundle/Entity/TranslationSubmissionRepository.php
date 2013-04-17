@@ -60,6 +60,7 @@ class TranslationSubmissionRepository extends EntityRepository {
 			$translation -> setLanguage($language);
 			$translation -> setText($text);
 			$translation -> setMkey($message -> getMkey());
+			$translation -> setAuthor($user);
 		}
 
 		$translation -> setPreviousTranslationId($previous_translation_id);
@@ -80,11 +81,6 @@ class TranslationSubmissionRepository extends EntityRepository {
 
 		$actualization = $this -> getEntityManager() -> getRepository('FMSymSlateBundle:CurrentTranslation') -> actualizeWith($translation);
 		$data['actualization'] = $actualization;
-		
-		/*
-		 * Finally create the submission TODO
-		 */
-		
 		
 		$submission = new TranslationSubmission();
 		$submission->setUser($user);
