@@ -20,8 +20,8 @@ class PackRepository extends EntityRepository
 			"empty" 				=> "ONLY", 				// possible values are: ONLY, EXCEPT, anything else is treated as "take empty or non-empty"
 			"category" 				=> null,				// all categories
 			"section" 				=> null,				// all sections
-			"subsection" 			=> null,			// all subsections
-			"source_language_id" 	=> null,	// language from which to translate
+			"subsection" 			=> null,				// all subsections
+			"source_language_id" 	=> null,				// language from which to translate
 			"message_like" 			=> null,
 			"translation_like" 		=> null,
 			"author_id" 			=> null,
@@ -495,7 +495,7 @@ class PackRepository extends EntityRepository
 		return array("categories" => $cats, "statistics" => $stats);
 	}
 
-	public function computeAllStatistics($pack_id, $force_refresh=false, $refresh_interval=1)
+	public function computeAllStatistics($pack_id, $force_refresh=false, $refresh_interval=1440)
 	{
 		$pack = $this->find($pack_id);
 
