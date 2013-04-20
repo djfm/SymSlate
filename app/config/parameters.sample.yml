@@ -1,0 +1,14 @@
+parameters:
+    secret: some_secret_string
+    locale: null
+    mailer_transport: gmail
+    mailer_host: null
+    mailer_user: a_gmail_full_email_for_instance
+    mailer_password: mail_account_password
+    database_driver: pdo_mysql
+    database_host: localhost
+    database_port: null
+    database_user: root
+    database_password: password
+    database_name: db_name
+    database_path: null
