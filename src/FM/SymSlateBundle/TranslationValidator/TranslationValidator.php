@@ -32,7 +32,7 @@ class TranslationValidator
 			return array('success' => false, 'error_message' => 'This looks like an error because of the "[iso]"" string, please contact sysadmin!');
 		}
 
-		if($category == 'Tabs' && mb_strlen($translation) > 32)
+		if($category == 'Tabs' && mb_strlen($translation, 'utf-8') > 32)
 		{
 			return array('success' => false, 'error_message' => 'Tab translation cannot exceed 32 chars!');
 		}
