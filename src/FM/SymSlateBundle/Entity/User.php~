@@ -63,6 +63,11 @@ class User extends BaseUser
 		return true;
 	}
 	
+    public function isSuperAdmin()
+    {
+        return in_array("ROLE_SUPER_ADMIN", $this->getRoles());
+    }
+
 	public function canTranslateInto(Language $language)
 	{
         if(in_array("ROLE_SUPER_ADMIN", $this->getRoles()))return true;

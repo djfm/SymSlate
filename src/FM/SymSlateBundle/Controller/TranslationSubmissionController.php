@@ -81,39 +81,21 @@ class TranslationSubmissionController extends Controller
         $message_id = $request->request->get('message_id');
         $language_id = $request->request->get('language_id');
 
-        $message  = $em->getRepository('FMSymSlateBundle:Message')->findOneById($message_id)->getText();
-        $language = $em->getRepository('FMSymSlateBundle:Language')->findOneById($language_id);
-        $category = $em->getRepository('FMSymSlateBundle:Classification')->findOneById($classification_id)->getCategory();
+        $message        = $em->getRepository('FMSymSlateBundle:Message')->findOneById($message_id);
+        $language       = $em->getRepository('FMSymSlateBundle:Language')->findOneById($language_id);
+        $classification = $em->getRepository('FMSymSlateBundle:Classification')->findOneById($classification_id);
 
-        $validation = $this->get('translation_validator')->validate($message, $text, $language, $category);
-
-        if($validation['success'] == true)
-        {
-            $data = $em->getRepository('FMSymSlateBundle:TranslationSubmission')->submitTranslation(
-                $user->getId(),
-                $message_id,
-                $classification_id,
-                $request->request->get('translation_id'),
-                $language_id,
-                $text,
-                !isset($validation['warning_message'])
-            );
-
-            if(isset($validation['warning_message']))$data['warning_message'] = $validation['warning_message'];
-        }
-        else
-        {
-            $data = $validation;
-        }
-
-		
-		
-		$em->flush();
+        $data = $this->get('translation_submitter')->submit(array(
+            'user' => $user,
+            'message' => $message,
+            'classification' => $classification,
+            'language' => $language,
+            'translation_text' => $text
+        ));
 		
     	$response = new Response(json_encode($data));
 		$response->headers->set('Content-Type', 'application/json');
 		return $response;
-        
     }
 
     /**

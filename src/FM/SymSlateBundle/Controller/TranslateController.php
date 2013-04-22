@@ -138,7 +138,7 @@ class TranslateController extends Controller
 									 INNER JOIN m.classifications c
 									 WHERE c.pack_id = :pack_id AND t.language_id = :language_id 
 									 AND a.roles NOT LIKE \'%ROLE_SUPER_ADMIN%\'
-									 AND (t.translation_submission_id IS NOT NULL OR t.mass_imported = true)')
+									 ')
 					     ->setParameter('pack_id', $pack_id)
 					     ->setParameter('language_id', $language->getId())
 					     ->getResult();
@@ -194,6 +194,27 @@ class TranslateController extends Controller
         	'authors'    => $authors
 		);
 	}
+
+	/**
+     * 
+     *
+     * @Route("/message/{message_id}/{language_code}", requirements={"message_id" = "\d+"}, name="translate_details")
+     * @Template()
+     */
+    public function translateDetailsAction($message_id, $language_code)
+    {
+    	$request = Request::createFromGlobals();
+
+    	$em = $this->getDoctrine()->getManager();
+
+    	$message = $em->getRepository("FMSymSlateBundle:Message")->getTranslationStringInto($message_id, $request->query->get('source_language_code', 'en'));
+    	if($message === false)$message = $em->getRepository("FMSymSlateBundle:Message")->find($message_id)->getText();
+
+    	$history = $em->getRepository("FMSymSlateBundle:History")->getTranslationHistory($message_id, $language_code);
+
+    	return array('message' => $message, "history" => $history);
+    }
+
 
 	/**
      * 

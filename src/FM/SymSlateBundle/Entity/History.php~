@@ -1,0 +1,103 @@
+<?php
+
+namespace FM\SymSlateBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+
+/**
+ * History
+ *
+ * @ORM\Table()
+ * @ORM\Entity()
+ * @ORM\HasLifecycleCallbacks
+ */
+class History
+{
+	/**
+	* @var integer
+	*
+	* @ORM\Column(name="id", type="integer")
+	* @ORM\Id
+	* @ORM\GeneratedValue(strategy="AUTO")
+	*/
+    private $id;
+
+
+    /**
+    * @ORM\ManyToOne(targetEntity="Message")
+    * @ORM\JoinColumn(name="message_id", referencedColumnName="id", onDelete="CASCADE")
+    */
+    private $message;
+
+    /**
+    * @ORM\ManyToOne(targetEntity="CurrentTranslation")
+    * @ORM\JoinColumns({
+    * 	@ORM\JoinColumn(name="message_id", referencedColumnName="message_id"),
+    * 	@ORM\JoinColumn(name="language_id", referencedColumnName="language_id")
+    * })
+    */
+    private $current_translation;
+
+	/**
+	* @var integer
+	*
+	* @ORM\Column(name="message_id", type="integer", nullable=false)
+	*/
+    private $message_id;
+
+    /**
+    * @ORM\OneToOne(targetEntity="Language")
+    * @ORM\JoinColumn(name="language_id", referencedColumnName="id", onDelete="CASCADE")
+    */
+    private $language;
+
+    /**
+	* @var integer
+	*
+	* @ORM\Column(name="language_id", type="integer", nullable=false)
+	*/
+    private $language_id;
+
+    /**
+    * @ORM\OneToOne(targetEntity="Translation")
+    * @ORM\JoinColumn(name="translation_id", referencedColumnName="id", onDelete="CASCADE")
+    */
+    private $translation;
+
+    /**
+	* @var integer
+	*
+	* @ORM\Column(name="translation_id", type="integer", nullable=false)
+	*/
+    private $translation_id;
+
+    /**
+    * @ORM\OneToOne(targetEntity="User")
+    * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
+    */
+    private $user;
+
+    /**
+	* @var integer
+	*
+	* @ORM\Column(name="user_id", type="integer", nullable=false)
+	*/
+    private $user_id;
+
+    /**
+	* @var string
+	*
+	* @ORM\Column(name="operation", type="string", length=32)
+	*/
+    private $operation;
+
+	/**
+	* @var \DateTime
+	* @Gedmo\Timestampable(on="create")
+	* @ORM\Column(name="created", type="datetime")
+	*/
+    private $created;
+
+
+}

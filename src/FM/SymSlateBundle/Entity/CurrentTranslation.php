@@ -31,7 +31,6 @@ class CurrentTranslation
      */
     private $language;
 	
-	
     /**
      * @var integer
      *

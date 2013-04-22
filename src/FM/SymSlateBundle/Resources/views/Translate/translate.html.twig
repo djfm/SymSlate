@@ -308,6 +308,14 @@
 															 alt="Submit!" 
 															 id="translation_submit_{{ m['classification_id'] }}"
 														 />
+														<a href="{{ url('translate_details', {message_id: m['message_id'], language_code: app.request.query.get('language_code')}) }}">
+															 <img 
+																 class="small more_info" 
+																 onclick="" 
+																 src="{{ asset('bundles/fmsymslate/images/more_info.png') }}"
+																 alt="More info..."
+															 />
+														 </a>
 													</div>
 
 													<div class="translate_row_left">

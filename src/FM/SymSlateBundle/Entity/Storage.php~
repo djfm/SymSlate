@@ -85,7 +85,7 @@ class Storage
     /**
      * @var string
      *
-     * @ORM\Column(name="custom", type="string", length=64, nullable=true)
+     * @ORM\Column(name="custom", type="text", nullable=true)
      */
     private $custom;
 

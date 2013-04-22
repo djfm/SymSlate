@@ -24,12 +24,6 @@ class Translation
 	 * @ORM\JoinColumn(name="created_by", referencedColumnName="id", onDelete="CASCADE", nullable=true)
 	 */
 	private $author;
-		 
-    /**
-	 * @ORM\ManyToOne(targetEntity="User", inversedBy="authored_translations")
-	 * @ORM\JoinColumn(name="reviewed_by", referencedColumnName="id", onDelete="CASCADE", nullable=true)
-	 */
-	private $reviewer;
 	
 	/**
 	 * @ORM\ManyToOne(targetEntity="Language", inversedBy="translations")
@@ -41,12 +35,6 @@ class Translation
 	 * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="translation")
 	 */
 	private $current_translations;
-
-    /**
-     * @ORM\OneToOne(targetEntity="TranslationSubmission", inversedBy="translation")
-     * @ORM\JoinColumn(name="translation_submission_id", referencedColumnName="id", onDelete="CASCADE")
-     */
-    private $translation_submission;
 	 
 	public function __construct()
 	{
@@ -73,13 +61,6 @@ class Translation
     private $translations_import_id;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="translation_submission_id", type="integer", nullable=true)
-     */
-    private $translation_submission_id;
-
-    /**
      * @var boolean
      *
      * @ORM\Column(name="mass_imported", type="boolean", nullable=false)
@@ -92,20 +73,6 @@ class Translation
      * @ORM\Column(name="created_by", type="integer", nullable=true)
      */
     private $created_by;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="reviewed_by", type="integer", nullable=true)
-     */
-    private $reviewed_by;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="previous_translation_id", type="integer", nullable=true)
-     */
-    private $previous_translation_id;
 
     /**
      * @var integer
@@ -142,6 +109,13 @@ class Translation
      * @ORM\Column(name="has_warning", type="boolean")
      */
     private $has_warning = false;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="fuzzyness", type="string", length=4, nullable=false)
+     */
+    private $fuzzyness='';
 
 
     /**
@@ -213,52 +187,6 @@ class Translation
     public function getCreatedBy()
     {
         return $this->created_by;
-    }
-
-    /**
-     * Set reviewed_by
-     *
-     * @param integer $reviewedBy
-     * @return Translation
-     */
-    public function setReviewedBy($reviewedBy)
-    {
-        $this->reviewed_by = $reviewedBy;
-    
-        return $this;
-    }
-
-    /**
-     * Get reviewed_by
-     *
-     * @return integer 
-     */
-    public function getReviewedBy()
-    {
-        return $this->reviewed_by;
-    }
-
-    /**
-     * Set previous_translation_id
-     *
-     * @param integer $previousTranslationId
-     * @return Translation
-     */
-    public function setPreviousTranslationId($previousTranslationId)
-    {
-        $this->previous_translation_id = $previousTranslationId;
-    
-        return $this;
-    }
-
-    /**
-     * Get previous_translation_id
-     *
-     * @return integer 
-     */
-    public function getPreviousTranslationId()
-    {
-        return $this->previous_translation_id;
     }
 
     /**
@@ -355,29 +283,6 @@ class Translation
     }
 
     /**
-     * Set reviewer
-     *
-     * @param \FM\SymSlateBundle\Entity\User $reviewer
-     * @return Translation
-     */
-    public function setReviewer(\FM\SymSlateBundle\Entity\User $reviewer = null)
-    {
-        $this->reviewer = $reviewer;
-    
-        return $this;
-    }
-
-    /**
-     * Get reviewer
-     *
-     * @return \FM\SymSlateBundle\Entity\User 
-     */
-    public function getReviewer()
-    {
-        return $this->reviewer;
-    }
-
-    /**
      * Set mkey
      *
      * @param string $mkey
@@ -457,29 +362,6 @@ class Translation
     }
 
     /**
-     * Set translation_submission
-     *
-     * @param \FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmission
-     * @return Translation
-     */
-    public function setTranslationSubmission(\FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmission = null)
-    {
-        $this->translation_submission = $translationSubmission;
-    
-        return $this;
-    }
-
-    /**
-     * Get translation_submission
-     *
-     * @return \FM\SymSlateBundle\Entity\TranslationSubmission 
-     */
-    public function getTranslationSubmission()
-    {
-        return $this->translation_submission;
-    }
-
-    /**
      * Set message
      *
      * @param \FM\SymSlateBundle\Entity\Message $message
@@ -500,29 +382,6 @@ class Translation
     public function getMessage()
     {
         return $this->message;
-    }
-
-    /**
-     * Set translation_submission_id
-     *
-     * @param integer $translationSubmissionId
-     * @return Translation
-     */
-    public function setTranslationSubmissionId($translationSubmissionId)
-    {
-        $this->translation_submission_id = $translationSubmissionId;
-    
-        return $this;
-    }
-
-    /**
-     * Get translation_submission_id
-     *
-     * @return integer 
-     */
-    public function getTranslationSubmissionId()
-    {
-        return $this->translation_submission_id;
     }
 
     /**
@@ -638,5 +497,28 @@ class Translation
     public function getWarningMessage()
     {
         return $this->warning_message;
+    }
+
+    /**
+     * Set fuzzyness
+     *
+     * @param string $fuzzyness
+     * @return Translation
+     */
+    public function setFuzzyness($fuzzyness)
+    {
+        $this->fuzzyness = $fuzzyness;
+    
+        return $this;
+    }
+
+    /**
+     * Get fuzzyness
+     *
+     * @return string 
+     */
+    public function getFuzzyness()
+    {
+        return $this->fuzzyness;
     }
 }

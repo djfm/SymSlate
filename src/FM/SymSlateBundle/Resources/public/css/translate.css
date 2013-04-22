@@ -45,6 +45,12 @@ img.submit_translation
 	margin:3px;
 }
 
+img.more_info
+{
+	margin-left: 3px;
+	margin-right: 3px;
+}
+
 div.translate_row
 {
 	margin-left: 5px;

@@ -8,7 +8,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 /**
  * Message
  * 
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="FM\SymSlateBundle\Entity\MessageRepository")
  * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="mkey_idx", columns={"mkey"})})
  * 
  */
@@ -28,12 +28,18 @@ class Message
      * @ORM\OneToMany(targetEntity="CurrentTranslation", mappedBy="message")
      */
      private $current_translations;
+
+     /**
+     * @ORM\OneToMany(targetEntity="History", mappedBy="message")
+     */
+     private $histories;
 	 
 	 public function __construct()
 	 {
 	 	$this->classifications = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->storages = new \Doctrine\Common\Collections\ArrayCollection();
         $this->current_translations = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->histories = new \Doctrine\Common\Collections\ArrayCollection();
 	 }
 	
     /**

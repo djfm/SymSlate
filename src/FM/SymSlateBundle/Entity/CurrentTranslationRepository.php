@@ -33,4 +33,20 @@ class CurrentTranslationRepository extends EntityRepository
 			if($logger)$logger->info("Changed translation to: \n".$translation->getText());
 		}
 	}
+
+	public function findCurrentFor($translation)
+	{
+		if($message = $this->getEntityManager()->getRepository('FMSymSlateBundle:Message')->findOneByMkey($translation->getMkey()))
+		{
+			//see if it is already associated to a (current) translation
+			$ct = $this->findOneBy(array('message_id' => $message->getId(), 'language_id' => $translation->getLanguage()->getId()));
+			if(null === $ct)
+			{
+				return false;
+			}
+			return $ct;
+		}
+		else return false;
+	}
+
 }

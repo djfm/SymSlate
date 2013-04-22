@@ -250,7 +250,12 @@ class TranslationsImport
 	
 	public function upload()
 	{
-		if($this->file === null)return;
+		if($this->file === null)return false;
+
+        if(!preg_match('/(?:\.gzip|\.tar\.gz|\.zip)$/',$this->file->getClientOriginalName()))
+        {
+            return false;
+        }
 			
 		$this->setOriginalFilename($this->file->getClientOriginalName());
 		
@@ -271,6 +276,8 @@ class TranslationsImport
 	
 	    // clean up the file property as you won't need it anymore
 	    $this->file = null;
+
+        return true;
 	}
 	
 
@@ -307,7 +314,7 @@ class TranslationsImport
         return $this->translations;
     }
 	
-	public function buildTranslations($logger=null)
+	public function buildTranslations($version=null, $logger=null)
 	{
 		
 		$translations = array();
@@ -362,13 +369,13 @@ NOW;
     			$data    = file_get_contents($path);
     						
     			$match = array();
-    			if(preg_match($ma_exp, $f['filename'],$match))
+    			if(null !== $version and preg_match($ma_exp, $f['filename'],$match))
     			{
     				$total += 1;
     				$translation = new Translation();
     				$translation->setText($data);
     				$translation->language_code = $match[1];
-    				$translation->setMkey('mail_/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename']));
+    				$translation->setMkey('mail:'.$version.':/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename']));
     				
     				$translations[]  = $translation;
     			}

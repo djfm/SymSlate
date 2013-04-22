@@ -1,0 +1,28 @@
+{% extends '::base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+
+{% endblock %}
+
+{% block body %}
+
+	Message: {{ message }}
+	<BR/>
+
+	<table class="table">
+		{% for h in history %}
+			<tr>
+				<td>{{ h.created | date("d/m/Y H:i:s") }}</td>
+				<td>{{ h.user }}</td>
+				<td>{{ h.operation }}</td>
+				<td>{{ h.getTranslation().getText() }}</td>
+				<td><button class="btn btn-success">Restore</button></td>
+			</tr>
+		{% endfor %}
+	</table>
+
+{% endblock %}
