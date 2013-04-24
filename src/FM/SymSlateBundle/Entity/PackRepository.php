@@ -384,7 +384,7 @@ class PackRepository extends EntityRepository
 		
 	}
 
-	public function computeStatistics($pack_id, $language_id)
+	public function computeStatistics($pack_id, $language_id, $cheat=true)
 	{	
 		$stats = array(null => array('total' => 0, 'translated' => 0, 'percent' => 0));
 		$cats  = array(null);
@@ -392,7 +392,7 @@ class PackRepository extends EntityRepository
 		$language = $this->getEntityManager()->getRepository('FMSymSlateBundle:Language')->find($language_id);
 		
 		//English is at 100% by definition for now
-		if($language->getCode() == 'en')
+		if($cheat and $language->getCode() == 'en')
 		{
 			$query = $this->getEntityManager()->createQuery(
 				"SELECT c.category, count(c.id) as n FROM FMSymSlateBundle:Classification c
@@ -495,12 +495,11 @@ class PackRepository extends EntityRepository
 		return array("categories" => $cats, "statistics" => $stats);
 	}
 
-	public function computeAllStatistics($pack_id, $force_refresh=false, $refresh_interval=1440)
+	public function computeAllStatistics($pack_id, $force_refresh=false, $cheat=true, $refresh_interval=1440)
 	{
 		$pack = $this->find($pack_id);
 
-		
-		if(!$force_refresh and null !== $pack->getStatisticsUpdated())
+		if($cheat and !$force_refresh and null !== $pack->getStatisticsUpdated())
 		{
 			$now   = new \DateTime("now");
 			$delta = $now->diff($pack->getStatisticsUpdated());
@@ -518,7 +517,7 @@ class PackRepository extends EntityRepository
 		$cats  = null;
 		foreach($this->getEntityManager()->getRepository('FMSymSlateBundle:Language')->findAll() as $language)
 		{
-			$st   = $this->computeStatistics($pack_id, $language->getId());
+			$st   = $this->computeStatistics($pack_id, $language->getId(), $cheat);
 			$cats = $st['categories'];
 			$stats[$language->getAName()] = array('code' => $language->getCode(), 'statistics' => $st['statistics']);
 		}
@@ -531,13 +530,15 @@ class PackRepository extends EntityRepository
 
 		$result = array('categories' => $cats, 'statistics' => $stats);
 
-		$pack = $this->find($pack_id);
-		$pack->setStatistics(json_encode($result));
-		$pack->setStatisticsUpdated(new \DateTime("now"));
+		if($cheat)
+		{
+			$pack = $this->find($pack_id);
+			$pack->setStatistics(json_encode($result));
+			$pack->setStatisticsUpdated(new \DateTime("now"));
 
-		$this->getEntityManager()->persist($pack);
-		$this->getEntityManager()->flush();
-
+			$this->getEntityManager()->persist($pack);
+			$this->getEntityManager()->flush();
+		}
 		return $result;
 	}
 	

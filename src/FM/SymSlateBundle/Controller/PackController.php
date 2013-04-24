@@ -42,7 +42,7 @@ class PackController extends Controller
      * @Route("/{id}/show", name="packs_show")
      * @Template()
      */
-    public function showAction($id)
+    public function showAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -53,8 +53,10 @@ class PackController extends Controller
         }
 
         $deleteForm = $this->createDeleteForm($id);
-
-        $stats = $em->getRepository('FMSymSlateBundle:Pack')->computeAllStatistics($entity->getId(), $this->getRequest()->query->get('refresh_stats','false') == 'true');
+	
+	    $cheat = $request->query->get('cheat','true') == 'true';
+	
+        $stats = $em->getRepository('FMSymSlateBundle:Pack')->computeAllStatistics($entity->getId(), $this->getRequest()->query->get('refresh_stats','false') == 'true', $cheat);
 
         return array(
             'entity'      => $entity,
