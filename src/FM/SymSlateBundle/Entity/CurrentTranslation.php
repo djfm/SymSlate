@@ -62,6 +62,13 @@ class CurrentTranslation
     private $message_id;
 
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="fuzzyness", type="integer", nullable=false)
+     */
+    private $fuzzyness = 0;
+
+    /**
      * Get id
      *
      * @return integer 

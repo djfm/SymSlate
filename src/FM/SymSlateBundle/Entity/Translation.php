@@ -113,14 +113,6 @@ class Translation
     /**
      * @var string
      *
-     * @ORM\Column(name="fuzzyness", type="string", length=4, nullable=false)
-     */
-    private $fuzzyness='';
-
-
-    /**
-     * @var string
-     *
      * @ORM\Column(name="error_message", type="text")
      */
     private $error_message = '';
@@ -497,28 +489,5 @@ class Translation
     public function getWarningMessage()
     {
         return $this->warning_message;
-    }
-
-    /**
-     * Set fuzzyness
-     *
-     * @param string $fuzzyness
-     * @return Translation
-     */
-    public function setFuzzyness($fuzzyness)
-    {
-        $this->fuzzyness = $fuzzyness;
-    
-        return $this;
-    }
-
-    /**
-     * Get fuzzyness
-     *
-     * @return string 
-     */
-    public function getFuzzyness()
-    {
-        return $this->fuzzyness;
     }
 }

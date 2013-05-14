@@ -113,18 +113,21 @@ fieldset.translate_category> legend:first-child
 {
 	color:#33A;
 	background-color: white;
-	padding:5px;
 }
 
 fieldset.translate_section> legend:first-child
 {
 	color:#666;
 	background-color: rgba(255,255,255,0.3);
-	padding:5px;
 }
 
 div div#submit_translation_filter
 {
+}
+
+span.legend
+{
+	padding-left: 10px;
 }
 
 div.filler
