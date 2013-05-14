@@ -282,12 +282,12 @@
 				{% else %}
 					{% for category, s_ss in messages %}
 						<fieldset class="translate_category">
-							<legend class="toggleable clickable">{{ category }}</legend>
+							<legend class="toggleable clickable"><span class="legend">{{ category }}</span></legend>
 							<div class="toggleable">
 							{% for section, ss_m in s_ss %}	
 								{% if section is not empty %}
 									<fieldset class="translate_section">
-										<legend class="toggleable clickable">{{ section }}</legend>
+										<legend class="toggleable clickable"><span class="legend">{{ section }}</span></legend>
 										<div class="toggleable">
 								{% endif %}				
 									{% for subsection, ms in ss_m %}

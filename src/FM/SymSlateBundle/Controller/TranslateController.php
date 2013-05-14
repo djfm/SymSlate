@@ -137,7 +137,6 @@ class TranslateController extends Controller
 									 INNER JOIN ct.message m
 									 INNER JOIN m.classifications c
 									 WHERE c.pack_id = :pack_id AND t.language_id = :language_id 
-									 AND a.roles NOT LIKE \'%ROLE_SUPER_ADMIN%\'
 									 AND (t.translation_submission_id IS NOT NULL OR t.mass_imported = true)')
 					     ->setParameter('pack_id', $pack_id)
 					     ->setParameter('language_id', $language->getId())

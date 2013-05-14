@@ -105,6 +105,7 @@ class PackRepository extends EntityRepository
 		if($query_options["author_id"] !== null)
 		{
 			$qb->andWhere("t.created_by = :created_by");
+			$qb->andWhere("t.translations_import_id IS NULL");
 		}
 		if($query_options["has_error"] !== null)
 		{
