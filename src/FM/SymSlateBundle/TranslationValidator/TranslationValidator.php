@@ -22,6 +22,14 @@ class TranslationValidator
 	public function validate($message, $translation, $language, $category)
 	{
 
+		$forbidden = array("ce.shell.la", "transla.shop.tm", "mon.shell.la");
+		foreach($forbidden as $fbdn)
+		{
+			if(strpos($translation, $fbdn) !== false)
+			{
+				return array('success' => false, 'error_message' => "Forbidden string '$fbdn' found in translation!");
+			}
+		}
 
 		if(preg_match('/PrestaBox/i', $translation))
 		{
