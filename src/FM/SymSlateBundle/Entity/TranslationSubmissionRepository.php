@@ -66,6 +66,7 @@ class TranslationSubmissionRepository extends EntityRepository {
 		$translation -> setPreviousTranslationId($previous_translation_id);
 
 		$translation -> setHasError(false);
+		$translation -> setErrorMessage('');
 
 		if($clear_warning)
 		{
@@ -92,6 +93,8 @@ class TranslationSubmissionRepository extends EntityRepository {
 		
 		//if we got there, don't think twice, it's allright
 		$data['success'] = true;
+
+		//return array('success' => false, 'error_message' => $translation->getHasError());
 
 		return $data;
 	}
