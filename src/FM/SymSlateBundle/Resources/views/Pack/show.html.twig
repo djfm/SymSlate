@@ -7,7 +7,7 @@
 		{
 			$('#generate_link').html('<span class="label label-success">Thinking...</span>');
 			$.post(url,{},function(data){
-				console.log(data);
+				//console.log(data);
 				if(data['got_file'])
 				{
 					$('#generate_link').html('<span class="label label-success">Done building pack!</span>');
@@ -25,9 +25,9 @@
 			if($(e.target).val())
 			{
 				var info_url = "{{ path('latest_export_info', {'pack_id': entity.id, 'language_code': 'xx'}) }}".replace('xx',$(e.target).val());
-				console.log(info_url);
+				//console.log(info_url);
 				$.getJSON(info_url, function(data){
-					console.log(data);
+					//console.log(data);
 					if(data['success'] && data['found'])
 					{
 						$('#download_link').html('<a class="label label-success" href="'+data['web_path']+'">Download GZIP, generated on '+data['created']+'</a>')

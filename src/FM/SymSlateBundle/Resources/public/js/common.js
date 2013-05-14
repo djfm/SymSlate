@@ -1,6 +1,6 @@
 function fixHeights()
 {
-	console.log("FIXIN!");
+	//console.log("FIXIN!");
 	$('[same_height]').each(function(i,e){
 
 		var reference = $('.'+$(e).attr('same_height'))
@@ -54,7 +54,7 @@ $(document).ready(function(){
 	if(!('srcdocument' in $('<iframe/>')[0]))
 	{
 		$('iframe[srcdoc]').each(function(i, iframe){
-			console.log("Iframe needs js loading");
+			//console.log("Iframe needs js loading");
 
 			iframe.contentWindow.document.open();
 			iframe.contentWindow.document.write($(this).attr('srcdoc'));
