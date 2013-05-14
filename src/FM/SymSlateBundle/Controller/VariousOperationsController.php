@@ -30,10 +30,10 @@ class VariousOperationsController extends Controller
 
     	$em = $this->getDoctrine()->getManager();
 
-    	$q  = $em->createQuery("SELECT t FROM FMSymSlateBundle:Translation t WHERE t.text LIKE '%transla.shop.tm%'");
+    	$q  = $em->createQuery("SELECT t FROM FMSymSlateBundle:Translation t WHERE t.text LIKE '%transla.shop.tm%' OR t.text LIKE '%ce.shell.la%'");
 
 $exp = <<<'NOW'
-/http:\/\/transla\.shop\.tm\/[^%]+/
+/(?:http:\/\/transla\.shop\.tm\/[^%]+)|(?:http:\/\/ce\.shell\.la\/[^%]+)/
 NOW;
 
     	$replaced = 0;
