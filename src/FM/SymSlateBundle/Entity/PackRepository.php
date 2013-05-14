@@ -443,6 +443,7 @@ class PackRepository extends EntityRepository
 		return array("categories" => $cats, "statistics" => $stats);
 	}
 
+	
 	public function computeDetailedStatistics($pack_id, $language_id)
 	{	
 		$query = $this->getEntityManager()->createQuery(
@@ -459,6 +460,59 @@ class PackRepository extends EntityRepository
 		$query->setParameter(':pack_id',$pack_id);
 		$results = $query->getResult();
 		
+		
+		
+		$stats = array(null => array(null => array('total' => 0, 'translated' => 0, 'percent' => 0)));
+		$cats  = array();
+
+		foreach($results as $row)
+		{
+			$cats[$row['category']] = true;
+
+			if(!isset($stats[$row['category']]))
+			{
+				$stats[$row['category']] = array();
+			}
+
+			$stats[$row['category']][$row['section']] = array(
+				'total' => (int)$row['total'], 
+				'translated' => (int)$row['translated'], 
+				'percent' => 100 * (int)$row['translated'] / (int)$row['total'] 
+			);
+
+			$stats[null][null]['total'] += (int)$row['total'];
+			$stats[null][null]['translated'] += (int)$row['translated'];
+
+		}
+
+		foreach($stats as $cat => &$sections)
+		{
+			uasort($sections, function($s, $t){
+				return $s['percent'] < $t['percent'] ? -1 : ($s['percent'] == $t['percent'] ? 0 : 1);
+			});
+		}
+		
+		$stats[null][null]['percent'] = $stats[null][null]['total'] > 0 ? 100 * $stats[null][null]['translated'] / $stats[null][null]['total'] : 0;
+
+		return array("categories" => $cats, "statistics" => $stats);
+	}
+
+	public function computeDetailedStatistics2($pack_id, $language_id)
+	{	
+		$query = $this->getEntityManager()->createQuery(
+		"SELECT c.category, c.section, m.text as message, t.text as translation
+		 FROM FMSymSlateBundle:Classification c 
+		 LEFT JOIN c.message m
+		 LEFT JOIN m.current_translations ct WITH ct.language_id = :language_id
+		 LEFT JOIN ct.translation t
+		 WHERE c.pack_id = :pack_id
+		"		
+		);
+		$query->setParameter(':language_id',$language_id);
+		$query->setParameter(':pack_id',$pack_id);
+		$results = $query->getResult();
+		
+		die(print_r($results, 1));
 		
 		
 		$stats = array(null => array(null => array('total' => 0, 'translated' => 0, 'percent' => 0)));
