@@ -444,7 +444,7 @@ class PackRepository extends EntityRepository
 	}
 
 	
-	public function computeDetailedStatistics($pack_id, $language_id)
+	public function computeDetailedStatisticsOld($pack_id, $language_id)
 	{	
 		$query = $this->getEntityManager()->createQuery(
 		"SELECT c.category, c.section, count(c.id) as total, count(ct.id) as translated 
@@ -497,7 +497,7 @@ class PackRepository extends EntityRepository
 		return array("categories" => $cats, "statistics" => $stats);
 	}
 
-	public function computeDetailedStatistics2($pack_id, $language_id)
+	public function computeDetailedStatistics($pack_id, $language_id)
 	{	
 		$query = $this->getEntityManager()->createQuery(
 		"SELECT c.category, c.section, m.text as message, t.text as translation
@@ -511,31 +511,82 @@ class PackRepository extends EntityRepository
 		$query->setParameter(':language_id',$language_id);
 		$query->setParameter(':pack_id',$pack_id);
 		$results = $query->getResult();
-		
-		die(print_r($results, 1));
-		
-		
-		$stats = array(null => array(null => array('total' => 0, 'translated' => 0, 'percent' => 0)));
+
+		$stats = array(null => 
+					array(null => array(
+							'total_strings' => 0, 
+							'translated_strings' => 0,
+							'total_words' => 0, 
+							'translated_words' => 0,
+							'words_in_translation' => 0,
+							'percent' => 0
+						)
+					)
+				);
+
 		$cats  = array();
 
 		foreach($results as $row)
 		{
-			$cats[$row['category']] = true;
-
 			if(!isset($stats[$row['category']]))
 			{
+				$cats[] = $row['category'];
+
 				$stats[$row['category']] = array();
+				$stats[$row['category']][null] = array(
+					'total_strings' => 0, 
+					'translated_strings' => 0,
+					'total_words' => 0, 
+					'translated_words' => 0,
+					'words_in_translation' => 0,
+					'percent' => 0
+				);
 			}
 
-			$stats[$row['category']][$row['section']] = array(
-				'total' => (int)$row['total'], 
-				'translated' => (int)$row['translated'], 
-				'percent' => 100 * (int)$row['translated'] / (int)$row['total'] 
-			);
+			if(!isset($stats[$row['category']][$row['section']]))
+			{
+				$stats[$row['category']][$row['section']] = array(
+					'total_strings' => 0, 
+					'translated_strings' => 0,
+					'total_words' => 0, 
+					'translated_words' => 0,
+					'words_in_translation' => 0,
+					'percent' => 0
+				);
+			}
 
-			$stats[null][null]['total'] += (int)$row['total'];
-			$stats[null][null]['translated'] += (int)$row['translated'];
 
+			$wc  = str_word_count(strip_tags($row['message']));
+			$ts  = $row['translation'] == null ? 0 : 1;
+			$tw  = $row['translation'] == null ? 0 : $wc;
+			$wit = $row['translation'] == null ? 0 : str_word_count(strip_tags($row['translation']));
+
+			$stats[$row['category']][$row['section']]['total_strings'] 			+= 1;
+			$stats[$row['category']][$row['section']]['translated_strings'] 	+= $ts;
+			$stats[$row['category']][$row['section']]['total_words'] 			+= $wc;
+			$stats[$row['category']][$row['section']]['translated_words'] 		+= $tw;
+			$stats[$row['category']][$row['section']]['words_in_translation'] 	+= $wit;
+
+			$stats[null][null]['total_strings'] 								+= 1;
+			$stats[null][null]['translated_strings'] 							+= $ts;
+			$stats[null][null]['total_words'] 									+= $wc;
+			$stats[null][null]['translated_words'] 								+= $tw;
+			$stats[null][null]['words_in_translation'] 							+= $wit;
+
+			$stats[$row['category']][null]['total_strings'] 					+= 1;
+			$stats[$row['category']][null]['translated_strings'] 				+= $ts;
+			$stats[$row['category']][null]['total_words'] 						+= $wc;
+			$stats[$row['category']][null]['translated_words'] 					+= $tw;
+			$stats[$row['category']][null]['words_in_translation'] 				+= $wit;
+		}
+
+		foreach($stats as $cat => $ss)
+		{
+			foreach($ss as $s => $unused)
+			{
+				$stats[$cat][$s]['percent']         = 100 * $stats[$cat][$s]['translated_strings'] / $stats[$cat][$s]['total_strings'];
+				$stats[$cat][$s]['remaining_words'] = $stats[$cat][$s]['total_words'] - $stats[$cat][$s]['translated_words'];
+			}
 		}
 
 		foreach($stats as $cat => &$sections)
@@ -544,8 +595,6 @@ class PackRepository extends EntityRepository
 				return $s['percent'] < $t['percent'] ? -1 : ($s['percent'] == $t['percent'] ? 0 : 1);
 			});
 		}
-		
-		$stats[null][null]['percent'] = $stats[null][null]['total'] > 0 ? 100 * $stats[null][null]['translated'] / $stats[null][null]['total'] : 0;
 
 		return array("categories" => $cats, "statistics" => $stats);
 	}

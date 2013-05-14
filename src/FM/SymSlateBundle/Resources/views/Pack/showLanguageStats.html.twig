@@ -17,19 +17,21 @@
 
 	<table class="table">
 		<tr>
-			{% for category, unused in stats['categories'] %}
-				<th>{{ category }}</th>
+			{% for category in stats['categories'] %}
+				<th>{{ category }}<BR/>Words: <ul><li>{{ stats['statistics'][category][null]['total_words'] }} total</li><li>{{ stats['statistics'][category][null]['translated_words'] }} translated (source lang)</li><li>{{ stats['statistics'][category][null]['words_in_translation'] }} translated (target lang)</li><li>{{ stats['statistics'][category][null]['total_words'] - stats['statistics'][category][null]['translated_words']}} remaining</li></ul></th>
 			{% endfor %}
 		</tr>
 		<tr>
-			{% for category, unused in stats['categories'] %}
+			{% for category in stats['categories'] %}
 				<td>
 					<table class="table table-striped">
 					{% for section, details in stats['statistics'][category] %}
-						<tr onclick="javascript:window.location='{{ path('translate', {'pack_id': entity.id, 'language_code': language_code, 'category': category, 'section': section}) }}'">
-							{% if section %}<td class="goto">{{ section }}</td>{% endif %}
-							<td class="goto" style="background-color:{{ color_shade("#800","#080",details['percent']/100, 0.7) }}; border: 1px solid {{ last_color_shade() }};">{{ '%.1f' | format(details['percent']) }}%<BR/>({{details['translated']}}/{{details['total']}})</td>
-						</tr>
+						{% if section != null %}
+							<tr onclick="javascript:window.location='{{ path('translate', {'pack_id': entity.id, 'language_code': language_code, 'category': category, 'section': section}) }}'">
+								{% if section %}<td class="goto">{{ section }}</td>{% endif %}
+								<td class="goto" style="background-color:{{ color_shade("#800","#080",details['percent']/100, 0.7) }}; border: 1px solid {{ last_color_shade() }};">{{ '%.1f' | format(details['percent']) }}%<BR/>({{details['translated_strings']}}/{{details['total_strings']}})</td>
+							</tr>
+						{% endif %}
 					{% endfor %}
 				</table>
 				</td>
