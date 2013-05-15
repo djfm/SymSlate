@@ -86,26 +86,51 @@
 	</table>
 	
 	<br/>
+
+	{% if is_granted('ROLE_SUPER_ADMIN') %}
+		<h2>Remove messages</h2>
+		<form method="post" action="{{ url('pack_delete_messages', {id: entity.id}) }}" class="form-inline">
+			<label for="delete_category" class="input-label medium">Category</label>
+			<select id="delete_category" name="category">
+				{% for category in categories %}
+					<option value="{{ category }}">
+						{{ category | default ('- any category -') }}
+					</option>
+				{% endfor %}
+			</select>
+			<label for="delete_section" class="input-label medium">Section</label>
+			<select id="delete_section" name="section">
+				<option value=''>- all sections -</option>
+				{% for section in sections %}
+					<option value="{{ section }}">
+						{{ section }}
+					</option>
+				{% endfor %}
+			</select>
+			<button class="btn btn-danger">Kill em!</button>
+		</form>
+		<br/>
+	{% endif %}
 	
 	<h2>Quick access to translations</h2>
 
 	<form class="form-inline translate" action="{{ path('translate', {'pack_id': entity.id}) }}">
   		<fieldset class="">
-  			<label for="translate_source_language_code" class="input-label">Source language</label>
+  			<label for="translate_source_language_code" class="input-label medium">From</label>
 	  		<select id="translate_source_language_code" name="source_language_code">
 				{% for language in languages %}
 					<option value="{{ language.code }}" {{ app.request.query.get('source_language_code','en')==language.code ? "selected='true'" : '' }}>{{ language }}</option>
 				{% endfor %}
 			</select>
 
-			<label for="translate_language_code" class="input-label">Target language</label>
+			<label for="translate_language_code" class="input-label medium">Into</label>
 			<select id="translate_language_code" name="language_code">
 				{% for language in languages %}
 					<option value="{{ language.code }}">{{ language }}</option>
 				{% endfor %}
 			</select>
 
-			<label for="translate_category" class="input-label">Category</label>
+			<label for="translate_category" class="input-label medium">Category</label>
 			<select id="translate_category" name="category">
 				{% for category in categories %}
 					<option value="{{ category }}">

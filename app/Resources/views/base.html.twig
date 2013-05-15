@@ -50,6 +50,12 @@
                     </li>
                     {% endif %}
                     <li id="notification">
+                            {% if app.session.hasFlash('notice') %}
+                                <div class="flash-notice">
+                                    {{ app.session.flash('notice') }}
+                                    <span class='close-parent' onclick='javascript:$(this).parent().remove()'>X</span>
+                                </div>
+                            {% endif %}
                     </li>
                 </ul>
                 <ul class="nav pull-right">
