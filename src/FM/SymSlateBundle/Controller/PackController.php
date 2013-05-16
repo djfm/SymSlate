@@ -371,13 +371,14 @@ NOW;
     {
         $category = $request->request->get('category');
         $section  = $request->request->get('section');
+        $message  = $request->request->get('message');
 
         if($category != '' or $section != '')
         {
             $em = $this->getDoctrine()->getManager();
 
             $qb = $em->createQueryBuilder();
-            $qb->select('c')->from('FMSymSlateBundle:Classification', 'c')->where('c.pack_id = :pack_id');
+            $qb->select('c, m')->from('FMSymSlateBundle:Classification', 'c')->innerJoin('c.message', 'm')->where('c.pack_id = :pack_id');
             if($category != '')
             {
                 $qb->andWhere('c.category = :category');
@@ -385,6 +386,10 @@ NOW;
             if($section != '')
             {
                 $qb->andWhere('c.section = :section');
+            }
+            if($message != '')
+            {
+                $qb->andWhere('m.text = :message');
             }
 
             $q = $qb->getQuery();
@@ -398,6 +403,10 @@ NOW;
             if($section != '')
             {
                 $q->setParameter('section', $section);
+            }
+            if($message != '')
+            {
+                $q->setParameter('message', $message);
             }
 
             $killed = 0;

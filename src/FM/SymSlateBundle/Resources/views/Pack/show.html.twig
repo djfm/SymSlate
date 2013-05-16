@@ -163,22 +163,24 @@
 					</option>
 				{% endfor %}
 			</select>
+			<label for="delete_message" class="input-label medium">Message</label>
+			<input type="text" id="delete_message" name="message"></input>
 			<button class="btn btn-danger">Kill em!</button>
 		</form>
 		<br/>
 
 		<script type="text/javascript">
+			var cs = {{ category_sections | raw }};
+
 			$('#delete_category').change(function(e){
 				var options = "<option value=''>- all sections -</option>";
-				var cs = {{ category_sections | raw }};
-
 				var category = $(e.target).val();
 
 				if(cs[category])
 				{
 					for(var i in cs[category])
 					{
-						options += "<option>"+cs[category][i]+"</option>";
+						options += "<option value='"+i+"'>"+(i == '' ? '(null)' : i)+"</option>";
 					}
 				}
 				else
@@ -187,11 +189,26 @@
 					{
 						for(var i in cs[category])
 						{
-							options += "<option>"+cs[category][i]+"</option>";
+							options += "<option>"+i+"</option>";
 						}
 					}
 				}
 				$('#delete_section').html(options);
+			});
+
+			$('#delete_section').change(function(e){
+				
+				var category = $("#delete_category").val();
+				var section  = $(e.target).val();
+				var messages;
+
+				if(cs[category] && cs[category][section])
+				{
+					var messages = {source: cs[category][section]};
+				}
+
+				$('#delete_message').autocomplete(messages);
+
 			});
 		</script>
 
