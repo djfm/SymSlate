@@ -664,4 +664,21 @@ class PackRepository extends EntityRepository
 		return $packNames;
 	}
 
+	public function getCategoriesAndSections($pack_id)
+	{
+		$q = $this->getEntityManager()->createQuery("SELECT DISTINCT c.category, c.section FROM FMSymSlateBundle:Classification c WHERE c.pack_id=:pack_id AND c.section IS NOT NULL");
+		$q->setParameter('pack_id', $pack_id);
+
+		$res = array();
+		foreach($q->getResult() as $row)
+		{
+			if(!isset($res[$row['category']]))
+			{
+				$res[$row['category']] = array();
+			}
+			$res[$row['category']][] = $row['section'];
+		}
+		return $res;
+	}
+
 }

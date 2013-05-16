@@ -76,7 +76,8 @@ class PackController extends Controller
             'stats' => $stats,
             'languages'  => $em->getRepository('FMSymSlateBundle:Language')->findAll(),
             'categories' => $stats['categories'],
-            'sections' => $sections
+            'sections' => $sections,
+            'category_sections' => json_encode($em->getRepository('FMSymSlateBundle:Pack')->getCategoriesAndSections($id))
         );
     }
 

@@ -86,31 +86,6 @@
 	</table>
 	
 	<br/>
-
-	{% if is_granted('ROLE_SUPER_ADMIN') %}
-		<h2>Remove messages</h2>
-		<form method="post" action="{{ url('pack_delete_messages', {id: entity.id}) }}" class="form-inline">
-			<label for="delete_category" class="input-label medium">Category</label>
-			<select id="delete_category" name="category">
-				{% for category in categories %}
-					<option value="{{ category }}">
-						{{ category | default ('- any category -') }}
-					</option>
-				{% endfor %}
-			</select>
-			<label for="delete_section" class="input-label medium">Section</label>
-			<select id="delete_section" name="section">
-				<option value=''>- all sections -</option>
-				{% for section in sections %}
-					<option value="{{ section }}">
-						{{ section }}
-					</option>
-				{% endfor %}
-			</select>
-			<button class="btn btn-danger">Kill em!</button>
-		</form>
-		<br/>
-	{% endif %}
 	
 	<h2>Quick access to translations</h2>
 
@@ -165,6 +140,60 @@
 		<button class="input-medium btn btn-primary">Download all GZIps</button>
 	</form>
 	<div class="clearfix"></div>
+
+	{% endif %}
+
+	{% if is_granted('ROLE_SUPER_ADMIN') %}
+		<h2>Remove messages</h2>
+		<form method="post" action="{{ url('pack_delete_messages', {id: entity.id}) }}" class="form-inline">
+			<label for="delete_category" class="input-label medium">Category</label>
+			<select id="delete_category" name="category">
+				{% for category in categories %}
+					<option value="{{ category }}">
+						{{ category | default ('- any category -') }}
+					</option>
+				{% endfor %}
+			</select>
+			<label for="delete_section" class="input-label medium">Section</label>
+			<select id="delete_section" name="section">
+				<option value=''>- all sections -</option>
+				{% for section in sections %}
+					<option value="{{ section }}">
+						{{ section }}
+					</option>
+				{% endfor %}
+			</select>
+			<button class="btn btn-danger">Kill em!</button>
+		</form>
+		<br/>
+
+		<script type="text/javascript">
+			$('#delete_category').change(function(e){
+				var options = "<option value=''>- all sections -</option>";
+				var cs = {{ category_sections | raw }};
+
+				var category = $(e.target).val();
+
+				if(cs[category])
+				{
+					for(var i in cs[category])
+					{
+						options += "<option>"+cs[category][i]+"</option>";
+					}
+				}
+				else
+				{
+					for(category in cs)
+					{
+						for(var i in cs[category])
+						{
+							options += "<option>"+cs[category][i]+"</option>";
+						}
+					}
+				}
+				$('#delete_section').html(options);
+			});
+		</script>
 
 	{% endif %}
 
