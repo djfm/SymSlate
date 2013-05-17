@@ -351,7 +351,7 @@ class PackRepository extends EntityRepository
 			'total_count' => count($paginator),
 			'page' => $pagination_options['page'],
 			'page_size' => $pagination_options['page_size'],
-			'page_count' => round((int)count($paginator)/(int)$pagination_options['page_size'])
+			'page_count' => ceil((int)count($paginator)/(int)$pagination_options['page_size'])
 		);
 		
 		return array('messages' => $messages, 
