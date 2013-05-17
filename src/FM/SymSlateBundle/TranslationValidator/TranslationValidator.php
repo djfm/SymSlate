@@ -81,7 +81,7 @@ class TranslationValidator
 				return array('success' => true, 'warning_message' => 'Translation looks a lot like the original English!');
 			}
 
-			if($language->getCode() != 'en' and $language->getCode() != 'zh' and $language->getCode() != 'tw' and $category != 'Mails')
+			if($language->getCode() != 'en' and $category != 'Mails' and $translation[0] >= 'A' and $translation[0] <= 'z')
 			{
 				$punctuation = ".:!?";
 				$lm = $message[strlen($message) - 1];
@@ -94,12 +94,9 @@ class TranslationValidator
 				$fm = mb_substr($message     , 0,  1 , "UTF-8");
 				$ft = mb_substr($translation , 0,  1 , "UTF-8");
 
-				if($language->getCode() != 'ru')
+				if( (strtolower($fm) == $fm) != (strtolower($ft) == $ft))
 				{
-					if( (strtolower($fm) == $fm) != (strtolower($ft) == $ft))
-					{
-						return array('success' => true, 'warning_message' => 'The message and the translation start with a letter of different case!');
-					}
+					return array('success' => true, 'warning_message' => 'The message and the translation start with a letter of different case!');
 				}
 			}
 		}
