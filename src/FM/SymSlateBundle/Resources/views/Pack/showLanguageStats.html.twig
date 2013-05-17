@@ -57,7 +57,7 @@
 							{% if section != null %}
 								<tr onclick="javascript:window.location='{{ path('translate', {'pack_id': entity.id, 'language_code': language_code, 'category': category, 'section': section}) }}'">
 									{% if section %}<td class="goto">{{ section }}</td>{% endif %}
-									<td class="goto" style="background-color:{{ color_shade("#800","#080",details['percent']/100, 0.7) }}; border: 1px solid {{ last_color_shade() }};">{{ '%.1f' | format(details['percent']) }}%<BR/>({{details['translated_strings']}}/{{details['total_strings']}})</td>
+									<td class="goto" style="background-color:{{ color_shade("#800","#080",details['percent']/100, 0.7) }}; border: 1px solid {{ last_color_shade() }};">{{ '%.1f' | format(details['percent']) }}%<BR/>(s: {{details['translated_strings']}}/{{details['total_strings']}}, w: {{details['translated_words']}}/{{details['total_words']}})</td>
 								</tr>
 							{% endif %}
 						{% endfor %}
