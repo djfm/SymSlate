@@ -51,6 +51,7 @@ class TranslationSubmitter
 			'language_id' => $args['language']->getId()
 		)))
 		{
+			
 			$ct->setTranslation($translation);
 		}
 		else

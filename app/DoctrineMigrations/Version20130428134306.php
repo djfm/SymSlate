@@ -13,7 +13,7 @@ class Version20130428134306 extends AbstractMigration
     public function up(Schema $schema)
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->addSql("CREATE INDEX message_txt_idx ON Message (text)");
+        $this->addSql("CREATE INDEX message_txt_idx ON Message (text(255))");
     }
 
     public function down(Schema $schema)
