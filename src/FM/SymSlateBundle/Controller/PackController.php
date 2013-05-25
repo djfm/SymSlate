@@ -42,7 +42,7 @@ class PackController extends Controller
      * @Route("/{id}/show", name="packs_show")
      * @Template()
      */
-    public function showAction($id)
+    public function showAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -53,15 +53,31 @@ class PackController extends Controller
         }
 
         $deleteForm = $this->createDeleteForm($id);
+	
+	    $cheat = $request->query->get('cheat','true') == 'true';
+	
+        $stats = $em->getRepository('FMSymSlateBundle:Pack')->computeAllStatistics($entity->getId(), $this->getRequest()->query->get('refresh_stats','false') == 'true', $cheat);
 
-        $stats = $em->getRepository('FMSymSlateBundle:Pack')->computeAllStatistics($entity->getId(), $this->getRequest()->query->get('refresh_stats','false') == 'true');
+        $sections_qb = $em->createQueryBuilder();
+        $sections_qb->select('DISTINCT c.section')
+                     ->from ('FMSymSlateBundle:Classification','c')
+                     ->where('c.pack_id = :pack_id')
+                     ->andWhere('c.section != \'\'')
+                     ->orderBy("c.section","ASC");
+
+        $sections_q = $sections_qb->getQuery();
+        $sections_q->setParameter('pack_id', $id);
+
+        $sections   = array_map('current',$sections_q->getResult());
 
         return array(
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
             'stats' => $stats,
             'languages'  => $em->getRepository('FMSymSlateBundle:Language')->findAll(),
-            'categories' => $stats['categories']
+            'categories' => $stats['categories'],
+            'sections' => $sections,
+            'category_sections' => json_encode($em->getRepository('FMSymSlateBundle:Pack')->getCategoriesAndSections($id))
         );
     }
 
@@ -342,6 +358,77 @@ NOW;
         }
 
         return $this->redirect($this->generateUrl('packs'));
+    }
+
+    /**
+     * Deletes Messages a Pack entity.
+     *
+     * @Route("/{id}/deleteMessages", name="pack_delete_messages")
+     * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
+     */
+    public function deleteMessagesAction(Request $request, $id)
+    {
+        $category = $request->request->get('category');
+        $section  = $request->request->get('section');
+        $message  = $request->request->get('message');
+
+        if($category != '' or $section != '')
+        {
+            $em = $this->getDoctrine()->getManager();
+
+            $qb = $em->createQueryBuilder();
+            $qb->select('c, m')->from('FMSymSlateBundle:Classification', 'c')->innerJoin('c.message', 'm')->where('c.pack_id = :pack_id');
+            if($category != '')
+            {
+                $qb->andWhere('c.category = :category');
+            }
+            if($section != '')
+            {
+                $qb->andWhere('c.section = :section');
+            }
+            if($message != '')
+            {
+                $qb->andWhere('m.text = :message');
+            }
+
+            $q = $qb->getQuery();
+
+            $q->setParameter('pack_id', $id);
+
+            if($category != '')
+            {
+                $q->setParameter('category', $category);
+            }
+            if($section != '')
+            {
+                $q->setParameter('section', $section);
+            }
+            if($message != '')
+            {
+                $q->setParameter('message', $message);
+            }
+
+            $killed = 0;
+            foreach($q->getResult() as $classification)
+            {
+                $killed += 1;
+                $message_id = $classification->getMessageId();
+
+                $em->remove($em->getRepository('FMSymSlateBundle:Storage')->findOneBy(array('message_id' => $message_id, 'pack_id' => $id)));
+                $em->remove($classification);
+            }
+
+            $em->flush();
+
+            $this->get('session')->setFlash('notice', "Successfully killed $killed messages!");
+        }
+        else
+        {
+            $this->get('session')->setFlash('notice', "Not killed nothing!");
+        }       
+
+        return $this->redirect($this->generateUrl('packs_show', array('id' => $id)));
     }
 
     private function createDeleteForm($id)

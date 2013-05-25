@@ -17,7 +17,6 @@ class CurrentTranslationRepository extends EntityRepository
 		//see if there is a message corresponding to this translation
 		if($message = $this->getEntityManager()->getRepository('FMSymSlateBundle:Message')->findOneByMkey($translation->getMkey()))
 		{
-
 			//see if it is already associated to a translation
 			$ct = $this->findOneBy(array('message_id' => $message->getId(), 'language_id' => $translation->getLanguage()->getId()));
 			if(null === $ct)

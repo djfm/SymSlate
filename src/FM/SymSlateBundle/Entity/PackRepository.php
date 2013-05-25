@@ -105,6 +105,7 @@ class PackRepository extends EntityRepository
 		if($query_options["author_id"] !== null)
 		{
 			$qb->andWhere("t.created_by = :created_by");
+			$qb->andWhere("t.translations_import_id IS NULL");
 		}
 		if($query_options["has_error"] !== null)
 		{
@@ -350,7 +351,7 @@ class PackRepository extends EntityRepository
 			'total_count' => count($paginator),
 			'page' => $pagination_options['page'],
 			'page_size' => $pagination_options['page_size'],
-			'page_count' => round((int)count($paginator)/(int)$pagination_options['page_size'])
+			'page_count' => ceil((int)count($paginator)/(int)$pagination_options['page_size'])
 		);
 		
 		return array('messages' => $messages, 
@@ -384,7 +385,7 @@ class PackRepository extends EntityRepository
 		
 	}
 
-	public function computeStatistics($pack_id, $language_id)
+	public function computeStatistics($pack_id, $language_id, $cheat=true)
 	{	
 		$stats = array(null => array('total' => 0, 'translated' => 0, 'percent' => 0));
 		$cats  = array(null);
@@ -392,7 +393,7 @@ class PackRepository extends EntityRepository
 		$language = $this->getEntityManager()->getRepository('FMSymSlateBundle:Language')->find($language_id);
 		
 		//English is at 100% by definition for now
-		if($language->getCode() == 'en')
+		if($cheat and $language->getCode() == 'en')
 		{
 			$query = $this->getEntityManager()->createQuery(
 				"SELECT c.category, count(c.id) as n FROM FMSymSlateBundle:Classification c
@@ -442,7 +443,8 @@ class PackRepository extends EntityRepository
 		return array("categories" => $cats, "statistics" => $stats);
 	}
 
-	public function computeDetailedStatistics($pack_id, $language_id)
+	
+	public function computeDetailedStatisticsOld($pack_id, $language_id)
 	{	
 		$query = $this->getEntityManager()->createQuery(
 		"SELECT c.category, c.section, count(c.id) as total, count(ct.id) as translated 
@@ -495,12 +497,113 @@ class PackRepository extends EntityRepository
 		return array("categories" => $cats, "statistics" => $stats);
 	}
 
-	public function computeAllStatistics($pack_id, $force_refresh=false, $refresh_interval=1440)
+	public function computeDetailedStatistics($pack_id, $language_id)
+	{	
+		$query = $this->getEntityManager()->createQuery(
+		"SELECT c.category, c.section, m.text as message, t.text as translation
+		 FROM FMSymSlateBundle:Classification c 
+		 LEFT JOIN c.message m
+		 LEFT JOIN m.current_translations ct WITH ct.language_id = :language_id
+		 LEFT JOIN ct.translation t
+		 WHERE c.pack_id = :pack_id
+		"		
+		);
+		$query->setParameter(':language_id',$language_id);
+		$query->setParameter(':pack_id',$pack_id);
+		$results = $query->getResult();
+
+		$stats = array(null => 
+					array(null => array(
+							'total_strings' => 0, 
+							'translated_strings' => 0,
+							'total_words' => 0, 
+							'translated_words' => 0,
+							'words_in_translation' => 0,
+							'percent' => 0
+						)
+					)
+				);
+
+		$cats  = array();
+
+		foreach($results as $row)
+		{
+			if(!isset($stats[$row['category']]))
+			{
+				$cats[] = $row['category'];
+
+				$stats[$row['category']] = array();
+				$stats[$row['category']][null] = array(
+					'total_strings' => 0, 
+					'translated_strings' => 0,
+					'total_words' => 0, 
+					'translated_words' => 0,
+					'words_in_translation' => 0,
+					'percent' => 0
+				);
+			}
+
+			if(!isset($stats[$row['category']][$row['section']]))
+			{
+				$stats[$row['category']][$row['section']] = array(
+					'total_strings' => 0, 
+					'translated_strings' => 0,
+					'total_words' => 0, 
+					'translated_words' => 0,
+					'words_in_translation' => 0,
+					'percent' => 0
+				);
+			}
+
+
+			$wc  = str_word_count(strip_tags($row['message']));
+			$ts  = $row['translation'] == null ? 0 : 1;
+			$tw  = $row['translation'] == null ? 0 : $wc;
+			$wit = $row['translation'] == null ? 0 : str_word_count(strip_tags($row['translation']));
+
+			$stats[$row['category']][$row['section']]['total_strings'] 			+= 1;
+			$stats[$row['category']][$row['section']]['translated_strings'] 	+= $ts;
+			$stats[$row['category']][$row['section']]['total_words'] 			+= $wc;
+			$stats[$row['category']][$row['section']]['translated_words'] 		+= $tw;
+			$stats[$row['category']][$row['section']]['words_in_translation'] 	+= $wit;
+
+			$stats[null][null]['total_strings'] 								+= 1;
+			$stats[null][null]['translated_strings'] 							+= $ts;
+			$stats[null][null]['total_words'] 									+= $wc;
+			$stats[null][null]['translated_words'] 								+= $tw;
+			$stats[null][null]['words_in_translation'] 							+= $wit;
+
+			$stats[$row['category']][null]['total_strings'] 					+= 1;
+			$stats[$row['category']][null]['translated_strings'] 				+= $ts;
+			$stats[$row['category']][null]['total_words'] 						+= $wc;
+			$stats[$row['category']][null]['translated_words'] 					+= $tw;
+			$stats[$row['category']][null]['words_in_translation'] 				+= $wit;
+		}
+
+		foreach($stats as $cat => $ss)
+		{
+			foreach($ss as $s => $unused)
+			{
+				$stats[$cat][$s]['percent']         = 100 * $stats[$cat][$s]['translated_strings'] / $stats[$cat][$s]['total_strings'];
+				$stats[$cat][$s]['remaining_words'] = $stats[$cat][$s]['total_words'] - $stats[$cat][$s]['translated_words'];
+			}
+		}
+
+		foreach($stats as $cat => &$sections)
+		{
+			uasort($sections, function($s, $t){
+				return $s['percent'] < $t['percent'] ? -1 : ($s['percent'] == $t['percent'] ? 0 : 1);
+			});
+		}
+
+		return array("categories" => $cats, "statistics" => $stats);
+	}
+
+	public function computeAllStatistics($pack_id, $force_refresh=false, $cheat=true, $refresh_interval=1440)
 	{
 		$pack = $this->find($pack_id);
 
-		
-		if(!$force_refresh and null !== $pack->getStatisticsUpdated())
+		if($cheat and !$force_refresh and null !== $pack->getStatisticsUpdated())
 		{
 			$now   = new \DateTime("now");
 			$delta = $now->diff($pack->getStatisticsUpdated());
@@ -518,7 +621,7 @@ class PackRepository extends EntityRepository
 		$cats  = null;
 		foreach($this->getEntityManager()->getRepository('FMSymSlateBundle:Language')->findAll() as $language)
 		{
-			$st   = $this->computeStatistics($pack_id, $language->getId());
+			$st   = $this->computeStatistics($pack_id, $language->getId(), $cheat);
 			$cats = $st['categories'];
 			$stats[$language->getAName()] = array('code' => $language->getCode(), 'statistics' => $st['statistics']);
 		}
@@ -531,13 +634,15 @@ class PackRepository extends EntityRepository
 
 		$result = array('categories' => $cats, 'statistics' => $stats);
 
-		$pack = $this->find($pack_id);
-		$pack->setStatistics(json_encode($result));
-		$pack->setStatisticsUpdated(new \DateTime("now"));
+		if($cheat)
+		{
+			$pack = $this->find($pack_id);
+			$pack->setStatistics(json_encode($result));
+			$pack->setStatisticsUpdated(new \DateTime("now"));
 
-		$this->getEntityManager()->persist($pack);
-		$this->getEntityManager()->flush();
-
+			$this->getEntityManager()->persist($pack);
+			$this->getEntityManager()->flush();
+		}
 		return $result;
 	}
 	
@@ -557,6 +662,27 @@ class PackRepository extends EntityRepository
 			$packNames[$pack->getId()] = $pack->getFullName();
 		}
 		return $packNames;
+	}
+
+	public function getCategoriesAndSections($pack_id)
+	{
+		$q = $this->getEntityManager()->createQuery("SELECT DISTINCT c.category, c.section, m.text as message FROM FMSymSlateBundle:Classification c INNER JOIN c.message m WHERE c.pack_id=:pack_id");
+		$q->setParameter('pack_id', $pack_id);
+
+		$res = array();
+		foreach($q->getResult() as $row)
+		{
+			if(!isset($res[$row['category']]))
+			{
+				$res[$row['category']] = array();
+			}
+			if(!isset($res[$row['category']][$row['section']]))
+			{
+				$res[$row['category']][$row['section']] = array();
+			}
+			$res[$row['category']][$row['section']][] = $row['message'];
+		}
+		return $res;
 	}
 
 }

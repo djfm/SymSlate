@@ -22,6 +22,14 @@ class TranslationValidator
 	public function validate($message, $translation, $language, $category)
 	{
 
+		$forbidden = array("ce.shell.la", "transla.shop.tm", "mon.shell.la");
+		foreach($forbidden as $fbdn)
+		{
+			if(strpos($translation, $fbdn) !== false)
+			{
+				return array('success' => false, 'error_message' => "Forbidden string '$fbdn' found in translation!");
+			}
+		}
 
 		if(preg_match('/PrestaBox/i', $translation))
 		{
@@ -32,7 +40,7 @@ class TranslationValidator
 			return array('success' => false, 'error_message' => 'This looks like an error because of the "[iso]"" string, please contact sysadmin!');
 		}
 
-		if($category == 'Tabs' && strlen($translation) > 32)
+		if($category == 'Tabs' && mb_strlen($translation, 'utf-8') > 32)
 		{
 			return array('success' => false, 'error_message' => 'Tab translation cannot exceed 32 chars!');
 		}
@@ -73,7 +81,7 @@ class TranslationValidator
 				return array('success' => true, 'warning_message' => 'Translation looks a lot like the original English!');
 			}
 
-			if($language->getCode() != 'en' and $language->getCode() != 'zh' and $language->getCode() != 'tw' and $category != 'Mails')
+			if($language->getCode() != 'en' and $category != 'Mails' and $translation[0] >= 'A' and $translation[0] <= 'z')
 			{
 				$punctuation = ".:!?";
 				$lm = $message[strlen($message) - 1];
@@ -86,12 +94,9 @@ class TranslationValidator
 				$fm = mb_substr($message     , 0,  1 , "UTF-8");
 				$ft = mb_substr($translation , 0,  1 , "UTF-8");
 
-				if($language->getCode() != 'ru')
+				if( (strtolower($fm) == $fm) != (strtolower($ft) == $ft))
 				{
-					if( (strtolower($fm) == $fm) != (strtolower($ft) == $ft))
-					{
-						return array('success' => true, 'warning_message' => 'The message and the translation start with a letter of different case!');
-					}
+					return array('success' => true, 'warning_message' => 'The message and the translation start with a letter of different case!');
 				}
 			}
 		}

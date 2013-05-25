@@ -50,6 +50,10 @@ api:
     resource: "@FMSymSlateBundle/Controller/APIController.php"
     type: annotation
 
+various:
+    resource: "@FMSymSlateBundle/Controller/VariousOperationsController.php"
+    type: annotation
+
 userlanguages:
     resource: "@FMSymSlateBundle/Controller/UserLanguageController.php"
     type: annotation

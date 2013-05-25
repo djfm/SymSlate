@@ -105,6 +105,11 @@ div.translate_row_translation
 	padding-bottom:2px;
 }
 
+span.legend
+{
+	padding-left: 10px;
+}
+
 fieldset.translate_category
 {
 }
@@ -215,15 +220,6 @@ div.translation_notification div.warning
 	background-color:#faa732;
 }
 
-span.close-parent
-{
-	float:right;
-	cursor: pointer;
-	font-weight: bold;
-	margin:5px;
-	margin-top: 0px;
-}
-
 div.tip
 {
 	border:1px solid orange;
@@ -237,4 +233,13 @@ div.tip
 div.smalltip
 {
 	width:321px;
+}
+
+span.close-parent
+{
+	float:right;
+	cursor: pointer;
+	font-weight: bold;
+	margin:5px;
+	margin-top: 0px;
 }

@@ -154,10 +154,25 @@ span.translation_stat_percent
 
 div.alert
 {
+	
+}
+
+span.close-parent
+{
+	cursor: pointer;
+	font-weight: bold;
+	margin:5px;
+	margin-top: 0px;
+}
+
+div.flash-notice
+{
 	margin:0;
-	padding-top:2px;
-	padding-bottom:2px;
+	padding:2px;
 	margin-top:8px;
 	margin-left:8px;
 	margin-right: 8px;
+	color:black;
+	background-color:#8BFF53;
+	border:1px solid green;
 }
