@@ -101,6 +101,7 @@ services:
           security_context: "@security.context"
           logger: "@monolog.logger"
           validator: "@translation_validator"
+          submitter: "@translation_submitter"
           max_concurrent_jobs: 2
 
     translation_validator:

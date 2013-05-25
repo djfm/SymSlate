@@ -2,6 +2,16 @@
 
 {% block stylesheets %}
     {{ parent() }}
+
+    <style type="text/css">
+    	iframe.translate_details
+    	{
+    		width:640px;
+    		height:480px;
+    		background-color: white;
+    	}
+    </style>
+
 {% endblock %}
 
 {% block javascripts %}
@@ -9,18 +19,56 @@
 {% endblock %}
 
 {% block body %}
-
-	Message: {{ message }}
+	<H1>
+		Message
+	</H1>
+	<div>
+		{% if message_type == "HTML" %}
+			<iframe class="translate_details" srcdoc="{{ message }}"></iframe>
+		{% elseif message_type == "TXT" %}
+			<pre class="translate_details">{{ message }}</pre>
+		{% else %}
+			<span class="translate_details">
+				{{ message | dbkslsh }}
+			</span>
+		{% endif %}
+	</div>
 	<BR/>
 
-	<table class="table">
+	<H1>
+		Translation History
+	</H1>
+	<table class="table table-striped">
+		<tr>
+			<th>Date</th>
+			<th>Author</th>
+			<th>Action</th>
+			<th>Translation</th>
+			<th></th>
+		</tr>
 		{% for h in history %}
 			<tr>
 				<td>{{ h.created | date("d/m/Y H:i:s") }}</td>
 				<td>{{ h.user }}</td>
 				<td>{{ h.operation }}</td>
-				<td>{{ h.getTranslation().getText() }}</td>
-				<td><button class="btn btn-success">Restore</button></td>
+				<td>
+					{% if message_type == "HTML" %}
+						<iframe class="translate_details" srcdoc="{{ h.getTranslation().getText() }}"></iframe>
+					{% elseif message_type == "TXT" %}
+						<pre class="translate_details">{{ h.getTranslation().getText() }}</pre>
+					{% else %}
+						<span class="translate_details">
+							{{ h.getTranslation().getText() | dbkslsh }}
+						</span>
+					{% endif %}
+				</td>
+				<td><form method="POST" action="{{ url('translate_details_restore', 
+					{
+					 message_id: message_id,
+					 language_code: language_code,
+					 translation_id: h.getTranslation().getId()
+					}
+					) }}"><button class="btn btn-success">Restore</button></form></td>
 			</tr>
 		{% endfor %}
 	</table>

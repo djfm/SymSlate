@@ -372,11 +372,12 @@ NOW;
     			if(null !== $version and preg_match($ma_exp, $f['filename'],$match))
     			{
     				$total += 1;
-    				$translation = new Translation();
-    				$translation->setText($data);
-    				$translation->language_code = $match[1];
-    				$translation->setMkey('mail:'.$version.':/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename']));
-    				
+    				$translation = array(
+                        'translation_text' => $data,
+                        'language_code'    => $match[1],
+                        'mkey'             => 'mail:'.$version.':/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename'])
+                    );
+    				    				
     				$translations[]  = $translation;
     			}
     			else if(   preg_match($nf_exp,$f['filename'],$match) 
@@ -389,10 +390,11 @@ NOW;
     				$total  += $count;
     				for($i = 0; $i < $count; $i++)
     				{
-    					$translation = new Translation();
-    					$translation->setText($matches[2][$i]);
-    					$translation->language_code = $match[1];
-    					$translation->setMkey($matches[1][$i]);
+                        $translation = array(
+                            'translation_text' => $matches[2][$i],
+                            'language_code'    => $match[1],
+                            'mkey'             => $matches[1][$i]
+                        );
     					
     					$translations[] = $translation;
     				}

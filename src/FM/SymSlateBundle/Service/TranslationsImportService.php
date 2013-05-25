@@ -44,41 +44,17 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 
 		foreach($translations as $key => $translation)
 		{	
-			if(($language = $this->getOrCreateLanguage($user, $translation->language_code)) and $user->canTranslateInto($language))
+			if($language = $this->getOrCreateLanguage($user, $translation['language_code']))
 			{
-				$validation = $this->validator->validate(null, $translation->getText(), $language, null);
-
-				if(!$validation['success'])continue;
-
-				$brand_new_translation = true;
-				if($tmp = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneBy(array(
-					"mkey" => $translation->getMkey(),
-					"language_id" => $language->getId(),
-					"text" => $translation->getText()
-				)))
-				{
-					//don't update already existing translations
-
-					$translation = $tmp;
-					$brand_new_translation = false;
-				}
-
-				if($brand_new_translation or $args['force_actualize'])
-				{
-					if($brand_new_translation)
-					{
-						$translation->setTranslationsImport($translations_import);
-						$translation->setAuthor($user);
-						$translation->setLanguage($language);
-					}
-					
-					$this->em->persist($translation);
-					$this->em->getRepository('FMSymSlateBundle:CurrentTranslation')->actualizeWith($translation, $this->logger);
-					$this->em->flush();
-				}
+				$this->submitter->submit(array(
+					'user' 						=> $user,
+					'language' 					=> $language,
+					'mkey'              		=> $translation['mkey'],
+					'translation_text'  		=> $translation['translation_text'],
+					'overwrite_current' 		=> $args['force_actualize'],
+					'translations_import' 		=> $translations_import
+				));
 			}
-
-			
 			
 			$this->step();
 
@@ -86,17 +62,12 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 
 			if($this->em->getUnitOfWork()->size() > 250)
 			{
-				//$this->logger->info("[UOW size before clear: " . $this->em->getUnitOfWork()->size() . "]");
-				//$this->logger->info("Memory usage before clear: " . round(memory_get_usage() / 1024/1024) . "MB");
 				//free some memory, without this we explode!!
 				$this->em->clear();
 
-				//reload entities because of the "clear" just before
+				//reload necessary entities because of the "clear" just before
 				$translations_import = $this->em->getRepository('FMSymSlateBundle:TranslationsImport')->findOneById($translations_import_id);
 				$user                = $translations_import->getCreator();
-
-				//$this->logger->info("[UOW size after clear: " . $this->em->getUnitOfWork()->size() . "]");
-				//$this->logger->info("Memory usage after clear: " . round(memory_get_usage() / 1024/1024) . "MB\n");
 			}
 
 		}

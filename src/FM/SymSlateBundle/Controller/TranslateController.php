@@ -198,7 +198,7 @@ class TranslateController extends Controller
 	/**
      * 
      *
-     * @Route("/message/{message_id}/{language_code}", requirements={"message_id" = "\d+"}, name="translate_details")
+     * @Route("/message/{message_id}/{language_code}", requirements={"message_id" = "\d+", "language_code" = "[a-z]{2}"}, name="translate_details")
      * @Template()
      */
     public function translateDetailsAction($message_id, $language_code)
@@ -207,19 +207,43 @@ class TranslateController extends Controller
 
     	$em = $this->getDoctrine()->getManager();
 
+    	$message_type = $em->getRepository("FMSymSlateBundle:Message")->findOneById($message_id)->getType();
+
     	$message = $em->getRepository("FMSymSlateBundle:Message")->getTranslationStringInto($message_id, $request->query->get('source_language_code', 'en'));
     	if($message === false)$message = $em->getRepository("FMSymSlateBundle:Message")->find($message_id)->getText();
 
     	$history = $em->getRepository("FMSymSlateBundle:History")->getTranslationHistory($message_id, $language_code);
 
-    	return array('message' => $message, "history" => $history);
+    	return array('message' => $message, "history" => $history, 'message_id' => $message_id, 'language_code' => $language_code, 'message_type' => $message_type);
+    }
+
+    /**
+     * 
+     * @Method("POST")
+     * @Route("/message/{message_id}/{language_code}/{translation_id}", requirements={"message_id" = "\d+", "translation_id" = "\d+"}, name="translate_details_restore")
+     */
+    public function translateDetailsRestoreAction($message_id, $language_code, $translation_id)
+    {
+    	$em = $this->getDoctrine()->getManager();
+
+    	$user = $this->get("security.context")->getToken()->getUser();
+
+    	$this->get('translation_submitter')->submit(array(
+    		'user' => $user,
+    		'language' => $em->getRepository('FMSymSlateBundle:Language')->findOneByCode($language_code),
+    		'mkey' => $em->getRepository('FMSymSlateBundle:Message')->findOneById($message_id)->getMkey(),
+    		'translation_text' => $em->getRepository('FMSymSlateBundle:Translation')->findOneById($translation_id)->getText(),
+    		'overwrite_current' => true
+    	));
+
+    	return $this->redirect($this->generateUrl('translate_details', array('message_id' => $message_id, 'language_code' => $language_code)));
     }
 
 
 	/**
      * 
      *
-     * @Route("/{notfound}", requirements={"notfound" = ".shop_logo."})
+     * @Route("/{notfound}", requirements={"notfound" = ".*shop_logo.$"})
      * 
      */
     public function defaultImageAction($notfound)

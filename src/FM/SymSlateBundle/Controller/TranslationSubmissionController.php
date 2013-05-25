@@ -77,20 +77,19 @@ class TranslationSubmissionController extends Controller
 		$em = $this->getDoctrine()->getManager();
 		
         $classification_id = $request->request->get('classification_id');
-        $text = $request->request->get('text');
-        $message_id = $request->request->get('message_id');
-        $language_id = $request->request->get('language_id');
+        $text              = $request->request->get('text');
+        $message_id        = $request->request->get('message_id');
+        $language_id       = $request->request->get('language_id');
 
-        $message        = $em->getRepository('FMSymSlateBundle:Message')->findOneById($message_id);
-        $language       = $em->getRepository('FMSymSlateBundle:Language')->findOneById($language_id);
-        $classification = $em->getRepository('FMSymSlateBundle:Classification')->findOneById($classification_id);
+        $language          = $em->getRepository('FMSymSlateBundle:Language')->findOneById($language_id);
+        $classification    = $em->getRepository('FMSymSlateBundle:Classification')->findOneById($classification_id);
 
         $data = $this->get('translation_submitter')->submit(array(
             'user' => $user,
-            'message' => $message,
             'classification' => $classification,
             'language' => $language,
-            'translation_text' => $text
+            'translation_text' => $text,
+            'overwrite_current' => true
         ));
 		
     	$response = new Response(json_encode($data));
