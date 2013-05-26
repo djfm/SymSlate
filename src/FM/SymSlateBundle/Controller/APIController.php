@@ -7,14 +7,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use FM\SymSlateBundle\Entity\TranslationSubmission;
-use FM\SymSlateBundle\Form\TranslationSubmissionType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 
 /**
- * TranslationSubmission controller.
+ * API controller.
  *
  * @Route("/api")
  */
