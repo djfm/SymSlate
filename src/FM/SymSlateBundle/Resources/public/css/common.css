@@ -26,7 +26,7 @@ div#main-menu
 
 div#contents
 {
-	margin-top:60px;
+	margin-top:30px;
 	padding:5px;
 }
 
@@ -124,7 +124,9 @@ fieldset.bordered
 
 div.pagination
 {
-	margin:25px;
+	margin:0;
+	margin-left: 5px;
+	margin-top: 5px;
 }
 
 
