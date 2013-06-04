@@ -238,10 +238,10 @@
 				{%  for cat in stats['categories'] %}
 					<td
 						class="clickable translation_stat"
-					    style="background-color:{{ color_shade("#800","#080",statistics['statistics'][cat]['percent']/100, 0.7) }}; border: 1px solid {{ last_color_shade() }};"
+					    style="background-color:{{ color_shade("#800","#080",statistics['statistics'][cat]['percent'] | default(0) / 100, 0.7) }}; border: 1px solid {{ last_color_shade() }};"
 					    onclick="javascript:window.location='{{ path('translate', {'pack_id': entity.id, 'language_code': statistics['code'], 'category': cat}) }}'">
-					    <span class="translation_stat_percent">{{ '%.1f' | format(statistics['statistics'][cat]['percent']) }}%</span>
-					    <br/>({{ statistics['statistics'][cat]['translated'] }}/{{ statistics['statistics'][cat]['total'] }})
+					    <span class="translation_stat_percent">{{ '%.1f' | format(statistics['statistics'][cat]['percent'] | default(0)) }}%</span>
+					    <br/>({{ statistics['statistics'][cat]['translated'] | default(0) }}/{{ statistics['statistics'][cat]['total'] | default(0) }})
 					</td>
 				{%  endfor %}
 			</tr>

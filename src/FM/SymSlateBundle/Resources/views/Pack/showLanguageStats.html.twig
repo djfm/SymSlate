@@ -11,6 +11,14 @@
 		{
 			cursor:pointer;
 		}
+		td.ignored
+		{
+			background-color:rgb(226, 222, 222);
+		}
+		td.not-ignored
+		{
+			background-color:rgb(213, 255, 213);
+		}
 	</style>
 
 	<h2>Detailed statistics for {{language}}</h2>
@@ -40,6 +48,12 @@
 
 	<BR/>
 
+<p>
+	Clicking on a Cell Name in the table below with deactivate/activate counting the corresponding section in the global statistics.<BR/>
+	This is usefull to exclude some modules from the global statistics if they are of no use in your country!<BR/>
+	Clicking on the part of the cell where the statistics are displayed will bring you to the translations of this section.
+</p>
+
 	<table class="table">
 		<tr>
 			{% for category in stats['categories'] %}
@@ -52,12 +66,27 @@
 			{% for category in stats['categories'] %}
 				{% if stats['statistics'][category] | length > 1 %}
 					<td>
-						<table class="table table-striped">
+						<table class="table">
 						{% for section, details in stats['statistics'][category] %}
 							{% if section != null %}
-								<tr onclick="javascript:window.location='{{ path('translate', {'pack_id': entity.id, 'language_code': language_code, 'category': category, 'section': section}) }}'">
-									{% if section %}<td class="goto">{{ section }}</td>{% endif %}
-									<td class="goto" style="background-color:{{ color_shade("#800","#080",details['percent']/100, 0.7) }}; border: 1px solid {{ last_color_shade() }};">{{ '%.1f' | format(details['percent']) }}%<BR/>(s: {{details['translated_strings']}}/{{details['total_strings']}}, w: {{details['translated_words']}}/{{details['total_words']}})</td>
+								<tr>
+									
+									{% if section %}
+										{% if category in ignored_sections | keys  and section in ignored_sections[category] | keys %}
+												<td class="goto ignored" onclick="javascript:$(this).find('form').submit()">
+													{{ section }}
+													<form method="post" action={{ url('pack_unignore_section', {pack_id: entity.id, language_code: language.code, category: category, section: section}) }}>
+												</td>
+										{% else %}
+											<td class="goto not-ignored" onclick="javascript:$(this).find('form').submit()">
+												{{ section }}
+												<form method="post" action={{ url('pack_ignore_section', {pack_id: entity.id, language_code: language.code, category: category, section: section}) }}>
+												</form>
+											</td>
+										{% endif %}
+									{% endif %}
+
+									<td onclick="javascript:window.location='{{ path('translate', {'pack_id': entity.id, 'language_code': language_code, 'category': category, 'section': section}) }}'" class="goto" style="background-color:{{ color_shade("#800","#080",details['percent']/100, 0.7) }}; border: 1px solid {{ last_color_shade() }};">{{ '%.1f' | format(details['percent']) }}%<BR/>(s: {{details['translated_strings']}}/{{details['total_strings']}}, w: {{details['translated_words']}}/{{details['total_words']}})</td>
 								</tr>
 							{% endif %}
 						{% endfor %}

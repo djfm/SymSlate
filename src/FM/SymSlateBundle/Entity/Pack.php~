@@ -14,6 +14,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Pack
 {
 	
+    /**
+     * @ORM\OneToMany(targetEntity="IgnoredSection", mappedBy="pack")
+     */
+     private $ignored_sections;
+
 	/**
 	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="message")
 	 */
@@ -40,6 +45,7 @@ class Pack
 		$this->messages_imports = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->storages         = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->pack_exports     = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->ignored_sections = new \Doctrine\Common\Collections\ArrayCollection();
 	 }
 	
 	public function getFullName()

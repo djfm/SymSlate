@@ -358,4 +358,27 @@ class Message
     {
         return $this->histories;
     }
+
+    /**
+     * Add histories
+     *
+     * @param \FM\SymSlateBundle\Entity\History $histories
+     * @return Message
+     */
+    public function addHistorie(\FM\SymSlateBundle\Entity\History $histories)
+    {
+        $this->histories[] = $histories;
+    
+        return $this;
+    }
+
+    /**
+     * Remove histories
+     *
+     * @param \FM\SymSlateBundle\Entity\History $histories
+     */
+    public function removeHistorie(\FM\SymSlateBundle\Entity\History $histories)
+    {
+        $this->histories->removeElement($histories);
+    }
 }

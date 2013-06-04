@@ -215,4 +215,27 @@ class CurrentTranslation
     {
         return $this->language;
     }
+
+    /**
+     * Set fuzzyness
+     *
+     * @param integer $fuzzyness
+     * @return CurrentTranslation
+     */
+    public function setFuzzyness($fuzzyness)
+    {
+        $this->fuzzyness = $fuzzyness;
+    
+        return $this;
+    }
+
+    /**
+     * Get fuzzyness
+     *
+     * @return integer 
+     */
+    public function getFuzzyness()
+    {
+        return $this->fuzzyness;
+    }
 }

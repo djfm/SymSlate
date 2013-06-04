@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\Pack;
+use FM\SymSlateBundle\Entity\IgnoredSection;
 use FM\SymSlateBundle\Form\PackType;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 
@@ -96,7 +97,63 @@ class PackController extends Controller
 
         $stats = $em->getRepository('FMSymSlateBundle:Pack')->computeDetailedStatistics($entity->getId(), $language->getId());
 
-        return array('stats' => $stats, 'entity' => $entity, 'language_code' => $language_code, 'language' => $language);
+        $ignored_sections = $em->getRepository('FMSymSlateBundle:IgnoredSection')->get($id, $language->getId());
+
+        //die("<pre>" . print_r($ignored_sections, 1) . "</pre>");
+
+        return array('stats' => $stats, 'entity' => $entity, 'language_code' => $language_code, 'language' => $language, 'ignored_sections' => $ignored_sections);
+    }
+
+    /**
+     * Finds and displays stats for pack and language.
+     *
+     * @Route("/{pack_id}/{language_code}/{category}/{section}/ignore", name="pack_ignore_section")
+     * @Method("POST")
+     */
+    public function ignoreSection($pack_id, $language_code, $category, $section)
+    {
+        $em = $this->getDoctrine()->getManager();
+        
+        $language = $em->getRepository('FMSymSlateBundle:Language')->findOneByCode($language_code);
+        
+        $is = new IgnoredSection();
+
+        $is->setPack($em->getRepository('FMSymSlateBundle:Pack')->find($pack_id));
+        $is->setLanguageId($language->getId());
+        $is->setCategory($category);
+        $is->setSection($section);
+
+        $em->persist($is);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('packs_show_language_stats', array('id' => $pack_id, 'language_code' => $language_code)));
+    }
+
+    /**
+     * Finds and displays stats for pack and language.
+     *
+     * @Route("/{pack_id}/{language_code}/{category}/{section}/unignore", name="pack_unignore_section")
+     * @Method("POST")
+     */
+    public function unignoreSection($pack_id, $language_code, $category, $section)
+    {
+        $em = $this->getDoctrine()->getManager();
+        
+        $language = $em->getRepository('FMSymSlateBundle:Language')->findOneByCode($language_code);
+        
+        $is = $em->getRepository('FMSymSlateBundle:IgnoredSection')->findOneBy(array(
+                'pack_id' => $pack_id,
+                'language_id' => $language->getId(),
+                'category' => $category,
+                'section' => $section
+            )
+        );
+       
+        $em->remove($is);
+
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('packs_show_language_stats', array('id' => $pack_id, 'language_code' => $language_code)));
     }
 
       /**

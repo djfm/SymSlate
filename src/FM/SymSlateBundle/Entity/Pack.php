@@ -14,6 +14,11 @@ use Doctrine\ORM\Mapping as ORM;
 class Pack
 {
 	
+    /**
+     * @ORM\OneToMany(targetEntity="IgnoredSection", mappedBy="pack")
+     */
+     private $ignored_sections;
+
 	/**
 	 * @ORM\OneToMany(targetEntity="Classification", mappedBy="message")
 	 */
@@ -40,6 +45,7 @@ class Pack
 		$this->messages_imports = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->storages         = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->pack_exports     = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->ignored_sections = new \Doctrine\Common\Collections\ArrayCollection();
 	 }
 	
 	public function getFullName()
@@ -491,5 +497,38 @@ class Pack
     public function getPackType()
     {
         return $this->pack_type;
+    }
+
+    /**
+     * Add ignored_sections
+     *
+     * @param \FM\SymSlateBundle\Entity\IgnoredSection $ignoredSections
+     * @return Pack
+     */
+    public function addIgnoredSection(\FM\SymSlateBundle\Entity\IgnoredSection $ignoredSections)
+    {
+        $this->ignored_sections[] = $ignoredSections;
+    
+        return $this;
+    }
+
+    /**
+     * Remove ignored_sections
+     *
+     * @param \FM\SymSlateBundle\Entity\IgnoredSection $ignoredSections
+     */
+    public function removeIgnoredSection(\FM\SymSlateBundle\Entity\IgnoredSection $ignoredSections)
+    {
+        $this->ignored_sections->removeElement($ignoredSections);
+    }
+
+    /**
+     * Get ignored_sections
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getIgnoredSections()
+    {
+        return $this->ignored_sections;
     }
 }

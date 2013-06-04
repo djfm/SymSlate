@@ -30,17 +30,6 @@ class CurrentTranslation
      * @ORM\JoinColumn(name="language_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $language;
-
-    /**
-     * @ORM\OneToMany(targetEntity="History", mappedBy="current_translation")
-     */
-     private $histories;
-     
-     public function __construct()
-     {
-        $this->histories = new \Doctrine\Common\Collections\ArrayCollection();
-     }
-	
 	
     /**
      * @var integer
@@ -71,6 +60,13 @@ class CurrentTranslation
      * @ORM\Column(name="message_id", type="integer")
      */
     private $message_id;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="fuzzyness", type="integer", nullable=false)
+     */
+    private $fuzzyness = 0;
 
     /**
      * Get id

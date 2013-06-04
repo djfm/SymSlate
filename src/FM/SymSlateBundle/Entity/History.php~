@@ -9,7 +9,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  * History
  *
  * @ORM\Table()
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="FM\SymSlateBundle\Entity\HistoryRepository")
  * @ORM\HasLifecycleCallbacks
  */
 class History
@@ -30,15 +30,6 @@ class History
     */
     private $message;
 
-    /**
-    * @ORM\ManyToOne(targetEntity="CurrentTranslation")
-    * @ORM\JoinColumns({
-    * 	@ORM\JoinColumn(name="message_id", referencedColumnName="message_id"),
-    * 	@ORM\JoinColumn(name="language_id", referencedColumnName="language_id")
-    * })
-    */
-    private $current_translation;
-
 	/**
 	* @var integer
 	*
@@ -47,7 +38,7 @@ class History
     private $message_id;
 
     /**
-    * @ORM\OneToOne(targetEntity="Language")
+    * @ORM\ManyToOne(targetEntity="Language")
     * @ORM\JoinColumn(name="language_id", referencedColumnName="id", onDelete="CASCADE")
     */
     private $language;
@@ -60,7 +51,7 @@ class History
     private $language_id;
 
     /**
-    * @ORM\OneToOne(targetEntity="Translation")
+    * @ORM\ManyToOne(targetEntity="Translation")
     * @ORM\JoinColumn(name="translation_id", referencedColumnName="id", onDelete="CASCADE")
     */
     private $translation;
@@ -73,7 +64,7 @@ class History
     private $translation_id;
 
     /**
-    * @ORM\OneToOne(targetEntity="User")
+    * @ORM\ManyToOne(targetEntity="User")
     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", onDelete="CASCADE")
     */
     private $user;
@@ -100,4 +91,244 @@ class History
     private $created;
 
 
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set message_id
+     *
+     * @param integer $messageId
+     * @return History
+     */
+    public function setMessageId($messageId)
+    {
+        $this->message_id = $messageId;
+    
+        return $this;
+    }
+
+    /**
+     * Get message_id
+     *
+     * @return integer 
+     */
+    public function getMessageId()
+    {
+        return $this->message_id;
+    }
+
+    /**
+     * Set language_id
+     *
+     * @param integer $languageId
+     * @return History
+     */
+    public function setLanguageId($languageId)
+    {
+        $this->language_id = $languageId;
+    
+        return $this;
+    }
+
+    /**
+     * Get language_id
+     *
+     * @return integer 
+     */
+    public function getLanguageId()
+    {
+        return $this->language_id;
+    }
+
+    /**
+     * Set translation_id
+     *
+     * @param integer $translationId
+     * @return History
+     */
+    public function setTranslationId($translationId)
+    {
+        $this->translation_id = $translationId;
+    
+        return $this;
+    }
+
+    /**
+     * Get translation_id
+     *
+     * @return integer 
+     */
+    public function getTranslationId()
+    {
+        return $this->translation_id;
+    }
+
+    /**
+     * Set user_id
+     *
+     * @param integer $userId
+     * @return History
+     */
+    public function setUserId($userId)
+    {
+        $this->user_id = $userId;
+    
+        return $this;
+    }
+
+    /**
+     * Get user_id
+     *
+     * @return integer 
+     */
+    public function getUserId()
+    {
+        return $this->user_id;
+    }
+
+    /**
+     * Set operation
+     *
+     * @param string $operation
+     * @return History
+     */
+    public function setOperation($operation)
+    {
+        $this->operation = $operation;
+    
+        return $this;
+    }
+
+    /**
+     * Get operation
+     *
+     * @return string 
+     */
+    public function getOperation()
+    {
+        return $this->operation;
+    }
+
+    /**
+     * Set created
+     *
+     * @param \DateTime $created
+     * @return History
+     */
+    public function setCreated($created)
+    {
+        $this->created = $created;
+    
+        return $this;
+    }
+
+    /**
+     * Get created
+     *
+     * @return \DateTime 
+     */
+    public function getCreated()
+    {
+        return $this->created;
+    }
+
+    /**
+     * Set message
+     *
+     * @param \FM\SymSlateBundle\Entity\Message $message
+     * @return History
+     */
+    public function setMessage(\FM\SymSlateBundle\Entity\Message $message = null)
+    {
+        $this->message = $message;
+    
+        return $this;
+    }
+
+    /**
+     * Get message
+     *
+     * @return \FM\SymSlateBundle\Entity\Message 
+     */
+    public function getMessage()
+    {
+        return $this->message;
+    }
+
+    /**
+     * Set language
+     *
+     * @param \FM\SymSlateBundle\Entity\Language $language
+     * @return History
+     */
+    public function setLanguage(\FM\SymSlateBundle\Entity\Language $language = null)
+    {
+        $this->language = $language;
+    
+        return $this;
+    }
+
+    /**
+     * Get language
+     *
+     * @return \FM\SymSlateBundle\Entity\Language 
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+
+    /**
+     * Set translation
+     *
+     * @param \FM\SymSlateBundle\Entity\Translation $translation
+     * @return History
+     */
+    public function setTranslation(\FM\SymSlateBundle\Entity\Translation $translation = null)
+    {
+        $this->translation = $translation;
+    
+        return $this;
+    }
+
+    /**
+     * Get translation
+     *
+     * @return \FM\SymSlateBundle\Entity\Translation 
+     */
+    public function getTranslation()
+    {
+        return $this->translation;
+    }
+
+    /**
+     * Set user
+     *
+     * @param \FM\SymSlateBundle\Entity\User $user
+     * @return History
+     */
+    public function setUser(\FM\SymSlateBundle\Entity\User $user = null)
+    {
+        $this->user = $user;
+    
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \FM\SymSlateBundle\Entity\User 
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
 }

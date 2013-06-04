@@ -19,17 +19,7 @@ class User extends BaseUser
 	private $authored_translations;
 	
     private $translations_count = 0;
-
-	/**
-	 * @ORM\OneToMany(targetEntity="Translation", mappedBy="reviewer", fetch="EXTRA_LAZY")
-	 */
-	private $reviewed_translations;
-	
-	/**
-	 * @ORM\OneToMany(targetEntity="TranslationSubmission", mappedBy="user", fetch="EXTRA_LAZY")
-	 */
-	private $translation_submissions;
-	
+		
 	/**
 	 * @ORM\OneToMany(targetEntity="TranslationsImport", mappedBy="creator")
 	 */
@@ -49,9 +39,7 @@ class User extends BaseUser
 	{
 		$this->translations = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->authored_translations = new \Doctrine\Common\Collections\ArrayCollection();
-		$this->reviewed_translations = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->translations_imports = new \Doctrine\Common\Collections\ArrayCollection();
-		$this->translation_submissions = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->pack_exports = new \Doctrine\Common\Collections\ArrayCollection();
         $this->user_languages = new \Doctrine\Common\Collections\ArrayCollection();
 		
@@ -92,11 +80,7 @@ class User extends BaseUser
         $this->translations_count = $count;
     }
 
-    public function reviewedTranslationsCount()
-    {
-        return $this->reviewed_translations->count();
-    }
-	
+    	
     /**
      * @var integer
      *
@@ -151,39 +135,6 @@ class User extends BaseUser
     }
 
     /**
-     * Add reviewed_translations
-     *
-     * @param \FM\SymSlateBundle\Entity\Translation $reviewedTranslations
-     * @return User
-     */
-    public function addReviewedTranslation(\FM\SymSlateBundle\Entity\Translation $reviewedTranslations)
-    {
-        $this->reviewed_translations[] = $reviewedTranslations;
-    
-        return $this;
-    }
-
-    /**
-     * Remove reviewed_translations
-     *
-     * @param \FM\SymSlateBundle\Entity\Translation $reviewedTranslations
-     */
-    public function removeReviewedTranslation(\FM\SymSlateBundle\Entity\Translation $reviewedTranslations)
-    {
-        $this->reviewed_translations->removeElement($reviewedTranslations);
-    }
-
-    /**
-     * Get reviewed_translations
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getReviewedTranslations()
-    {
-        return $this->reviewed_translations;
-    }
-
-    /**
      * Add translations_imports
      *
      * @param \FM\SymSlateBundle\Entity\TranslationsImport $translationsImports
@@ -214,39 +165,6 @@ class User extends BaseUser
     public function getTranslationsImports()
     {
         return $this->translations_imports;
-    }
-
-    /**
-     * Add translation_submissions
-     *
-     * @param \FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmissions
-     * @return User
-     */
-    public function addTranslationSubmission(\FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmissions)
-    {
-        $this->translation_submissions[] = $translationSubmissions;
-    
-        return $this;
-    }
-
-    /**
-     * Remove translation_submissions
-     *
-     * @param \FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmissions
-     */
-    public function removeTranslationSubmission(\FM\SymSlateBundle\Entity\TranslationSubmission $translationSubmissions)
-    {
-        $this->translation_submissions->removeElement($translationSubmissions);
-    }
-
-    /**
-     * Get translation_submissions
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getTranslationSubmissions()
-    {
-        return $this->translation_submissions;
     }
 
     /**

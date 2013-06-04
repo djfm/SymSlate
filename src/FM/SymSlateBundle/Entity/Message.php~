@@ -325,4 +325,37 @@ class Message
     {
         return $this->current_translations;
     }
+
+    /**
+     * Add histories
+     *
+     * @param \FM\SymSlateBundle\Entity\History $histories
+     * @return Message
+     */
+    public function addHistory(\FM\SymSlateBundle\Entity\History $histories)
+    {
+        $this->histories[] = $histories;
+    
+        return $this;
+    }
+
+    /**
+     * Remove histories
+     *
+     * @param \FM\SymSlateBundle\Entity\History $histories
+     */
+    public function removeHistory(\FM\SymSlateBundle\Entity\History $histories)
+    {
+        $this->histories->removeElement($histories);
+    }
+
+    /**
+     * Get histories
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getHistories()
+    {
+        return $this->histories;
+    }
 }
