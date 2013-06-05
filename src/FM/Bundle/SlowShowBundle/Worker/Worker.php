@@ -19,6 +19,7 @@ class Worker
 
 	public function setStatus($status)
 	{
+		if(!$this->job_id)return;
 		$task = $this->em->getRepository('FMSlowShowBundle:Task')->find($this->job_id);
 		$task->setStatus($status);
 		$this->em->persist($task);
@@ -32,6 +33,7 @@ class Worker
 
 	public function step()
 	{
+		if(!$this->job_id)return;
 		$this->steps_performed += 1;
 
 		if($this->expected_steps !== false)

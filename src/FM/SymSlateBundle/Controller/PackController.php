@@ -95,7 +95,9 @@ class PackController extends Controller
         $entity   = $em->getRepository('FMSymSlateBundle:Pack')->find($id);
         $language = $em->getRepository('FMSymSlateBundle:Language')->findOneByCode($language_code);
 
-        $stats = $em->getRepository('FMSymSlateBundle:Pack')->computeDetailedStatistics($entity->getId(), $language->getId());
+
+        $show_all = $this->get('security.context')->isGranted('ROLE_SUPER_ADMIN');
+        $stats = $em->getRepository('FMSymSlateBundle:Pack')->computeDetailedStatistics($entity->getId(), $language->getId(), $show_all);
 
         $ignored_sections = $em->getRepository('FMSymSlateBundle:IgnoredSection')->get($id, $language->getId());
 
@@ -109,6 +111,7 @@ class PackController extends Controller
      *
      * @Route("/{pack_id}/{language_code}/{category}/{section}/ignore", name="pack_ignore_section")
      * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function ignoreSection($pack_id, $language_code, $category, $section)
     {
@@ -134,6 +137,7 @@ class PackController extends Controller
      *
      * @Route("/{pack_id}/{language_code}/{category}/{section}/unignore", name="pack_unignore_section")
      * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
      */
     public function unignoreSection($pack_id, $language_code, $category, $section)
     {

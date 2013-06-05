@@ -22,6 +22,11 @@ class TranslationValidator
 	public function validate($message, $translation, $language, $category)
 	{
 
+		if(strlen(trim($translation)) == 0)
+		{
+			return array('success' => false, 'error_message' => "Empty translation!");
+		}
+
 		$forbidden = array("ce.shell.la", "transla.shop.tm", "mon.shell.la");
 		foreach($forbidden as $fbdn)
 		{

@@ -37,8 +37,44 @@ class TranslationSubmitter
      */
 	public function submit($args)
 	{
+		$translation_text    = isset($args['translation_text']) ? $args['translation_text'] : false;
+
+		$translation = false;
+		if(isset($args['translation_id']))
+		{
+			$translation = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneById($args['translation_id']);
+			$translation_text = $translation->getText();
+		}
+
+		if(isset($args['user']))
+		{
+			$user = $args['user'];
+		}
+		else if(is_object($translation))
+		{
+			$user = $translation->getAuthor();
+		}
+		else
+		{
+			return array('success' => false, 'error_message' => "You must specify a user.");
+		}
+
+		$language    = false;
+		if(isset($args['language']))
+		{
+			$language = $args['language'];
+		}
+		else if(isset($args['language_id']))
+		{
+			$language = $this->em->getRepository('FMSymSlateBundle:Language')->findOneById($args['language_id']);
+		}
+		else
+		{
+			return array('success' => false, 'error_message' => "You must specify a language.");
+		}
+
 		/* First, check that the User is allowed to submit the translation */
-		if(!$args['user']->canTranslateInto($args['language']))
+		if(!$user->canTranslateInto($language))
 		{
 			return array('success' => false, 'error_message' => "You are not allowed to translate into this language.");
 		}
@@ -66,9 +102,6 @@ class TranslationSubmitter
 			}
 		}
 
-		$translation_text    = $args['translation_text'];
-		$language            = $args['language'];
-		$user                = $args['user'];
 		$overwrite_current   = isset($args['overwrite_current']) and $args['overwrite_current'];
 		$translations_import = isset($args['translations_import']) ? $args['translations_import'] : null;
 
@@ -79,11 +112,11 @@ class TranslationSubmitter
 		if(!$validation['success'])return $validation;
 
 		/* See if we need to create a translation or if it already exists */
-		if($translation = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneBy(array(
+		if(is_object($translation) or ($translation = $this->em->getRepository('FMSymSlateBundle:Translation')->findOneBy(array(
 			'mkey' => $mkey,
 			'language_id' => $language->getId(),
 			'text' => $translation_text
-		)))
+		))))
 		{
 			/* The translation is already there, submitting it is equivalent to reviewing it */
 			$operation = "review";
@@ -125,6 +158,11 @@ class TranslationSubmitter
 				$ct->setLanguage($language);
 				$ct->setTranslation($translation);
 				$history_changed = true;
+			}
+
+			if(isset($args['operation']))
+			{
+				$operation = $args['operation'];
 			}
 
 			/* Finally, create the history entry! */

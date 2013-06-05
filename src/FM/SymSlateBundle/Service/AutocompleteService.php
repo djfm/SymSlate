@@ -19,6 +19,51 @@ class AutocompleteService extends \FM\SymSlateBundle\Worker\Worker
 
 		$language_ids = isset($args['language_ids']) ? $args['language_ids'] : null;
 
+		if( null === $language_ids or count($language_ids) == 0)$language_ids = array_map(function($language){
+			return $language->getId();
+		},
+		$this->em->getRepository('FMSymSlateBundle:Language')->findAll());
+		else $language_ids = array_map('intval', $language_ids);
+
+		foreach($language_ids as $language_id)
+		{
+			$q = $this->em->createQuery("SELECT m.mkey, max(t.id) as id 
+										 FROM FMSymSlateBundle:Message m
+										 LEFT  JOIN m.current_translations ct WITH ct.language_id=:language_id,
+										 FMSymSlateBundle:Message mt INNER JOIN mt.current_translations ctt
+										 INNER JOIN ctt.translation t
+										 WHERE mt.text = m.text
+										 AND ctt.language_id = :language_id
+										 AND ct.id IS NULL
+										 GROUP BY m.mkey");
+
+			$q->setParameter('language_id', $language_id);
+			$untranslated_messages = $q->getResult();
+
+			$new_translations = array();
+			foreach($untranslated_messages as $row)
+			{
+				$new_translations[$row['mkey']] = $row['id'];	
+			}
+
+			$this->setExpectedSteps(count($new_translations));
+			$this->em->clear();
+			
+			foreach($new_translations as $mkey => $translation_id)
+			{
+				$this->step();
+				$res = $this->submitter->submit(array('language_id' => $language_id, 'mkey' => $mkey, 'translation_id' => $translation_id, 'operation' => 'autocomplete'));
+				$this->em->clear();
+			}
+		}
+	}
+
+	public function old_run($args)
+	{
+		$this->setStatus("Started!");
+
+		$language_ids = isset($args['language_ids']) ? $args['language_ids'] : null;
+
 
 
 		if( null === $language_ids or count($language_ids) == 0)$language_ids = array_map(function($language){

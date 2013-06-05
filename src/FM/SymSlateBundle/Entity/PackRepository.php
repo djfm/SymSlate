@@ -64,6 +64,8 @@ class PackRepository extends EntityRepository
 		}
 		
 		$qb->from('FMSymSlateBundle:Classification','c')
+		   ->innerJoin('c.pack', 'p')
+		   ->leftJoin('p.ignored_sections', 'igs', 'WITH', 'igs.language_id=:language_id AND igs.section=c.section AND igs.category=c.category')
 		   ->innerJoin('c.message', 'm')
 		   ->leftJoin ('m.current_translations','ct','WITH','ct.language_id = :language_id')
 		   ->leftJoin ('ct.translation','t');
@@ -80,6 +82,7 @@ class PackRepository extends EntityRepository
 		}
 
 		$qb->where('c.pack_id = :pack_id');
+		$qb->andWhere('igs.id IS NULL');
 			
 		if($query_options["empty"] == "ONLY")
 		{
@@ -445,15 +448,27 @@ class PackRepository extends EntityRepository
 		return array("categories" => $cats, "statistics" => $stats);
 	}
 
-	public function computeDetailedStatistics($pack_id, $language_id)
+	public function computeDetailedStatistics($pack_id, $language_id, $show_all=true)
 	{	
+
+		$join_for_ignore  = "";
+		$where_for_ignore = "";
+
+		if(!$show_all)
+		{
+			$join_for_ignore  = "INNER JOIN c.pack p LEFT JOIN p.ignored_sections igs WITH igs.language_id=:language_id AND igs.category=c.category AND igs.section=c.section";
+			$where_for_ignore = "AND igs.id IS NULL";
+		}
+
 		$query = $this->getEntityManager()->createQuery(
 		"SELECT c.category, c.section, m.text as message, t.text as translation
 		 FROM FMSymSlateBundle:Classification c
 		 LEFT JOIN c.message m
 		 LEFT JOIN m.current_translations ct WITH ct.language_id = :language_id
 		 LEFT JOIN ct.translation t
+		 $join_for_ignore
 		 WHERE c.pack_id = :pack_id
+		 $where_for_ignore
 		"		
 		);
 		$query->setParameter(':language_id',$language_id);

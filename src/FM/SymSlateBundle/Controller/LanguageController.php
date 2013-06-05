@@ -71,7 +71,8 @@ class LanguageController extends Controller
     public function autocompleteAction($id)
     {
 	    $manager = $this->get('queue_manager');
-	    $manager->enqueueJob('FM\SymSlateBundle\Service\AutocompleteService', array('language_ids' => array($id)));
+	    //$manager->runNow('FM\SymSlateBundle\Service\AutocompleteService', array('language_ids' => array($id)));
+        $manager->enqueueJob('FM\SymSlateBundle\Service\AutocompleteService', array('language_ids' => array($id)));
 	    return $this->redirect($this->generateUrl("languages"));
     }
     /**

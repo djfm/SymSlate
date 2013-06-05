@@ -47,12 +47,13 @@
 	</table>
 
 	<BR/>
-
+{% if is_granted('ROLE_SUPER_ADMIN') %}
 <p>
 	Clicking on a Cell Name in the table below with deactivate/activate counting the corresponding section in the global statistics.<BR/>
 	This is usefull to exclude some modules from the global statistics if they are of no use in your country!<BR/>
 	Clicking on the part of the cell where the statistics are displayed will bring you to the translations of this section.
 </p>
+{% endif %}
 
 	<table class="table">
 		<tr>
@@ -72,16 +73,22 @@
 								<tr>
 									
 									{% if section %}
-										{% if category in ignored_sections | keys  and section in ignored_sections[category] | keys %}
+										{% if is_granted('ROLE_SUPER_ADMIN') %}
+											{% if category in ignored_sections | keys  and section in ignored_sections[category] | keys %}
 												<td class="goto ignored" onclick="javascript:$(this).find('form').submit()">
 													{{ section }}
 													<form method="post" action={{ url('pack_unignore_section', {pack_id: entity.id, language_code: language.code, category: category, section: section}) }}>
 												</td>
+											{% else %}
+												<td class="goto not-ignored" onclick="javascript:$(this).find('form').submit()">
+													{{ section }}
+													<form method="post" action={{ url('pack_ignore_section', {pack_id: entity.id, language_code: language.code, category: category, section: section}) }}>
+													</form>
+												</td>
+											{% endif %}
 										{% else %}
-											<td class="goto not-ignored" onclick="javascript:$(this).find('form').submit()">
+											<td>
 												{{ section }}
-												<form method="post" action={{ url('pack_ignore_section', {pack_id: entity.id, language_code: language.code, category: category, section: section}) }}>
-												</form>
 											</td>
 										{% endif %}
 									{% endif %}

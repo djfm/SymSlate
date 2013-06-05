@@ -16,6 +16,12 @@ class Manager
 		$this->max_concurrent_jobs = $max_concurrent_jobs;
 	}
 	
+	public function runNow($job, $arguments)
+	{
+		$instance = $this->initWorker($job, null);
+		return $instance->run($arguments);
+	}
+
 	public function enqueueJob($job,$arguments=array(), $later=true)
 	{
 		$task = new \FM\Bundle\SlowShowBundle\Entity\Task();
