@@ -216,6 +216,17 @@
 
 	<h2>Detailed statistics</h2>
 
+	<table>
+		<tr>
+			<th>Average translation completion</th><td>&nbsp;{{'%.1f' | format(average)}}%</td>
+		</tr>
+		<tr>
+			<th>Median  translation completion</th><td>&nbsp;{{'%.1f' | format(median) }}%</td>
+		</tr>
+	</table>
+
+	<BR/>
+
 	<form action=""><input type="hidden" name="refresh_stats" value="true"/>
 		<p>
 			The statistics were last updated on {{ entity.getStatisticsUpdated() | date('d/m/Y') }} at {{ entity.getStatisticsUpdated() | date('H:i:s') }}

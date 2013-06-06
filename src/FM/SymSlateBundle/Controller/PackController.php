@@ -59,6 +59,22 @@ class PackController extends Controller
 	
         $stats = $em->getRepository('FMSymSlateBundle:Pack')->computeAllStatistics($entity->getId(), $this->getRequest()->query->get('refresh_stats','false') == 'true', $cheat);
 
+        /**
+        * Average and Median
+        */
+        $percents = array();
+        foreach($stats['statistics'] as $language => $data)
+        {
+            $percents[] = (float)$data['statistics'][null]['percent'];
+        }
+        sort($percents);
+
+        $n       = count($percents);
+        $average = array_sum($percents)/$n;
+        $median  = ($n % 2 == 1) ? ($percents[($n+1)/2] + $percents[($n-1)/2])/2 : $percents[$n/2];
+
+        /***/
+
         $sections_qb = $em->createQueryBuilder();
         $sections_qb->select('DISTINCT c.section')
                      ->from ('FMSymSlateBundle:Classification','c')
@@ -72,6 +88,8 @@ class PackController extends Controller
         $sections   = array_map('current',$sections_q->getResult());
 
         return array(
+            'average' => $average,
+            'median'    => $median,
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
             'stats' => $stats,
