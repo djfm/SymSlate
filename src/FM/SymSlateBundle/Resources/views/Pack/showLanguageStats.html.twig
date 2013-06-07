@@ -77,7 +77,7 @@
 											{% if category in ignored_sections | keys  and section in ignored_sections[category] | keys %}
 												<td class="goto ignored" onclick="javascript:$(this).find('form').submit()">
 													{{ section }}
-													<form method="post" action={{ url('pack_unignore_section', {pack_id: entity.id, language_code: language.code, category: category, section: section}) }}>
+													<form method="post" action={{ url('pack_unignore_section', {pack_id: entity.id, language_code: language.code, category: category, section: section}) }}></form>
 												</td>
 											{% else %}
 												<td class="goto not-ignored" onclick="javascript:$(this).find('form').submit()">
