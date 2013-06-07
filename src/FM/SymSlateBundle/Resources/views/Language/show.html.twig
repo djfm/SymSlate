@@ -36,12 +36,25 @@
             Edit
         </a>
     </li>
-    <li>
-        <form action="{{ path('languages_delete', { 'id': entity.id }) }}" method="post">
-            {{ form_widget(delete_form) }}
-            <button type="submit">Delete</button>
-        </form>
-    </li>
 </ul>
+
+<BR/>
+
+<h1>Active contributors</h1>
+
+<table class="table table-striped">
+    <tr>
+        <th>Email</th><th>User</th><th># Translations</th><th>Latest login</th>
+    </tr>
+    </tr>
+    {%for translator in translators%}
+        <tr>
+            <td>{{translator.email}}</td>
+             <td>{{translator.username}}</td>
+            <td>{{translator.getTranslationsCount}}</td>
+            <td>{{translator.lastLogin|date('d/m/Y H:i:s')}}</td>
+        </tr>
+    {%endfor%}
+</table>
 
 {% endblock %}

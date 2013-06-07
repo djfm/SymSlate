@@ -53,10 +53,13 @@ class LanguageController extends Controller
             throw $this->createNotFoundException('Unable to find Language entity.');
         }
 
+        $users = $em->getRepository('FMSymSlateBundle:User')->findAll(null, $id);
+
         $deleteForm = $this->createDeleteForm($id);
 
         return array(
             'entity'      => $entity,
+            'translators' => $users,
             'delete_form' => $deleteForm->createView(),
         );
     }
