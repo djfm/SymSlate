@@ -239,7 +239,7 @@ class PackExportController extends Controller
                 $export = new PackExport();
 
                 $export->setCreator($this->get('security.context')->getToken()->getUser());
-                $export->setLanguageId($language->getId());
+                $export->setLanguage($language);
                 $export->setPack($pack);
 
                 $em = $this->getDoctrine()->getManager();
