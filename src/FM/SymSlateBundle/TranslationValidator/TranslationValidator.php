@@ -42,7 +42,7 @@ class TranslationValidator
 		}
 		if(preg_match('/\[iso\]/', $translation))
 		{
-			return array('success' => false, 'error_message' => 'This looks like an error because of the "[iso]"" string, please contact sysadmin!');
+			return array('success' => false, 'error_message' => 'This looks like an error because of the "[iso]" part in the string, please contact sysadmin!');
 		}
 
 		if($category == 'Tabs' && mb_strlen($translation, 'utf-8') > 32)
@@ -76,10 +76,7 @@ class TranslationValidator
 
 			if($language->getCode() == 'en')
 			{
-				if($message == $translation)
-				{
-					return array('success' => true, 'warning_message' => 'Reviewed string is identical to source!');
-				}
+				
 			}
 			else if($this->normalize($message) == $this->normalize($translation))
 			{
