@@ -4,6 +4,8 @@ namespace FM\SymSlateBundle\Entity;
 
 use Gedmo\Mapping\Annotation as Gedmo;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use FM\SymSlateBundle\Validator\Constraints as FMAssert;
 
 /**
  * Pack
@@ -73,6 +75,7 @@ class Pack
      * @var string
      *
      * @ORM\Column(name="project", type="string", length=255)
+     * @FMAssert\IsValidPathComponentName
      */
     private $project;
 
@@ -81,12 +84,13 @@ class Pack
      *
      * @ORM\Column(name="pack_type", type="string", length=255)
      */
-    private $pack_type;
+    private $pack_type = "standard";
 
     /**
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
+     * @FMAssert\IsValidPathComponentName
      */
     private $name;
 
@@ -94,6 +98,7 @@ class Pack
      * @var string
      *
      * @ORM\Column(name="version", type="string", length=255)
+     * @FMAssert\IsValidPathComponentName
      */
     private $version;
 

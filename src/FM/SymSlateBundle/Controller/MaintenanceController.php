@@ -11,13 +11,28 @@ use FM\SymSlateBundle\Entity\TranslationsImport;
 use FM\SymSlateBundle\Form\TranslationsImportType;
 use JMS\SecurityExtraBundle\Annotation\Secure;
 
+
+
+
+
 /**
- * VariousOperations controller.
+ * MaintenanceController controller.
  *
- * @Route("/work")
+ * @Route("/maintenance")
  */
-class VariousOperationsController extends Controller
+class MaintenanceController extends Controller
 {	
+    /**
+    * @Route("/")
+    * @Method("GET")
+    * @Template()
+    * @Secure(roles="ROLE_SUPER_ADMIN")
+    */
+    public function indexAction()
+    {
+        
+    }
+
     /**
      * 
      *
@@ -50,5 +65,7 @@ NOW;
 
     	return array('replaced' => $replaced);
     }
+
+
 
 }

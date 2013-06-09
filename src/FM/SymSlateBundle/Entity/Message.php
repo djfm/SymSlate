@@ -9,7 +9,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * Message
  * 
  * @ORM\Entity(repositoryClass="FM\SymSlateBundle\Entity\MessageRepository")
- * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="mkey_idx", columns={"mkey"})})
+ * @ORM\Table(uniqueConstraints={@ORM\UniqueConstraint(name="mkey_idx", columns={"mkey"})}, indexes={@ORM\Index(name="message_text_idx", columns={"text"})})
  * 
  */
 class Message

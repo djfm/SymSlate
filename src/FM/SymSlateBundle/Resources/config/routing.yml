@@ -42,16 +42,8 @@ users:
     resource: "@FMSymSlateBundle/Controller/UserController.php"
     type: annotation
 
-massimport:
-    resource: "@FMSymSlateBundle/Controller/MassImportController.php"
-    type: annotation
-
-api:
-    resource: "@FMSymSlateBundle/Controller/APIController.php"
-    type: annotation
-
-various:
-    resource: "@FMSymSlateBundle/Controller/VariousOperationsController.php"
+maintenance:
+    resource: "@FMSymSlateBundle/Controller/MaintenanceController.php"
     type: annotation
 
 userlanguages:
