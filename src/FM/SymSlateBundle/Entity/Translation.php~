@@ -61,13 +61,6 @@ class Translation
     private $translations_import_id;
 
     /**
-     * @var boolean
-     *
-     * @ORM\Column(name="mass_imported", type="boolean", nullable=false)
-     */
-    private $mass_imported = false;
-
-    /**
      * @var integer
      *
      * @ORM\Column(name="created_by", type="integer", nullable=true)

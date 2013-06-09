@@ -56,6 +56,15 @@
 	</script>
 {% endblock %}
 
+{% block stylesheets %}
+	<style type="text/css">
+		span.pack_actions
+		{
+			float:right;
+		}
+	</style>
+{% endblock %}
+
 {%  block body %}
 	<h1>Pack &amp; translations management interface</h1>
 
@@ -174,7 +183,16 @@
 		</tr>
 		{% for language, statistics in stats['statistics'] %}
 			<tr class="translation_stat">
-				<th><a href="{{ path('packs_show_language_stats', {'id': entity.id, 'language_code': statistics['code']}) }}">{{ language }}</a></th>
+				<th>
+					<a href="{{ path('packs_show_language_stats', {'id': entity.id, 'language_code': statistics['code']}) }}">{{ language }}</a>
+					<span class="pack_actions">
+						{% if exports[language] | default(false)  %}
+							<a href="{{asset(exports[language])}}"><img src="{{asset('bundles/fmsymslate/images/download.png')}}"></a>
+						{% else %}
+
+						{% endif %}
+					</span>
+				</th>
 				{%  for cat in stats['categories'] %}
 					<td
 						class="clickable translation_stat"

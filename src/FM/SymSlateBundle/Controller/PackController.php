@@ -87,16 +87,19 @@ class PackController extends Controller
 
         $sections   = array_map('current',$sections_q->getResult());
 
+        $exports = $em->getRepository('FMSymSlateBundle:PackExport')->getLatestPaths($id);
+
         return array(
             'average' => $average,
             'median'    => $median,
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
             'stats' => $stats,
-            'languages'  => $em->getRepository('FMSymSlateBundle:Language')->findAll(),
+            'languages'  => $em->getRepository('FMSymSlateBundle:Language')->findBy(array(), array('name' => 'asc')),
             'categories' => $stats['categories'],
             'sections' => $sections,
-            'category_sections' => json_encode($em->getRepository('FMSymSlateBundle:Pack')->getCategoriesAndSections($id))
+            'category_sections' => json_encode($em->getRepository('FMSymSlateBundle:Pack')->getCategoriesAndSections($id)),
+            'exports' => $exports
         );
     }
 

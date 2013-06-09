@@ -49,6 +49,11 @@ class PackExport
     private $pack_id;
 
     /**
+     * @ORM\ManyToOne(targetEntity="Language")
+     */
+    private $language;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="language_id", type="integer")
@@ -293,4 +298,27 @@ class PackExport
         return $this->pack;
     }
 	
+
+    /**
+     * Set language
+     *
+     * @param \FM\SymSlateBundle\Entity\Language $language
+     * @return PackExport
+     */
+    public function setLanguage(\FM\SymSlateBundle\Entity\Language $language = null)
+    {
+        $this->language = $language;
+    
+        return $this;
+    }
+
+    /**
+     * Get language
+     *
+     * @return \FM\SymSlateBundle\Entity\Language 
+     */
+    public function getLanguage()
+    {
+        return $this->language;
+    }
 }

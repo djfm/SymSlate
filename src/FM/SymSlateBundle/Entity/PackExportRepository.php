@@ -28,4 +28,25 @@ class PackExportRepository extends EntityRepository
 		if(count($result) == 1)return $result[0];
 		else return null;
 	}
+
+	public function getLatestPaths($pack_id)
+	{
+		$query = $this->getEntityManager()->createQuery("SELECT e FROM FMSymSlateBundle:PackExport e 
+								 						 WHERE e.id = (
+								 						 				SELECT MAX(f.id) FROM FMSymSlateBundle:PackExport f 
+								 						 				WHERE f.pack_id = :pack_id AND f.language_id = e.language_id AND f.filepath IS NOT NULL
+								 						 			   )
+														");
+		$query->setParameter('pack_id', $pack_id);
+		$result = array();
+		foreach($query->getResult() as $export)
+		{
+			if(file_exists($export->getAbsolutePath()))
+			{
+				$result[$export->getLanguage()->getName()] = $export->getWebPath();
+			}
+		}
+
+		return $result;
+	}
 }
