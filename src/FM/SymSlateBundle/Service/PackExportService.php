@@ -21,10 +21,7 @@ class PackExportService extends \FM\SymSlateBundle\Worker\Worker
 
 		$pack = $export->getPack();
 
-		$this->em->clear();
-
-		$files = array();
-		
+		$this->em->clear();		
 		
 		$file_contents = array();
 		$footers       = array();
@@ -134,24 +131,26 @@ NOW;
 		{
 			$file_contents[$path] .= $data;
 		}
-		
-		if(count($file_contents) > 0)
+
+		$export   = $this->em->getRepository('FMSymSlateBundle:PackExport')->find($pack_export_id);
+
+		//Create The Directory Tree (if needed)
+		$dirs     = array($export->getPack()->getProject(), $export->getPack()->getVersion());
+		$path     = $export->getUploadRootDir();
+		foreach($dirs as $dir)
 		{
-			$export   = $this->em->getRepository('FMSymSlateBundle:PackExport')->find($pack_export_id);
-			$export->setFilepath($export->getId() . "_" . $language->getAName() . "_" . $export->getPack()->getFullName() . ".gzip");
-			$archive = new \Archive_Tar($export->getAbsolutePath(), 'gz');
-			
-			foreach($file_contents as $path => $data)
+			$path .= '/'.$dir;
+			if(!is_dir($path))
 			{
-				$archive->addString($path, $data);
+				mkdir($path);
 			}
 		}
 
-		$export   = $this->em->getRepository('FMSymSlateBundle:PackExport')->find($pack_export_id);
-		$export->setFilepath($export->getId() . "_" . $language->getAName() . "_" . $export->getPack()->getFullName() . ".gzip");
+		$export->setFilepath(implode('/', $dirs) . '/' . $language->getCode() . ".gzip");
+		
 		$archive = new \Archive_Tar($export->getAbsolutePath(), 'gz');
 		
-		foreach($files as $path => $data)
+		foreach($file_contents as $path => $data)
 		{
 			$archive->addString($path, $data);
 		}

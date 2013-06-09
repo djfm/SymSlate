@@ -240,7 +240,7 @@ class PackExport
             : $this->getUploadDir().'/'.$this->filepath;
     }
 	
-	protected function getUploadRootDir()
+	public function getUploadRootDir()
     {
         // the absolute directory path where uploaded
         // documents should be saved
@@ -256,7 +256,7 @@ class PackExport
     {
         // get rid of the __DIR__ so it doesn't screw up
         // when displaying uploaded doc/image in the view.
-        return 'exports/';
+        return 'exports';
     }
 	
 	/**
