@@ -14,8 +14,8 @@ class PackExportService extends \FM\SymSlateBundle\Worker\Worker
 
 		$export   = $this->em->getRepository('FMSymSlateBundle:PackExport')->find($pack_export_id);
 		
-		$language = $this->em->getRepository('FMSymSlateBundle:Language')->find($export->getLanguageId());
-		$storages = $this->em->getRepository('FMSymSlateBundle:Pack')->getStoragesWithTranslations($export->getPack()->getId(),$export->getLanguageId());
+		$language = $export->getLanguage();
+		$storages = $this->em->getRepository('FMSymSlateBundle:Pack')->getStoragesWithTranslations($export->getPack()->getId(),$language->getId());
 
 		$this->setExpectedSteps(count($storages));
 
