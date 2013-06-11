@@ -213,6 +213,18 @@
 	</table>
 
 	{% if is_granted('ROLE_SUPER_ADMIN') %}
+
+		<h2>Copy ignored sections from another pack</h2>
+		<form method="post" action="{{url('pack_copy_ignore_list', {pack_id: entity.id})}}" class="form-inline">
+			<label for="replicate_from" class="input-label medium">Pack</label>
+			<select name="replicate_from" id="replicate_from">
+				{% for pack in packs %}
+					<option value="{{pack.id}}">{{pack.project}} ({{pack.version}})</option>
+				{% endfor %}
+			</select>
+			<button class="btn btn-primary">Go</button>
+		</form>
+
 		<h2>Remove some messages</h2>
 		<form method="post" action="{{ url('pack_delete_messages', {id: entity.id}) }}" class="form-inline">
 			<label for="delete_category" class="input-label medium">Category</label>

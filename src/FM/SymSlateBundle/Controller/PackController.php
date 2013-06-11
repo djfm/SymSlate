@@ -99,7 +99,8 @@ class PackController extends Controller
             'categories' => $stats['categories'],
             'sections' => $sections,
             'category_sections' => json_encode($em->getRepository('FMSymSlateBundle:Pack')->getCategoriesAndSections($id)),
-            'exports' => $exports
+            'exports' => $exports,
+            'packs'      => $em->getRepository("FMSymSlateBundle:Pack")->findAll()
         );
     }
 
@@ -151,6 +152,36 @@ class PackController extends Controller
         $em->flush();
 
         return $this->redirect($this->generateUrl('packs_show_language_stats', array('id' => $pack_id, 'language_code' => $language_code)));
+    }
+
+    /**
+     *
+     * @Route("/{pack_id}/copyignore", name="pack_copy_ignore_list")
+     * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
+     */
+    public function copyIgnoreList(Request $request, $pack_id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $pack = $em->getRepository('FMSymSlateBundle:Pack')->findOneById($pack_id);
+        
+        foreach($em->getRepository('FMSymSlateBundle:IgnoredSection')->findBy(array('pack_id' => $request->request->get('replicate_from'))) as $is)
+        {
+            if(!$em->getRepository('FMSymSlateBundle:IgnoredSection')->findBy(array(  'pack_id'     => $pack_id
+                                                                                    , 'language_id' => $is->getLanguageId()
+                                                                                    , 'category'    => $is->getCategory()
+                                                                                    , 'section'     => $is->getSection())))
+            {
+                $e = clone $is;
+                $e->setPack($pack);
+                $em->persist($e);
+            }
+        }
+
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('packs_show', array('id' => $pack_id)));
     }
 
     /**
