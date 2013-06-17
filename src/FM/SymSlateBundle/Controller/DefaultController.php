@@ -24,8 +24,44 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
+    	$args = array();
+
+    	if($this->get('security.context')->isGranted('ROLE_SUPER_ADMIN'))
+    	{
+    		$latest_submission_on = $this->getDoctrine()->getManager()->createQuery("SELECT MAX(h.created) FROM FMSymSlateBundle:History h")->getSingleScalarResult();
+    		$time  = time() - strtotime($latest_submission_on);
+
+    		$text  = '';
+
+    		$tokens = array(
+		        31536000 => 'year',
+		        2592000 => 'month',
+		        604800 => 'week',
+		        86400 => 'day',
+		        3600 => 'hour',
+		        60 => 'minute',
+		        1 => 'second'
+		    );
+
+    		$parts = array();
+
+		    foreach ($tokens as $n => $unit)
+		    {
+		        if ($time < $n) continue;
+		        $numberOfUnits = floor($time / $n);
+		        $time -= $numberOfUnits * $n;
+		        $parts[] = $numberOfUnits.' '.$unit.(($numberOfUnits>1)?'s':'');
+		    }
+
+		    $parts[count($parts) - 1] = 'and '.end($parts);
+		    $text = implode(', ', $parts);
+		    
+		    $args['latest_submission_date'] = $text;
+    	}
     	$users = $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:User')->findAll(15);
-        return array('topusers' => $users);
+    	$args['topusers'] = $users;
+
+        return $args;
     }
 	
 	/**

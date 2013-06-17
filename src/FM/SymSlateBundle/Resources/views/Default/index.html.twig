@@ -91,6 +91,12 @@
 {% block body %}
 	<h2 id="country">-</h2>
 
+	{% if is_granted('ROLE_SUPER_ADMIN') %}
+		<div style="padding:5px; font-weight:bold; color: #555">
+			Latest submission was {{ latest_submission_date }} ago.
+		</div>
+	{% endif %}
+
 	<div id="topcontribs">
 		<table class="table">
 			<tr><th>Contributor</th><th>Strings translated</th></tr>
