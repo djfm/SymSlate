@@ -185,6 +185,11 @@
 			<tr class="translation_stat">
 				<th>
 					<a href="{{ path('packs_show_language_stats', {'id': entity.id, 'language_code': statistics['code']}) }}">{{ language }}</a>
+					
+					{% if is_granted('ROLE_SUPER_ADMIN') %}
+						<form class="pull-right" method="POST" action="{{url('export_pack_now', {'pack_id': entity.id, 'language_code': statistics['code']})}}">&nbsp;&nbsp;<button class="btn btn-primary">build</button></form>
+					{% endif %}
+
 					<span class="pack_actions">
 
 						{% if exports[language] | default(false)  %}
@@ -192,11 +197,6 @@
 						{% else %}
 
 						{% endif %}
-
-						{% if is_granted('ROLE_SUPER_ADMIN') %}
-							<form method="POST" action="{{url('export_pack_now', {'pack_id': entity.id, 'language_code': statistics['code']})}}"><button class="btn btn-primary">build</button></form>
-						{% endif %}
-
 					</span>
 				</th>
 				{%  for cat in stats['categories'] %}
