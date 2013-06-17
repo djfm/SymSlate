@@ -120,6 +120,36 @@ class PackExportController extends Controller
         );
     }
 
+     /**
+     * @Route("/now/{pack_id}/{language_code}", name="export_pack_now")
+     * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
+     */
+    public function buildNowAction($pack_id, $language_code)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $export = new PackExport();
+
+        $export->setCreator ($this->get('security.context')->getToken()->getUser());
+        $export->setLanguage($em->getRepository('FMSymSlateBundle:Language')->findOneByCode($language_code));
+        $export->setPack    ($em->getRepository('FMSymSlateBundle:Pack')->findOneById($pack_id));
+
+        $em->persist($export);
+        $em->flush();
+
+        $path = $this->get('queue_manager')->runNow('FM\SymSlateBundle\Service\PackExportService', array('pack_export_id' => $export->getId()));
+
+        return new Response(
+                    file_get_contents($path),
+                    200,
+                    array(
+                         'Content-Type' => 'application/gzip',
+                         'Content-Disposition' => 'attachment; filename="'.$language_code.'.gzip"'
+                    )
+        );
+    }
+
     /**
      * Gets the latest pack export
      *

@@ -186,11 +186,17 @@
 				<th>
 					<a href="{{ path('packs_show_language_stats', {'id': entity.id, 'language_code': statistics['code']}) }}">{{ language }}</a>
 					<span class="pack_actions">
+
 						{% if exports[language] | default(false)  %}
 							<a href="{{asset(exports[language])}}"><img src="{{asset('bundles/fmsymslate/images/download.png')}}"></a>
 						{% else %}
 
 						{% endif %}
+
+						{% if is_granted('ROLE_SUPER_ADMIN') %}
+							<form method="POST" action="{{url('export_pack_now', {'pack_id': entity.id, 'language_code': statistics['code']})}}"><button class="btn btn-primary">build</button></form>
+						{% endif %}
+
 					</span>
 				</th>
 				{%  for cat in stats['categories'] %}

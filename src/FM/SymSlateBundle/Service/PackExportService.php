@@ -148,6 +148,12 @@ NOW;
 
 		$export->setFilepath(implode('/', $dirs) . '/' . $language->getCode() . ".gzip");
 		
+		if(file_exists($export->getAbsolutePath()))
+		{
+			//Archive_Tar will add to the already existing archive if we do not delete it
+			unlink($export->getAbsolutePath());
+		}
+
 		$archive = new \Archive_Tar($export->getAbsolutePath(), 'gz');
 		
 		foreach($file_contents as $path => $data)
@@ -156,6 +162,9 @@ NOW;
 		}
 
 		$this->setStatus("Completed!");
+
+		$this->em->persist($export);
+		$this->em->flush();
 
 		return $export->getAbsolutePath();
 		
