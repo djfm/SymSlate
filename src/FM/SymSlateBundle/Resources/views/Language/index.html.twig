@@ -11,6 +11,7 @@
             <th>Code</th>
             <th>Locale</th>
             <th>Name</th>
+            <th>Published?</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -21,6 +22,11 @@
             <td>{{ entity.code }}</td>
             <td>{{ entity.locale }}</td>
             <td>{{ entity.name }}</td>
+            <td>
+                <form method="POST" action="{{ url('language_toggle_publish', {id: entity.id}) }}">
+                    {{ entity.published ? '<button style="width:55px" class="btn btn-success">YES</button>' : '<button style="width:55px" class="btn btn-warning">NO</button>' }}
+                </form>
+            </td>
             <td>
                 <a class="btn btn-success" href="{{ path('languages_show', { 'id': entity.id }) }}">show</a>
                 <form method="post" class="pull-left" action="{{ path('languages_autocomplete', { 'id': entity.id }) }}"><button class="btn btn-primary" type="submit">autocomplete</button></form>

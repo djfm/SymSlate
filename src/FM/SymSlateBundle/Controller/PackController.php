@@ -65,7 +65,10 @@ class PackController extends Controller
         $percents = array();
         foreach($stats['statistics'] as $language => $data)
         {
-            $percents[] = (float)$data['statistics'][null]['percent'];
+            if($data['published'])
+            {
+                $percents[] = (float)$data['statistics'][null]['percent'];
+            }
         }
         sort($percents);
 
@@ -90,6 +93,7 @@ class PackController extends Controller
         $exports = $em->getRepository('FMSymSlateBundle:PackExport')->getLatestPaths($id);
 
         return array(
+            'n_published' => $n,
             'average' => $average,
             'median'    => $median,
             'entity'      => $entity,

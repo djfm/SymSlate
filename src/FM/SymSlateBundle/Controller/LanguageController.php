@@ -188,6 +188,26 @@ class LanguageController extends Controller
     }
 
     /**
+     * Publish / Unpublish a language
+     *
+     * @Route("/{id}/togglepublish", name="language_toggle_publish")
+     * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
+     */
+    public function togglePublishAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('FMSymSlateBundle:Language')->find($id);
+        $entity->setPublished(!$entity->getPublished());
+
+        $em->persist($entity);
+        $em->flush();
+
+        return $this->redirect($this->generateUrl('languages'));
+    }
+
+    /**
      * Deletes a Language entity.
      *
      * @Route("/{id}/delete", name="languages_delete")

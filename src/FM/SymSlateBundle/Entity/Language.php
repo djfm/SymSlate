@@ -86,7 +86,7 @@ class Language
      *
      * @ORM\Column(name="published", type="boolean")
      */
-    private $boolean;
+    private $published;
 
 
     /**
@@ -298,5 +298,28 @@ class Language
     public function getCurrentTranslations()
     {
         return $this->current_translations;
+    }
+
+    /**
+     * Set published
+     *
+     * @param boolean $published
+     * @return Language
+     */
+    public function setPublished($published)
+    {
+        $this->published = $published;
+    
+        return $this;
+    }
+
+    /**
+     * Get published
+     *
+     * @return boolean 
+     */
+    public function getPublished()
+    {
+        return $this->published;
     }
 }

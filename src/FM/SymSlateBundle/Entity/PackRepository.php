@@ -582,7 +582,7 @@ class PackRepository extends EntityRepository
 		{
 			$st   = $this->computeStatistics($pack_id, $language->getId(), $cheat);
 			$cats = $st['categories'];
-			$stats[$language->getAName()] = array('code' => $language->getCode(), 'statistics' => $st['statistics']);
+			$stats[$language->getAName()] = array('published' => $language->getPublished(), 'code' => $language->getCode(), 'statistics' => $st['statistics']);
 		}
 
 		uasort($stats, function($s, $t){
