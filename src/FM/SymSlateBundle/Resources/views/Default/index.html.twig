@@ -118,7 +118,8 @@
 		<div id="latest">
 			{% for l in latest %}
 				<div class="history">
-					Submitted by <span class="user">{{l.username}}</span> <span class="language">({{l.language}})</span> <span class="date">{{l.created | ago}} ago</span>:
+					Submitted by <span class="user">{{l.username}}</span> <span class="language">({{l.language}})</span>
+					<BR/><span class="date">{{l.created | ago}} ago</span>
 					<div class="message">{{l.message}}</div>
 					<div class="translation">{{l.translation}}</div>
 				</div>
