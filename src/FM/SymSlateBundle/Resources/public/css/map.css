@@ -13,8 +13,8 @@ div#topcontribs
 
 div#latest
 {
-	float:right;
-	width:400px;
+	float: right;
+	width: 400px;
 	height: 600px;
 	overflow-y: auto;
 	margin-left: 40px;
@@ -55,4 +55,9 @@ span.user
 span.date
 {
 	color: #A33B2F;
+}
+
+span.language
+{
+	color: #46734B;
 }
