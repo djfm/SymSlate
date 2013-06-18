@@ -81,6 +81,13 @@ class Language
      */
     private $name;
 
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="published", type="boolean")
+     */
+    private $boolean;
+
 
     /**
      * Get id
