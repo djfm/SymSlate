@@ -65,7 +65,7 @@ class PackController extends Controller
         $percents = array();
         foreach($stats['statistics'] as $language => $data)
         {
-            if($data['published'])
+            if(isset($data['published']) and $data['published'])
             {
                 $percents[] = (float)$data['statistics'][null]['percent'];
             }
