@@ -14,7 +14,7 @@ div#topcontribs
 div#latest
 {
 	float:right;
-	width:600px;
+	width:400px;
 	height: 600px;
 	overflow-y: auto;
 	margin-left: 40px;
