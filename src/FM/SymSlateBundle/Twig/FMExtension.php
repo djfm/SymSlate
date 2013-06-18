@@ -20,7 +20,8 @@ class FMExtension extends \Twig_Extension
 	public function getFilters()
 	{
 		return array(
-			'dbkslsh' => new \Twig_Filter_Method($this, 'dbkslsh')
+			'dbkslsh' => new \Twig_Filter_Method($this, 'dbkslsh'),
+			'ago' => new \Twig_Filter_Method($this, 'ago')
 		);
 	}
 
@@ -75,6 +76,38 @@ class FMExtension extends \Twig_Extension
 	public function getName()
 	{
 		return 'fm_extension';
+	}
+
+	public function ago($date)
+	{
+		$time  = time() - $date->getTimestamp();
+
+		$text  = '';
+
+		$tokens = array(
+	        31536000 => 'y',
+	        2592000 => 'm',
+	        604800 => 'w',
+	        86400 => 'd',
+	        3600 => 'h',
+	        60 => 'm',
+	        1 => 's'
+	    );
+
+		$parts = array();
+
+	    foreach ($tokens as $n => $unit)
+	    {
+	        if ($time < $n) continue;
+	        $numberOfUnits = floor($time / $n);
+	        $time -= $numberOfUnits * $n;
+	        $parts[] = $numberOfUnits.' '.$unit;
+	    }
+
+	   	$last = array_pop($parts);
+	    $text = implode(', ', $parts);
+
+	    return $text;
 	}
 
 }

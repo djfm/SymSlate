@@ -57,6 +57,22 @@ class DefaultController extends Controller
 		    $text = implode(', ', $parts);
 		    
 		    $args['latest_submission_date'] = $text;
+
+
+		    $q = $this->getDoctrine()->getManager()->createQuery(
+		    "	SELECT h.created, l.name as language, u.username, m.text as message, t.text as translation  
+		     	FROM FMSymSlateBundle:History h
+		     	INNER JOIN h.language l
+		     	INNER JOIN h.message m
+		     	INNER JOIN h.translation t
+		     	INNER JOIN h.user u
+		     	ORDER BY h.id DESC
+		    ");
+
+		    $q->setMaxResults(100);
+		    
+		    $args['latest'] = $q->getResult();
+
     	}
     	$users = $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:User')->findAll(15);
     	$args['topusers'] = $users;

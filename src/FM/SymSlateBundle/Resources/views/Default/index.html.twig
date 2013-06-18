@@ -97,6 +97,14 @@
 		</div>
 	{% endif %}
 
+	
+
+	<div id="mapdiv">
+		<object id="map" data="{{ asset('bundles/fmsymslate/images/map.svg') }}" type="image/svg+xml" height="600" width="800"> <img src="image-png.png" height="48" width="48" alt="this is a PNG" /> </object>
+	</div>
+
+	
+
 	<div id="topcontribs">
 		<table class="table">
 			<tr><th>Contributor</th><th>Strings translated</th></tr>
@@ -105,10 +113,21 @@
 			{% endfor %}
 		</table>
 	</div>
-	<div id="mapdiv">
-		<object id="map" data="{{ asset('bundles/fmsymslate/images/map.svg') }}" type="image/svg+xml" height="600" width="800"> <img src="image-png.png" height="48" width="48" alt="this is a PNG" /> </object>
-	</div>
 
-	<p id="status">&nbsp;</p>
+	{% if is_granted('ROLE_SUPER_ADMIN') %}
+		<div id="latest">
+			{% for l in latest %}
+				<div class="history">
+					Submitted by <span class="user">{{l.username}}</span> <span class="date">{{l.created | ago}} ago</span>:
+					<div class="message">{{l.message}}</div>
+					<div class="translation">{{l.translation}}</div>
+				</div>
+			{% endfor %}
+		</div>
+	{% endif %}
+
+	<div class="clearfix"></div>
+
+	<div id="status">&nbsp;</div>
 
 {% endblock %}
