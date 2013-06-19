@@ -104,7 +104,6 @@ class FMExtension extends \Twig_Extension
 	        $parts[] = $numberOfUnits.' '.$unit;
 	    }
 
-	   	$last = array_pop($parts);
 	    $text = implode(', ', $parts);
 
 	    return $text;
