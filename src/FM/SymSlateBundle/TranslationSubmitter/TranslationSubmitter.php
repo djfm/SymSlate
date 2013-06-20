@@ -102,7 +102,7 @@ class TranslationSubmitter
 			}
 		}
 
-		$overwrite_current   = isset($args['overwrite_current']) and $args['overwrite_current'];
+		$overwrite_current   = (isset($args['overwrite_current']) && $args['overwrite_current']);
 		$translations_import = isset($args['translations_import']) ? $args['translations_import'] : null;
 
 		/* Then validate the translation */
