@@ -23,7 +23,8 @@
         "stof/doctrine-extensions-bundle": "dev-master",
         "doctrine/migrations": "dev-master",
         "doctrine/doctrine-migrations-bundle": "dev-master",
-        "Trsteel/ckeditor-bundle": "*"
+        "Trsteel/ckeditor-bundle": "*",
+        "phpexcel/phpexcel": "1.7.*"
     },
     
     "repositories": [

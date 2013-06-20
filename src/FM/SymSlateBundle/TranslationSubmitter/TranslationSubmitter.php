@@ -102,7 +102,7 @@ class TranslationSubmitter
 			}
 		}
 
-		$overwrite_current   = isset($args['overwrite_current']) and $args['overwrite_current'];
+		$overwrite_current   = $args['overwrite_current'] && ($args['overwrite_current'] === true);
 		$translations_import = isset($args['translations_import']) ? $args['translations_import'] : null;
 
 		/* Then validate the translation */
@@ -166,7 +166,7 @@ class TranslationSubmitter
 			}
 
 			/* Finally, create the history entry! */
-			if($history_changed)
+			if(isset($history_changed) && $history_changed)
 			{
 				$history = new \FM\SymSlateBundle\Entity\History();
 				$history->setUser($user);
