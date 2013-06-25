@@ -135,6 +135,13 @@ class TranslationSubmitter
 			$this->em->persist($translation);
 		}
 
+		/* Clear the Error message if there is one, this usually never happens but can happen when the translationvalidator is changed */
+		if($translation->getErrorMessage() != '')
+		{
+			$translation->setErrorMessage('');
+			$this->em->persist($translation);
+		}
+
 		/* Check wheter a CurrentTranslation exists for this message (if we have one) */
 		if($message)
 		{
@@ -166,7 +173,7 @@ class TranslationSubmitter
 			}
 
 			/* Finally, create the history entry! */
-			if($history_changed)
+			if(isset($history_changed) && $history_changed)
 			{
 				$history = new \FM\SymSlateBundle\Entity\History();
 				$history->setUser($user);

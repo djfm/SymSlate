@@ -46,14 +46,16 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 		{	
 			if($language = $this->getOrCreateLanguage($user, $translation['language_code']))
 			{
-				$this->submitter->submit(array(
+				$submission = array(
 					'user' 						=> $user,
 					'language' 					=> $language,
 					'mkey'              		=> $translation['mkey'],
 					'translation_text'  		=> $translation['translation_text'],
 					'overwrite_current' 		=> $args['force_actualize'],
 					'translations_import' 		=> $translations_import
-				));
+				);
+
+				$this->submitter->submit($submission);
 			}
 			
 			$this->step();

@@ -9,6 +9,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\TranslationsImport;
 use FM\SymSlateBundle\Form\TranslationsImportType;
+use JMS\SecurityExtraBundle\Annotation\Secure;
 
 /**
  * Translate controller.
@@ -237,6 +238,63 @@ class TranslateController extends Controller
     	));
 
     	return $this->redirect($this->generateUrl('translate_details', array('message_id' => $message_id, 'language_code' => $language_code)));
+    }
+
+    /**
+    * @Method("POST")
+    * @Secure(roles="ROLE_TRUSTED")
+    * @Route("/translate_excel", name="translate_excel")
+    */
+    public function translateExcelAction(Request $request)
+    {
+    	$xl = \PHPExcel_IOFactory::load($request->files->get('excel')->getPathName());
+    	$sh = $xl->setActiveSheetIndex(0);
+
+    	$row = 1;
+    	$col = 'A';
+
+    	$language_columns = array();
+
+
+    	while($sh->cellExists($col.$row) and ($v=$sh->getCell($col.$row)->getValue()) != '')
+    	{
+    		if(preg_match('/^[a-z]{2}$/', $v))
+    		{
+    			$language_columns[$v] = $col;
+    		}
+    		$col++;
+    	}
+
+    	$firstEmptyColumn = $col;
+    	$lastRow = $sh->getHighestRow();
+
+    	foreach($language_columns as $iso => $col)
+    	{
+    		if($iso != 'en')
+    		{
+    			for($row=2; $row<=$lastRow; $row++)
+    			{
+    				if(trim($sh->getCell($col.$row)->getValue()) == '' and ($message=trim($sh->getCell($language_columns['en'].$row)->getValue())) != '')
+    				{
+    					$translation = $this->getDoctrine()->getEntityManager()->getRepository('FMSymSlateBundle:Translation')->translateFromEnglishInto($message, $iso);
+    					if($translation)
+    					{
+    						$sh->getCell($col.$row)->setValue($translation);
+    						$sh->getStyle($col.$row)->getFont()->getColor()->applyFromArray(array("rgb" => '0000FF'));
+    					}
+    				}
+    			}
+    		}
+    	}
+
+    	ob_clean();
+    	header("Content-Type: application/vnd.ms-excel");
+		header("Content-Disposition: attachment; filename=\"".$request->files->get('excel')->getClientOriginalName()."\"");
+		header("Cache-Control: max-age=0");
+		
+		$objWriter = \PHPExcel_IOFactory::createWriter($xl, 'Excel5');
+		$objWriter->save("php://output");
+		exit;
     }
 
 
