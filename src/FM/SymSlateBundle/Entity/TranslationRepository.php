@@ -12,5 +12,23 @@ use Doctrine\ORM\EntityRepository;
  */
 class TranslationRepository extends EntityRepository
 {
-	
+	public function translateFromEnglishInto($message, $language_code)
+	{
+		$em = $this->getEntityManager();
+		$q  = $em->createQuery("SELECT t.text FROM FMSymSlateBundle:CurrentTranslation ct
+								INNER JOIN ct.translation t
+								INNER JOIN ct.message m
+								INNER JOIN ct.language l
+						  WHERE m.text = :message AND l.code=:language_code
+						  ORDER BY t.id DESC 
+		");
+
+		$q->setParameter('message', $message);
+		$q->setParameter('language_code', $language_code);
+		$q->setMaxResults(1);
+
+		$res = $q->getResult();
+
+		return empty($res) ? null : $res[0]['text'];
+	}
 }

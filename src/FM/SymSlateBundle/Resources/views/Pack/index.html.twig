@@ -42,4 +42,13 @@
     <form action="{{ path('packs_new') }}"><button class="btn btn-primary">Create a new pack</button></form>
 {% endif %}
 
+{% if is_granted('ROLE_TRUSTED') %}
+    <h1>Translate Excel</h1>
+    <p>Please use a .xls file (not a .xlsx!). The first row must have iso codes (de, es, it...) and translations under it.</p>
+    <form enctype='multipart/form-data' method="POST"  action="{{url('translate_excel')}}" class="form">
+        <input type="file" name="excel"/>
+        <button class="btn btn-primary">Fill!</button>
+    </form>
+{% endif %}
+
 {% endblock %}
