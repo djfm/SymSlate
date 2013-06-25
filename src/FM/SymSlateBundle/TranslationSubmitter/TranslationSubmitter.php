@@ -136,8 +136,9 @@ class TranslationSubmitter
 		}
 
 		/* Clear the Error message if there is one, this usually never happens but can happen when the translationvalidator is changed */
-		if($translation->getErrorMessage() != '')
+		if($translation->getErrorMessage() != '' or $translation->getHasError())
 		{
+			$translation->setHasError(false);
 			$translation->setErrorMessage('');
 			$this->em->persist($translation);
 		}
