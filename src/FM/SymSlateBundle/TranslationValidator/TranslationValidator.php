@@ -69,7 +69,7 @@ class TranslationValidator
 				}
 			}
 
-			if(strpos($translation, "\n") and !strpos($message, "\n"))
+			if((strpos($translation, "\n") !== false) and (strpos($message, "\n") === false))
 			{
 				return array('success' => false, 'error_message' => "Translation cannot contain line breaks! (because original text has none).");
 			}
