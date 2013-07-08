@@ -86,7 +86,7 @@ class Language
      *
      * @ORM\Column(name="published", type="boolean")
      */
-    private $published;
+    private $published = false;
 
 
     /**
