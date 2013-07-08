@@ -10,7 +10,6 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="FM\SymSlateBundle\Entity\HistoryRepository")
- * @ORM\HasLifecycleCallbacks
  */
 class History
 {
