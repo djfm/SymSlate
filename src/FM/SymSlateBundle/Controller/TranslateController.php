@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use FM\SymSlateBundle\Entity\TranslationsImport;
 use FM\SymSlateBundle\Form\TranslationsImportType;
 use JMS\SecurityExtraBundle\Annotation\Secure;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * Translate controller.
@@ -240,6 +241,19 @@ class TranslateController extends Controller
     	return $this->redirect($this->generateUrl('translate_details', array('message_id' => $message_id, 'language_code' => $language_code)));
     }
 
+    /**
+    * @Method("GET")
+    * @Route("/suggestions", name="translate_suggestions")
+    */
+    public function getSuggestionsAction(Request $request)
+    {
+    	return new JsonResponse($this->getDoctrine()->getManager()->getRepository("FMSymSlateBundle:Translation")->getSuggestions(
+    		$request->query->get('source_language_code'),
+    		$request->query->get('language_code'),
+    		$request->query->get('message')
+    	));
+
+    }
     /**
     * @Method("POST")
     * @Secure(roles="ROLE_TRUSTED")

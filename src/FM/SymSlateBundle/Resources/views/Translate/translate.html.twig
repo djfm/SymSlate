@@ -5,6 +5,12 @@
     {% stylesheets '@FMSymSlateBundle/Resources/public/css/translate.css' %}
 	    <link rel="stylesheet" href="{{ asset_url }}" />
 	{% endstylesheets %}
+	<style type="text/css">
+		div.suggestions
+		{
+			padding: 15px;
+		}
+	</style>
 {% endblock %}
 
 {% block javascripts %}
@@ -25,7 +31,6 @@
 					$('#translate_fields').css('margin-left',0);
 					$('#translate_filters_reveal').toggle();
 					fixHeights();
-					//fixHeights();
 				});
 			});
 
@@ -64,7 +69,6 @@
 						if(data.success)
 						{
 							img.attr('src','{{ asset('bundles/fmsymslate/images/happy.png') }}');
-							//unOops();
 							if(data.warning_message)
 							{
 								$('#notification_' + classification_id).html("<div class='warning'>"+data['warning_message']+"<span class='close-parent' onclick='javascript:$(this).parent().remove()'>X</span></div>")
@@ -74,7 +78,6 @@
 						else
 						{
 							img.attr('src','{{ asset('bundles/fmsymslate/images/sad.png') }}');
-							//oops(data['error_message']);
 							$('#notification_' + classification_id).html("<div class='error'>"+data['error_message']+"<span class='close-parent' onclick='javascript:$(this).parent().remove()'>X</span></div>")
 						}
 					},
@@ -113,12 +116,41 @@
 			function gotFocus(id)
 			{
 				$('.controls_active').removeClass('controls_active').css('display','none');
-				console.log("I got the focus! " + id);
 				$('#controls_'+id).css('display','table').addClass('controls_active');
+
+				if($('#translation_text_'+id).hasClass('STRING'))
+				{
+					if(($('#translation_text_'+id).attr('data-suggestions-loaded')!='1'))
+					{
+						$('#translation_text_'+id).attr('data-suggestions-loaded', '1');
+
+						var message = $('span.message_contents_'+id).text();
+						var source_language_code = '{{app.request.query.get('source_language_code','en')}}';
+						var language_code = '{{app.request.query.get('language_code')}}';
+
+						$.getJSON("{{url('translate_suggestions')}}", {source_language_code: source_language_code, language_code: language_code, message: message}, function(data){
+							var html = "";
+
+							if(data.length == 0)
+							{
+								html = "<span class='no-suggestion'>No suggestion found, sorry!</span>";
+							}
+
+							for(var i in data)
+							{
+								html+="<div class='row'><div class='span6'>"+data[i].message+"</div>"+"<div class='span6'>"+data[i].translation+"</div></div>"
+							}
+							$('div#suggestions_'+id).html(html);
+						});
+
+					}
+					$('div.suggestions').hide();
+					$('#suggestions_'+id).show();
+				}				
+
 			}
 			function lostFocus(id)
 			{
-				console.log("I lost the focus! " + id);
 				var text = get_translation(id);
 				if(text.length > 0)
 				{
@@ -345,6 +377,10 @@
 													{% if m['warning_message'] != '' %}
 														<div class='warning'>{{ m['warning_message'] }}<span class='close-parent' onclick='javascript:$(this).parent().remove()'>X</span></div>
 													{% endif %}
+												</div>
+
+												<div style="display:none" class="suggestions" id="suggestions_{{ m['classification_id'] }}">
+													<span class='loading-suggestions'>Loading suggestions...</span>
 												</div>
 
 											{%  endfor %}
