@@ -47,9 +47,20 @@
 				}
 			}
 
-			submit_translation = function(message_id, classification_id, translation_id, language_id)
+			var submit_cuz_focus_out = false;
+
+			submit_translation = function(classification_id, language_id)
 			{
 				var text = get_translation(classification_id);
+
+				if(submit_cuz_focus_out)
+				{
+					var original_text = $('#translation_text_'+classification_id).attr('data-original-value');
+					if(original_text == text)
+					{
+						return;
+					}
+				}
 
 				var img = $('#translation_submit_'+classification_id);
 
@@ -58,14 +69,12 @@
 				$('#submission_feedback_'+classification_id).hide();
 				
 				$.post('../submissions/create',{
-						message_id: message_id,
 						classification_id: classification_id,
-						translation_id: translation_id,
 						language_id: language_id,
-						text: text
+						text: text,
+						reason: submit_cuz_focus_out ? 'autosubmit' : 'manual'
 					},
 					function(data){
-						console.log(data);
 						if(data.success)
 						{
 							img.attr('src','{{ asset('bundles/fmsymslate/images/happy.png') }}');
@@ -154,7 +163,9 @@
 				var text = get_translation(id);
 				if(text.length > 0)
 				{
+					submit_cuz_focus_out = true;
 					$('#translation_submit_'+id).click();
+					submit_cuz_focus_out = false;
 				}
 			}
 						
@@ -328,10 +339,8 @@
 													<div class="translate_row_right">
 														<img 
 															 class="clickable small submit_translation" 
-															 onclick="javascript:submit_translation({{ m['message_id'] }}, 
-															 									 	{{ m['classification_id'] }},
-															 									 	{{ m['translation_id'] | default('undefined') }},
-															 									 	{{ language.getId() }})" 
+															 onclick="javascript:submit_translation({{ m['classification_id'] }},
+															 									 	{{ language.getId() }})"
 															 src="{{ asset('bundles/fmsymslate/images/submit.png') }}"
 															 alt="Submit!" 
 															 id="translation_submit_{{ m['classification_id'] }}"
@@ -363,7 +372,7 @@
 														</div>
 														<div class="translate_row_translation pull-right">
 															
-															<textarea {% if m['type'] == "HTML" %} ckadjust="iframe_{{ m['classification_id'] }}" {% else %} same_height="message_contents_{{ m['classification_id'] }}"  {% endif %} id="translation_text_{{ m['classification_id'] }}" class="translate {{ m['type'] }}">{{ m['translation'] }}</textarea>
+															<textarea data-original-value="{{ m['translation'] }}" {% if m['type'] == "HTML" %} ckadjust="iframe_{{ m['classification_id'] }}" {% else %} same_height="message_contents_{{ m['classification_id'] }}"  {% endif %} id="translation_text_{{ m['classification_id'] }}" class="translate {{ m['type'] }}">{{ m['translation'] }}</textarea>
 															
 															
 														</div>

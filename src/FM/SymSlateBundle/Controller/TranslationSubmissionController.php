@@ -33,8 +33,8 @@ class TranslationSubmissionController extends Controller
 		
         $classification_id = $request->request->get('classification_id');
         $text              = $request->request->get('text');
-        $message_id        = $request->request->get('message_id');
         $language_id       = $request->request->get('language_id');
+        $reason            = $request->request->get('reason');
 
         $language          = $em->getRepository('FMSymSlateBundle:Language')->findOneById($language_id);
         $classification    = $em->getRepository('FMSymSlateBundle:Classification')->findOneById($classification_id);
@@ -44,7 +44,8 @@ class TranslationSubmissionController extends Controller
             'classification' => $classification,
             'language' => $language,
             'translation_text' => $text,
-            'overwrite_current' => true
+            'overwrite_current' => true,
+            'reason'    => $reason
         ));
 		
     	$response = new Response(json_encode($data));
