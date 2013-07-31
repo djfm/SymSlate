@@ -10,6 +10,18 @@
 		{
 			padding: 15px;
 		}
+		div.message, div.translation
+		{
+			padding:5px;
+		}
+		div.message
+		{
+			background-color: #EEE;
+		}
+		div.translation
+		{
+			margin-bottom: 5px;
+		}
 	</style>
 {% endblock %}
 
@@ -127,28 +139,32 @@
 				$('.controls_active').removeClass('controls_active').css('display','none');
 				$('#controls_'+id).css('display','table').addClass('controls_active');
 
-				if($('#translation_text_'+id).hasClass('STRING'))
+				var source_language_code = '{{app.request.query.get('source_language_code','en')}}';
+
+				if(source_language_code == 'en' && $('#translation_text_'+id).attr('data-original-value') == '' && $('#translation_text_'+id).hasClass('STRING'))
 				{
 					if(($('#translation_text_'+id).attr('data-suggestions-loaded')!='1'))
 					{
 						$('#translation_text_'+id).attr('data-suggestions-loaded', '1');
 
 						var message = $('span.message_contents_'+id).text();
-						var source_language_code = '{{app.request.query.get('source_language_code','en')}}';
 						var language_code = '{{app.request.query.get('language_code')}}';
 
 						$.getJSON("{{url('translate_suggestions')}}", {source_language_code: source_language_code, language_code: language_code, message: message}, function(data){
 							var html = "";
 
-							if(data.length == 0)
+							var found = false;
+							for(var i in data)
+							{
+								found = true;
+								html+="<div class='row'><div class='message span6'>"+data[i].message+"</div>"+"<div class='translation span6'>"+data[i].translation+"</div></div>"
+							}
+
+							if(!found)
 							{
 								html = "<span class='no-suggestion'>No suggestion found, sorry!</span>";
 							}
 
-							for(var i in data)
-							{
-								html+="<div class='row'><div class='span6'>"+data[i].message+"</div>"+"<div class='span6'>"+data[i].translation+"</div></div>"
-							}
 							$('div#suggestions_'+id).html(html);
 						});
 

@@ -68,7 +68,8 @@ class TranslationRepository extends EntityRepository
 			->innerJoin('ct.message', 'm')
 			->innerJoin('ct.translation', 't')
 			->innerJoin('ct.language', 'l')
-			->where('l.code = :language_code');
+			->where('l.code = :language_code')
+			->andWhere('m.type = \'STRING\'');
 
 		$q = $qb->getQuery();
 
