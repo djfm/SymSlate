@@ -53,7 +53,7 @@ class TranslationRepository extends EntityRepository
 		};
 
 		$t_message = $tokenize($message);
-		if(count($t_message) <= 1)
+		if(count($t_message) < 1)
 		{
 			return array();
 		}
