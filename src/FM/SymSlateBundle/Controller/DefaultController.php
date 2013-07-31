@@ -74,8 +74,33 @@ class DefaultController extends Controller
 		    $args['latest'] = $q->getResult();
 
     	}
-    	$users = $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:User')->findAll(15);
-    	$args['topusers'] = $users;
+
+    	$em    = $this->getDoctrine()->getManager();
+
+    	$em->transactional(function($em){
+    		$cache_date = $em->createQuery('SELECT MAX(tc.date_updated) FROM FMSymSlateBundle:TopContrib tc')->getSingleScalarResult();
+
+	    	$diff = date_diff(new \DateTime('now'), new \DateTime($cache_date));
+
+	    	if($cache_date == null || $diff->d > 0 || $diff->m > 0 || $diff->y > 0)
+	    	{
+    			$em->createQuery("DELETE FROM FMSymSlateBundle:TopContrib tc")->execute();
+
+	    		foreach($em->getRepository('FMSymSlateBundle:User')->findAll(15) as $user)
+	    		{
+	    			$tc = new \FM\SymSlateBundle\Entity\TopContrib();
+	    			$tc->setUser($user);
+	    			$tc->setDateUpdated(new \DateTime('now'));
+	    			$tc->setTranslated($user->getTranslationsCount());
+	    			$em->persist($tc);
+	    		}
+	    	}
+
+    	});
+
+    	
+
+    	$args['topusers'] = $em->getRepository('FMSymSlateBundle:TopContrib')->findBy(array(), array('translated' => 'desc'));
 
         return $args;
     }

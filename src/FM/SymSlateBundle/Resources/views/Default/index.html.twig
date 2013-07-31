@@ -109,7 +109,7 @@
 		<table class="table">
 			<tr><th>Contributor</th><th>Strings translated</th></tr>
 			{% for user in topusers %}
-				<tr><td>{{ user.username }}</td><td>{{ user.getTranslationsCount }}</td></tr>
+				<tr><td>{{ user.user.username }}</td><td>{{ user.translated }}</td></tr>
 			{% endfor %}
 		</table>
 	</div>
