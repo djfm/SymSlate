@@ -45,6 +45,7 @@ class MaintenanceController extends Controller
 
     	$em = $this->getDoctrine()->getManager();
 
+/*
     	$q  = $em->createQuery("SELECT t FROM FMSymSlateBundle:Translation t WHERE t.text LIKE '%transla.shop.tm%' OR t.text LIKE '%ce.shell.la%'");
 
 $exp = <<<'NOW'
@@ -62,6 +63,24 @@ NOW;
     	}
 
     	$em->flush();
+*/
+
+        $q  = $em->createQuery("SELECT t FROM FMSymSlateBundle:Translation t WHERE t.text LIKE '%\\%7B%\\%7D%' ESCAPE '\\'");
+
+        $replaced = 0;
+
+        foreach($q->getResult() as $translation)
+        {
+            $text = preg_replace('/%7B(.*?)%7D/', '{\\1}', $translation->getText());
+
+            $translation->setText($text);
+            $em->persist($translation);
+
+            $replaced += 1;
+        }
+
+        $em->flush();
+
 
     	return array('replaced' => $replaced);
     }
