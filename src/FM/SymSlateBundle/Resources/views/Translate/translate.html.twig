@@ -209,21 +209,19 @@
 
 		<div id="translate_filters">
 			<div id="translate_filters_hide">X</div>
-			<div class="translate_filters_contents">
 				<form class="form-inline translate">
-				  		
 						<input type="hidden" name="page" id="page" value="{{ app.request.query.get('page') | default(1) }}"/>
 
 				  		<fieldset class="bordered">
 				  			<legend>Language</legend>
-				  			<label for="translate_source_language_code" class="input-label medium">From</label>
-					  		<select class="autosubmit" id="translate_source_language_code" name="source_language_code">
+				  			<label for="translate_source_language_code" class="input-label smallish">From</label>
+					  		<select style="" class="autosubmit" id="translate_source_language_code" name="source_language_code">
 								{% for language in languages %}
 									<option value="{{ language.code }}" {{ app.request.query.get('source_language_code','en')==language.code ? "selected='true'" : '' }}>{{ language }}</option>
 								{% endfor %}
 							</select>
 							<br/>
-							<label for="translate_language_code" class="input-label medium">Into</label>
+							<label for="translate_language_code" class="input-label smallish">Into</label>
 							<select class="autosubmit" id="translate_language_code" name="language_code">
 								{% for language in languages %}
 									<option value="{{ language.code }}" {{ app.request.query.get('language_code')==language.code ? "selected='true'" : '' }}>{{ language }}</option>
@@ -233,11 +231,11 @@
 
 						<fieldset class="bordered">
 							<legend>Message</legend>
-							<label for = "message_like" class="input-label medium">Filter</label>
+							<label for = "message_like" class="input-label smallish">Filter</label>
 							<input id="message_like" name="message_like" type='text' value='{{ app.request.query.get('message_like')}}' placeholder="Filter messages..."/>
 							<br/>
 							{{ search_tip }}
-							<label for="translate_category" class="input-label medium">Category</label>
+							<label for="translate_category" class="input-label smallish">Category</label>
 							<select style="" class="autosubmit" id="translate_category" name="category">
 								<option value="">Any Category</option>
 								{% for category in categories %}
@@ -247,7 +245,7 @@
 								{% endfor %}
 							</select>
 							<br/>
-							<label for="translate_section" class="input-label medium">Section</label>
+							<label for="translate_section" class="input-label smallish">Section</label>
 							<select style="" class="autosubmit" id="translate_section" name="section">
 								<option value="">Any Section</option>
 								{% for section in sections %}
@@ -257,13 +255,13 @@
 								{% endfor %}
 							</select>
 							<br/>
-							<label for="translate_context" class="input-label medium">Context</label>
+							<label for="translate_context" class="input-label smallish">Context</label>
 							<select class="autosubmit" id="translate_context" name="context">
 								<option value="YES" {{ app.request.query.get('context','YES') == 'YES' ? 'selected' : '' }}>Yes</option>
 								<option value="NO"  {{ app.request.query.get('context','YES') == 'NO'  ? 'selected' : '' }}>No</option>
 							</select>
 							<br/>
-							<label for="translate_not_in" class="input-label medium">Not in</label>
+							<label for="translate_not_in" class="input-label smallish">Not in</label>
 							<select style="" class="autosubmit" id="translate_not_in" name="not_in">
 								<option value=""></option>
 								{% for apack in packs %}
@@ -278,25 +276,25 @@
 
 						<fieldset class="bordered">
 							<legend>Translation</legend>
-							<label for="translation_like" class="input-label medium">Filter</label>
+							<label for="translation_like" class="input-label smallish">Filter</label>
 							<input type='text' id="translation_like" name="translation_like" value='{{ app.request.query.get('translation_like')}}' placeholder="Filter translations..."/>
 							<br/>
 							{{ search_tip }}
-							<label for="translate_empty" class="input-label medium">Status</label>
+							<label for="translate_empty" class="input-label smallish">Status</label>
 							<select  class="autosubmit" id="translate_empty" name="empty">
 								<option value="ONLY" {{ app.request.query.get('empty')== "ONLY" ? "selected='true'" : '' }}>missing</option>
 								<option value="EXCEPT" {{ app.request.query.get('empty')== "EXCEPT" ? "selected='true'" : '' }}>there</option>
 								<option value="MAYBE" {{ app.request.query.get('empty')== "MAYBE" ? "selected='true'" : '' }}>there or not</option>
 							</select>
 							<br/>
-							<label for="translate_author" class="input-label medium">Author</label>
+							<label for="translate_author" class="input-label smallish">Author</label>
 							<select  class="autosubmit" id="translate_author" name="translate_author">
 								<option value="*" {{ app.request.query.get('translate_author','*') == "*"  ? "selected" : "" }}>Anyone</option>
 								{% for author in authors %}
 									<option value="{{ author.getId() }}" {{ app.request.query.get('translate_author','*') ==  author.getId() ? "selected" : "" }}>{{ author.getUsername() }}</option>
 								{% endfor %}
 							</select>
-							<label for="translate_validation" class="input-label medium">Validation</label>
+							<label for="translate_validation" class="input-label smallish">Validation</label>
 							<select class="autosubmit" id="translate_validation" name="translate_validation">
 								<option value="*" {{ app.request.query.get('translate_validation','*') == "*"  ? "selected" : "" }}>OK or not</option>
 								<option value="has_error" {{ app.request.query.get('translate_validation','*') == "has_error"  ? "selected" : "" }}>Has error</option>
@@ -319,7 +317,6 @@
 					</div>
 				{% endif %}
 
-			</div>
 		</div>
 		
 		<div id="translate_fields">

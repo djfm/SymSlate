@@ -111,6 +111,11 @@ fieldset.bordered
 	width:100px;
 }
 
+.smallish
+{
+	width:70px;
+}
+
 .input-label
 {
 	height:22px;

@@ -142,7 +142,7 @@ div.filler
 
 div#translate_filters
 {
-	position:fixed;
+	position:absolute;
 	width:370px;
 	border:1px solid #CCC;
 	border-radius: 5px;
@@ -152,7 +152,7 @@ div#translate_filters
 
 div.translate_filters_contents
 {
-	float:left;
+	overflow-y:scroll;
 }
 
 div#translate_filters_hide
@@ -226,7 +226,7 @@ div.tip
 
 div.smalltip
 {
-	width:321px;
+	width:292px;
 }
 
 span.close-parent
