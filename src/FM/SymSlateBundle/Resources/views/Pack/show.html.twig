@@ -164,6 +164,14 @@
 		<tr>
 			<th>Median  translation completion</th><td>&nbsp;{{'%.1f' | format(median) }}%</td>
 		</tr>
+		{% if is_granted('ROLE_SUPER_ADMIN') %}
+			<tr>
+				<th>Average translation completion on top {{perimeter}} languages</th><td>&nbsp;{{'%.1f' | format(average_p)}}%</td>
+			</tr>
+			<tr>
+				<th>Median  translation completion on top {{perimeter}} languages</th><td>&nbsp;{{'%.1f' | format(median_p) }}%</td>
+			</tr>
+		{% endif %}
 	</table>
 
 	<BR/>

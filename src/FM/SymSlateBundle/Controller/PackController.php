@@ -59,22 +59,33 @@ class PackController extends Controller
 	
         $stats = $em->getRepository('FMSymSlateBundle:Pack')->computeAllStatistics($entity->getId(), $this->getRequest()->query->get('refresh_stats','false') == 'true', $cheat);
 
+        $perimeter = 57;
+
         /**
         * Average and Median
         */
-        $percents = array();
+        $percents   = array();
+        $percents_p = array();
+
         foreach($stats['statistics'] as $language => $data)
         {
             if(isset($data['published']) and $data['published'])
             {
                 $percents[] = (float)$data['statistics'][null]['percent'];
             }
+
         }
         sort($percents);
+
+        $percents_p = array_slice($percents, -$perimeter);
 
         $n       = count($percents);
         $average = array_sum($percents)/$n;
         $median  = ($n % 2 == 1) ? ($percents[($n+1)/2] + $percents[($n-1)/2])/2 : $percents[$n/2];
+
+        $n_p       = count($percents_p);
+        $average_p = array_sum($percents_p)/$n_p;
+        $median_p  = ($n_p % 2 == 1) ? ($percents_p[($n_p+1)/2] + $percents_p[($n_p-1)/2])/2 : $percents_p[$n_p/2];
 
         /***/
 
@@ -96,6 +107,9 @@ class PackController extends Controller
             'n_published' => $n,
             'average' => $average,
             'median'    => $median,
+            'average_p' => $average_p,
+            'median_p' => $median_p,
+            'perimeter' => $n_p,
             'entity'      => $entity,
             'delete_form' => $deleteForm->createView(),
             'stats' => $stats,
