@@ -385,7 +385,7 @@
 														</div>
 														<div class="translate_row_translation pull-right">
 															
-															<textarea data-original-value="{{ m['translation'] }}" {% if m['type'] == "HTML" %} ckadjust="iframe_{{ m['classification_id'] }}" {% else %} same_height="message_contents_{{ m['classification_id'] }}"  {% endif %} id="translation_text_{{ m['classification_id'] }}" class="translate {{ m['type'] }}">{{ m['translation'] }}</textarea>
+															<textarea data-original-value="{{ m['translation'] }}" {% if m['type'] == "HTML" %} ckadjust="iframe_{{ m['classification_id'] }}" {% else %} same_height="message_contents_{{ m['classification_id'] }}"  {% endif %} id="translation_text_{{ m['classification_id'] }}" class="translate {{ m['type'] }}">{{ m['translation'] == '' ? m['text'] : m['translation'] }}</textarea>
 															
 															
 														</div>
