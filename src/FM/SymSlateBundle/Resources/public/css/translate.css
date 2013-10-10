@@ -196,12 +196,17 @@ div.translation_notification
 	margin-right:5px;
 }
 
-div.translation_notification div
+div.translation_notification > div
 {
+	margin-bottom: 2px;
 	padding:5px;
-	margin-bottom: 10px;
 	border-radius: 5px;
 	border:1px solid black;
+}
+
+div.translation_notification > div:last-child
+{
+	margin-bottom: 15px;
 }
 
 div.translation_notification div.error
@@ -212,6 +217,22 @@ div.translation_notification div.error
 div.translation_notification div.warning
 {
 	background-color:#faa732;
+}
+
+div.translation_notification div.explain textarea
+{
+	width: 100%;
+}
+
+div.translation_notification div.explain div.right
+{
+	text-align: right;
+}
+
+div.translation_notification div.explain div.right a
+{
+	text-align: right;
+	cursor: pointer;
 }
 
 div.tip

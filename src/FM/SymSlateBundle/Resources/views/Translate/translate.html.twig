@@ -399,6 +399,12 @@
 													{% if m['warning_message'] != '' %}
 														<div class='warning'>{{ m['warning_message'] }}<span class='close-parent' onclick='javascript:$(this).parent().remove()'>X</span></div>
 													{% endif %}
+													<div class='explain'>
+														<textarea></textarea>
+														<div class="right">
+															<a onclick='javascript:$(this).closest("div.explain").remove()'>hide comment</a>
+														</div>
+													</div>
 												</div>
 
 												<div style="display:none" class="suggestions" id="suggestions_{{ m['classification_id'] }}">
