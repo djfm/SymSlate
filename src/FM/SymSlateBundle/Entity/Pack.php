@@ -115,6 +115,13 @@ class Pack
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $statistics_updated;
+
+    /**
+    * @var string $repost_to_url
+    *
+    * @ORM\Column(type="string", nullable=true)
+    */
+    private $repost_to_url;
 	
 	
 	/**
@@ -535,5 +542,28 @@ class Pack
     public function getIgnoredSections()
     {
         return $this->ignored_sections;
+    }
+
+    /**
+     * Set repost_to_url
+     *
+     * @param string $repostToUrl
+     * @return Pack
+     */
+    public function setRepostToUrl($repostToUrl)
+    {
+        $this->repost_to_url = $repostToUrl;
+    
+        return $this;
+    }
+
+    /**
+     * Get repost_to_url
+     *
+     * @return string 
+     */
+    public function getRepostToUrl()
+    {
+        return $this->repost_to_url;
     }
 }

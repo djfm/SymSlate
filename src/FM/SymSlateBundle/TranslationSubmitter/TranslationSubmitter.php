@@ -189,6 +189,35 @@ class TranslationSubmitter
 
 		}
 
+
+		if(isset($args['from_ui']) && $args['from_ui'] === true)
+		{
+			foreach($message->getStorages() as $storage)
+			{
+				if($url=$storage->getPack()->getRepostToUrl())
+				{
+					$data = array(
+						'method' => $storage->getMethod(),
+						'path' => $storage->getPath(),
+						'category' => $storage->getCategory(),
+						'custom' => $storage->getCustom(),
+						'mkey' => $message->getMkey(),
+						'message' => $message->getText(),
+						'translation' => $translation->getText(),
+						'language_code' => $language->getCode()
+					);
+
+					$ch = curl_init($url);
+					
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");                                                                     
+					curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));  
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+					curl_exec($ch);
+					curl_close($ch);
+				}
+			}
+		}
+		
 		$this->em->flush();
 
 		/* Return the output of the validation (it could have warnings) */

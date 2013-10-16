@@ -14,6 +14,7 @@ class PackType extends AbstractType
             ->add('project')
             ->add('name')
             ->add('version')
+            ->add('repost_to_url')
         ;
     }
 
