@@ -254,6 +254,61 @@ class TranslateController extends Controller
     	));
 
     }
+
+    /**
+    * @Method("POST")
+    * @Secure(roles="ROLE_SUPER_ADMIN")
+    * @Route("/completeWith", name="complete_with")
+    */
+    public function completeWithAction(Request $request)
+    {
+    	$oldMessage = $request->request->get('oldMessage');
+    	$newMessage = $request->request->get('newMessage');
+
+    	$em = $this->getDoctrine()->getManager();
+    	
+    	$n = 0;
+
+    	foreach($em->getRepository('FMSymSlateBundle:Language')->findAll() as $l)
+    	{
+    		$q = $em->createQuery("SELECT m FROM FMSymSlateBundle:Message m
+    			LEFT JOIN m.current_translations ct WITH ct.language_id=:language_id
+    			WHERE m.text=:newMessage AND ct.id IS NULL
+    		")->setParameter("newMessage", $newMessage)->setParameter('language_id', $l->getId());
+
+    		$untranslated_messages = $q->getResult();
+
+
+    		foreach($untranslated_messages as $untranslated_message)
+    		{
+    			$r = $em->createQuery("SELECT DISTINCT t.text FROM FMSymSlateBundle:Message m
+    				INNER JOIN m.current_translations ct
+    				INNER JOIN ct.translation t
+    				WHERE m.text = :oldMessage AND t.language_id=:language_id
+    			")->setParameter('oldMessage', $oldMessage)->setParameter('language_id', $l->getId());
+
+    			$t = $r->getResult();
+
+    			if(count($t) === 1)
+    			{
+    				$translation = $t[0]['text'];
+	    			
+	    			$this->get('translation_submitter')->submit(array(
+			    		'user' => $this->get("security.context")->getToken()->getUser(),
+			    		'language' => $l,
+			    		'mkey' => $untranslated_message->getMkey(),
+			    		'translation_text' => $translation,
+			    		'overwrite_current' => false
+			    	));
+
+	    			$n += 1;
+	    		}
+    		}
+    	}
+
+    	return new JsonResponse(array('n' => $n));
+    }
+
     /**
     * @Method("POST")
     * @Secure(roles="ROLE_TRUSTED")
