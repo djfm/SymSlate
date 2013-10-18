@@ -33,6 +33,12 @@ class Message
      * @ORM\OneToMany(targetEntity="History", mappedBy="message")
      */
      private $histories;
+
+     /**
+     * @ORM\OneToOne(targetEntity="Comment")
+     * @ORM\JoinColumn(name="comment_id", nullable=true, onDelete="SET NULL")
+     */
+     private $comment;
 	 
 	 public function __construct()
 	 {
@@ -380,5 +386,28 @@ class Message
     public function removeHistorie(\FM\SymSlateBundle\Entity\History $histories)
     {
         $this->histories->removeElement($histories);
+    }
+
+    /**
+     * Set comment
+     *
+     * @param \FM\SymSlateBundle\Entity\Comment $comment
+     * @return Message
+     */
+    public function setComment(\FM\SymSlateBundle\Entity\Comment $comment = null)
+    {
+        $this->comment = $comment;
+    
+        return $this;
+    }
+
+    /**
+     * Get comment
+     *
+     * @return \FM\SymSlateBundle\Entity\Comment 
+     */
+    public function getComment()
+    {
+        return $this->comment;
     }
 }

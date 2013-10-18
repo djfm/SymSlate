@@ -257,6 +257,44 @@ class TranslateController extends Controller
 
     /**
     * @Method("POST")
+    * @Route("/message_comment", name="message_comment")
+    */
+    public function postCommentAction(Request $request)
+    {
+    	$message_id 		= $request->request->get('message_id');
+    	$comment_text    	= trim($request->request->get('comment'));
+
+    	$message = $this->getDoctrine()->getManager()->getRepository('FMSymSlateBundle:Message')->findOneById($message_id);
+
+    	$comment = $message->getComment();
+    	
+    	if($comment_text !== '')
+    	{
+	    	if(!$comment)
+	    	{
+	    		$comment = new \FM\SymSlateBundle\Entity\Comment();
+	    		$message->setComment($comment);
+	    	}
+
+	    	$comment->setText($comment_text);
+	    	$this->getDoctrine()->getManager()->persist($comment);
+	    	$this->getDoctrine()->getManager()->persist($message);
+	    	$this->getDoctrine()->getManager()->flush();
+	    }
+	    else
+	    {
+	    	if($comment)
+	    	{
+	    		$this->getDoctrine()->getManager()->remove($comment);
+	    		$this->getDoctrine()->getManager()->flush();
+	    	}
+	    }
+
+    	return new JsonResponse(array('success' => true));
+    }
+
+    /**
+    * @Method("POST")
     * @Secure(roles="ROLE_SUPER_ADMIN")
     * @Route("/completeWith", name="complete_with")
     */

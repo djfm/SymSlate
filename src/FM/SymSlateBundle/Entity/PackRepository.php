@@ -324,7 +324,8 @@ class PackRepository extends EntityRepository
 				"is_context" => isset($query_options['is_context']) and $query_options['is_context'],
 				"position" => $classification->getPosition(),
 				"error_message" => $translation_error_message,
-				"warning_message" => $translation_warning_message
+				"warning_message" => $translation_warning_message,
+				"comment" => $message->getComment()
 			);
 				
 				//echo "<p>".$message->getText()."</p>";

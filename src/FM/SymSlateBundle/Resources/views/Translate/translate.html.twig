@@ -37,6 +37,37 @@
 		<script type="text/javascript">
 			//this is here and not in translate.js because we need some twig helpers for URLs, so this is more convenient.
 			
+			function addComment(classification_id, message_id)
+			{
+				if($('#comment_'+message_id).length === 1)
+				{
+					$('#comment_'+message_id).show();
+					return;	
+				}
+
+				var html = "";
+
+				html += "<div class='explain' data-message-id='"+message_id+"' id='comment_"+message_id+"'>";
+				html += "<table style='width:100%'><tr><td style='width:50px'><img src='{{ asset('bundles/fmsymslate/images/info2.png') }}'/></td>";
+				html += "<td><textarea/></td></tr></table>";
+				html += "<div class='right'>";
+				html += "<a onclick='javascript:$(this).closest(\"div.explain\").hide()'>hide comment</a>"
+				html += "&nbsp;/&nbsp;<a onclick='saveComment($(this).closest(\"div.explain\"))'>save comment</a>"
+				html += "</div>";
+				html += "</div>";
+
+				$('div#notification_'+classification_id).append(html);
+			};
+
+			function saveComment(element)
+			{
+				var message_id = element.attr('data-message-id');
+				var comment = element.find('textarea').val();
+				$.post("{{ url('message_comment')}}", {message_id: message_id, comment: comment}, function(res){
+					console.log(res);
+				});
+			};
+
 			function confirmOnClick(element)
 			{
 				var e = $(element);
@@ -403,12 +434,17 @@
 														 />
 														<a href="{{ url('translate_details', {message_id: m['message_id'], language_code: app.request.query.get('language_code')}) }}">
 															 <img 
-																 class="small more_info" 
+																 class="tiny more_info inline" 
 																 onclick="" 
 																 src="{{ asset('bundles/fmsymslate/images/more_info.png') }}"
 																 alt="More info..."
 															 />
 														 </a>
+														 <img 
+															 class="clickable tiny inline" 
+															 src="{{ asset('bundles/fmsymslate/images/pen.png') }}"
+															 onclick="addComment({{m['classification_id']}}, {{m['message_id']}})"
+														  />
 													</div>
 
 													<div class="translate_row_left">
@@ -423,8 +459,9 @@
 																	{{ m['text'] | dbkslsh }}
 																</span>
 															{% endif %}
-														
-														
+															
+															
+															
 														</div>
 														<div class="translate_row_translation pull-right">
 															
@@ -442,12 +479,9 @@
 													{% if m['warning_message'] != '' %}
 														<div class='warning'>{{ m['warning_message'] }}<span class='close-parent' onclick='javascript:$(this).parent().remove()'>X</span></div>
 													{% endif %}
-													<div class='explain'>
-														<textarea></textarea>
-														<div class="right">
-															<a onclick='javascript:$(this).closest("div.explain").remove()'>hide comment</a>
-														</div>
-													</div>
+													{% if m['comment'] %}
+														<div class="explain" data-message-id="{{m['message_id']}}" id="comment_{{m['message_id']}}"><table style="width:100%"><tbody><tr><td style="width:50px"><img src="/bundles/fmsymslate/images/info2.png"></td><td><textarea style="margin-top: 0px; margin-bottom: 0px; height: 48px;">{{m['comment'].text}}</textarea></td></tr></tbody></table><div class="right"><a onclick="javascript:$(this).closest(&quot;div.explain&quot;).hide()">hide comment</a>&nbsp;/&nbsp;<a onclick="saveComment($(this).closest(&quot;div.explain&quot;))">save comment</a></div></div>
+													{% endif %}
 												</div>
 
 												<div style="display:none" class="suggestions" id="suggestions_{{ m['classification_id'] }}">

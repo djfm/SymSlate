@@ -201,7 +201,7 @@ div.translation_notification > div
 	margin-bottom: 2px;
 	padding:5px;
 	border-radius: 5px;
-	border:1px solid black;
+	border:1px solid #CCC;
 }
 
 div.translation_notification > div:last-child
@@ -257,4 +257,8 @@ span.close-parent
 	font-weight: bold;
 	margin:5px;
 	margin-top: 0px;
+}
+
+div.translate_row
+{
 }

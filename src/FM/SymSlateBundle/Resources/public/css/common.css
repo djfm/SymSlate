@@ -86,6 +86,17 @@ img.small
 	height:24px;
 }
 
+img.tiny
+{
+	width:10px;
+	height:10px;
+}
+
+.inline
+{
+	display: inline-block;
+}
+
 th
 {
 	text-align: left;
