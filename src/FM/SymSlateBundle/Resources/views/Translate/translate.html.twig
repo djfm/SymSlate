@@ -37,6 +37,33 @@
 		<script type="text/javascript">
 			//this is here and not in translate.js because we need some twig helpers for URLs, so this is more convenient.
 			
+			function confirmOnClick(element)
+			{
+				var e = $(element);
+				if(e.hasClass('btn-warning'))
+				{
+					e.removeClass("btn-warning").addClass("btn-danger");
+					e.attr('data-old-html', e.html()); 
+					e.html("Sure? &nbsp;<a onclick='yesImSure(this);'>yes</a>");
+				}
+				else
+				{
+					e.removeClass("btn-danger").addClass("btn-warning");
+					e.html(e.attr('data-old-html'));
+				}	
+			};
+
+			function yesImSure(element)
+			{
+				var e = $(element).closest('button');
+				e.removeClass("btn-danger").addClass("btn-primary").html("Do it!");
+
+				e.attr('onclick',e.attr('data-confirm-onclick'));
+
+				window.event.stopPropagation();
+				return false;
+			};
+
 			$(document).ready(function(){
 				$('#translate_filters_hide').click(function(){
 					$('#translate_filters').toggle();
@@ -134,6 +161,16 @@
 				lostFocus(id);	
 			});
 
+
+			function copyTranslations(button, oldMessage, newMessage)
+			{
+				$(button).html("k, wait");
+				$.post('{{url("complete_with")}}', {oldMessage: oldMessage, newMessage: newMessage}, function(res){
+					$(button).html(res.n);
+					$(button).addClass("btn-success");
+				});
+			}
+
 			function gotFocus(id)
 			{
 				$('.controls_active').removeClass('controls_active').css('display','none');
@@ -156,8 +193,14 @@
 							var found = false;
 							for(var i in data)
 							{
+								{% if is_granted('ROLE_SUPER_ADMIN') %}
+									var button = "<button onclick='confirmOnClick(this)' data-confirm-onclick='copyTranslations(this, "+JSON.stringify(data[i].message)+","+JSON.stringify(message.trim())+")' class='btn btn-warning'>use</button>&nbsp;";
+								{% else %}
+									var button = "";
+								{% endif %}
+
 								found = true;
-								html+="<div class='row'><div class='message span6'>"+data[i].message+"</div>"+"<div contenteditable class='translation span6'>"+data[i].translation+"</div></div>"
+								html+="<div class='row'><div class='message span6'>"+button+data[i].message+"</div>"+"<div contenteditable class='translation span6'>"+data[i].translation+"</div></div>"
 							}
 
 							if(!found)
@@ -385,7 +428,7 @@
 														</div>
 														<div class="translate_row_translation pull-right">
 															
-															<textarea data-original-value="{{ m['translation'] }}" {% if m['type'] == "HTML" %} ckadjust="iframe_{{ m['classification_id'] }}" {% else %} same_height="message_contents_{{ m['classification_id'] }}"  {% endif %} id="translation_text_{{ m['classification_id'] }}" class="translate {{ m['type'] }}">{{ m['translation'] == '' ? m['text'] : m['translation'] }}</textarea>
+															<textarea data-original-value="{{ m['translation'] }}" {% if m['type'] == "HTML" %} ckadjust="iframe_{{ m['classification_id'] }}" {% else %} same_height="message_contents_{{ m['classification_id'] }}"  {% endif %} id="translation_text_{{ m['classification_id'] }}" class="translate {{ m['type'] }}">{% if m['type'] == "HTML" %}{{ m['translation'] == '' ? m['text'] : m['translation'] }}{% else %}{{ m['translation'] }}{% endif %}</textarea>
 															
 															
 														</div>

@@ -45,7 +45,8 @@ class TranslationSubmissionController extends Controller
             'language' => $language,
             'translation_text' => $text,
             'overwrite_current' => true,
-            'reason'    => $reason
+            'reason'    => $reason,
+            'from_ui' => true
         ));
 		
     	$response = new Response(json_encode($data));
