@@ -3,6 +3,7 @@
 namespace FM\SymSlateBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -214,5 +215,23 @@ class MessagesImportController extends Controller
             ->add('id', 'hidden')
             ->getForm()
         ;
+    }
+
+    /**
+     * Deletes a Message.
+     *
+     * @Route("/delete/message", name="delete_message")
+     * @Method("POST")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
+     */
+
+    public function deleteMessageAction(Request $request)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $em->remove($em->getRepository('FMSymSlateBundle:Message')->findOneById($request->request->get('id')));
+        $em->flush();
+
+        return new JsonResponse(array());
     }
 }
