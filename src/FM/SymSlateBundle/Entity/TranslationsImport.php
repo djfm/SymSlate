@@ -362,47 +362,70 @@ NOW;
 
 		foreach($files as $f)
 		{
+            $match = array();
             $path = "$dir/".$f['filename'];
             if(!is_dir($path))
             {
                 //if($logger)$logger->info("Parsing file: " . $f['filename']);
-    			$data    = file_get_contents($path);
     						
-    			$match = array();
-    			if(null !== $version and preg_match($ma_exp, $f['filename'],$match))
-    			{
-    				$total += 1;
-    				$translation = array(
-                        'translation_text' => $data,
-                        'language_code'    => $match[1],
-                        'mkey'             => 'mail:'.$version.':/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename'])
-                    );
-    				    				
-    				$translations[]  = $translation;
-    			}
-    			else if(   preg_match($nf_exp,$f['filename'],$match) 
-    			        or preg_match($f_exp ,$f['filename'],$match) 
-    			        or preg_match($m_exp ,$f['filename'],$match) 
-    			        or preg_match($o_exp ,$f['filename'],$match))
-    			{
-    				$matches = array();
-    				$count   = preg_match_all($exp, $data, $matches);
-    				$total  += $count;
-    				for($i = 0; $i < $count; $i++)
-    				{
-                        $translation = array(
-                            'translation_text' => $matches[2][$i],
+                if(preg_match('/\.po$/', $path) && preg_match('#/src/lang/([a-z]{2})/#', $path, $match))
+                {
+                    $po = new \FM\SymSlateBundle\PO\PoFile();
+                    $po->read($path);
+
+                    foreach($po->getEntries() as $msgid => $entry)
+                    {
+                        $trad   = trim($entry['msgstr']);
+                        if($trad !== '')
+                        {
+                            $key    = md5($msgid);
+                            $t      = \FM\SymSlateBundle\PO\PoFile::cleanup($trad);
+                            $translations[] = array(
+                                'translation_text' => $t,
+                                'language_code'    => $match[1],
+                                'mkey'             => $key
+                            );
+                        }
+                    }
+                }
+    			else 
+                {
+                    $data    = file_get_contents($path);
+                    if(null !== $version and preg_match($ma_exp, $f['filename'],$match))
+        			{
+        				$total += 1;
+        				$translation = array(
+                            'translation_text' => $data,
                             'language_code'    => $match[1],
-                            'mkey'             => $matches[1][$i]
+                            'mkey'             => 'mail:'.$version.':/'.str_replace("/{$match[1]}/", '/[iso]/', $f['filename'])
                         );
-    					
-    					$translations[] = $translation;
-    				}
-    			}
-    			else
-    			{
-    				
-    			}
+        				    				
+        				$translations[]  = $translation;
+        			}
+        			else if(   preg_match($nf_exp,$f['filename'],$match) 
+        			        or preg_match($f_exp ,$f['filename'],$match) 
+        			        or preg_match($m_exp ,$f['filename'],$match) 
+        			        or preg_match($o_exp ,$f['filename'],$match))
+        			{
+        				$matches = array();
+        				$count   = preg_match_all($exp, $data, $matches);
+        				$total  += $count;
+        				for($i = 0; $i < $count; $i++)
+        				{
+                            $translation = array(
+                                'translation_text' => $matches[2][$i],
+                                'language_code'    => $match[1],
+                                'mkey'             => $matches[1][$i]
+                            );
+        					
+        					$translations[] = $translation;
+        				}
+        			}
+        			else
+        			{
+        				
+        			}
+                }
             }
 		}
         

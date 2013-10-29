@@ -71,7 +71,7 @@ class Storage
     /**
      * @var string
      *
-     * @ORM\Column(name="path", type="string", length=255)
+     * @ORM\Column(name="path", type="text")
      */
     private $path;
 

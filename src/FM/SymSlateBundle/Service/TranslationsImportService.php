@@ -55,7 +55,11 @@ class TranslationsImportService extends \FM\SymSlateBundle\Worker\Worker
 					'translations_import' 		=> $translations_import
 				);
 
-				$this->submitter->submit($submission);
+				$val = $this->submitter->submit($submission);
+				if($val['success'] === false)
+				{
+					die(print_r($val, 1));
+				}
 			}
 			
 			$this->step();

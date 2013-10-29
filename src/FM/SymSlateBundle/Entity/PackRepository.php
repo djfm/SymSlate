@@ -366,11 +366,9 @@ class PackRepository extends EntityRepository
 		$qb->select(array('s','m','ct','t'))
 		   ->from('FMSymSlateBundle:Storage', 's')
 		   ->innerJoin('s.message', 'm')
-		   ->innerJoin('m.current_translations', 'ct')
-		   ->innerJoin('ct.translation', 't')
-		   ->where('s.pack_id = :pack_id')
-		   ->andWhere('ct.language_id = :language_id')
-		   ->andWhere('t.has_error = 0');
+		   ->leftJoin('m.current_translations', 'ct', 'WITH', 'ct.language_id = :language_id')
+		   ->leftJoin('ct.translation', 't', 'WITH', 't.has_error = 0')
+		   ->where('s.pack_id = :pack_id');
 		   
 		$query = $qb->getQuery();
 

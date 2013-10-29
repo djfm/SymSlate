@@ -25,6 +25,7 @@ class PackExportService extends \FM\SymSlateBundle\Worker\Worker
 		
 		$file_contents = array();
 		$footers       = array();
+		$po_files      = array();
 
 		foreach($storages as $storage)
 		{
@@ -80,7 +81,23 @@ NOW;
 					}
 					else if($storage->getMethod() == 'FILE')
 					{
-						$file_contents[$path] = $translation->getText();
+						if($storage->getCategory() === 'Mails2')
+						{
+							foreach( explode(",", $storage->getPath()) as $path) 
+							{
+								$path = str_replace('[iso]', $language->getCode(), $path);
+								if($path[0] == '/')$path = substr($path, 1);
+								if(!isset($po_files[$path]))
+								{
+									$po_files[$path] = array();
+								}
+								$po_files[$path][$storage->getMessage()->getText()] = $translation->getText();
+							}
+						}
+						else
+						{
+							$file_contents[$path] = $translation->getText();
+						}
 					}
 					else
 					{
@@ -118,12 +135,29 @@ NOW;
 				}
 				
 			}
-			else
+			else if($cts->count() === 0)
+			{
+				if($storage->getMethod() === 'FILE' && $storage->getCategory() === 'Mails2')
+				{
+					//add empty strings to the .po to
+					foreach( explode(",", $storage->getPath()) as $path) 
+					{
+						$path = str_replace('[iso]', $language->getCode(), $path);
+						if($path[0] == '/')$path = substr($path, 1);
+						if(!isset($po_files[$path]))
+						{
+							$po_files[$path] = array();
+						}
+						$po_files[$path][$storage->getMessage()->getText()] = '';
+					}
+				}
+			}
+			else // Zero, One, Insanity
 			{
 				throw new Exception("Classification ". $cl->getId() . " doesn't have exactly one current translation in this language! (got " . $cts->count() . ")");	
 			}
 
-				$this->step();
+			$this->step();
 				
 		}
 
@@ -159,6 +193,13 @@ NOW;
 		foreach($file_contents as $path => $data)
 		{
 			$archive->addString($path, $data);
+		}
+
+		foreach ($po_files as $path => $dictionary)
+		{
+			$po = new \FM\SymSlateBundle\PO\PoFile();
+			$po->addMessages($dictionary);
+			$archive->addString($path, (string)$po);
 		}
 
 		$this->setStatus("Completed!");
