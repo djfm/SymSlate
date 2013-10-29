@@ -85,6 +85,43 @@ NOW;
     	return array('replaced' => $replaced);
     }
 
+    /**
+     * 
+     *
+     * @Route("/decolon")
+     * @Secure(roles="ROLE_SUPER_ADMIN")
+     * @Template("FMSymSlateBundle:Maintenance:clean.html.twig")
+     */
+    public function decolonAction()
+    {
+
+        $em = $this->getDoctrine()->getManager();
+
+        $q  = $em->createQuery("SELECT t FROM FMSymSlateBundle:Translation t
+            INNER JOIN t.current_translations ct
+            INNER JOIN ct.message m
+            INNER JOIN m.classifications c
+            WHERE t.text LIKE '%:%' AND c.category='Back-Office' AND m.type='STRING'");
+
+        $replaced = 0;
+
+        foreach($q->getResult() as $translation)
+        {
+            $original_text = $text = $translation->getText();
+
+            $text = preg_replace('/\s*:\s*$/', '', $text);
+
+            $translation->setText($text);
+
+            $replaced += 1;
+        }
+
+        $em->flush();
+
+
+        return array('replaced' => $replaced);
+    }
+
 
 
 }
