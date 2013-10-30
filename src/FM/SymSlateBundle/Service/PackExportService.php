@@ -37,7 +37,20 @@ class PackExportService extends \FM\SymSlateBundle\Worker\Worker
 				$ct = $cts[0];
 				$translation = $ct->getTranslation();
 
-				$validation = $this->validator->validate($storage->getMessage()->getText(), $translation->getText(), $language, $storage->getCategory());
+				if(!$translation)
+				{
+					// This happends when the Storage has a CurrentTranslation
+					// but the CurrentTranslation doesn't have a translation
+					// because it is invalid.
+					// The CurrentTranslation is still there because of the Left Join in getStoragesWithTranslations
+					// but since the associations are fetched greedily $ct->getTranslation() returns null!!
+					continue;
+				}
+
+				$message_text = $storage->getMessage()->getText();
+				$translation_text = $translation->getText();
+
+				$validation = $this->validator->validate($message_text, $translation_text, $language, $storage->getCategory());
 
 				if($validation['success'])
 				{
