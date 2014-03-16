@@ -1,4 +1,4 @@
-<?
+<?php
 
 namespace FM\SymSlateBundle\EventListener;
 
